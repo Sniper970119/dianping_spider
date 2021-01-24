@@ -26,16 +26,21 @@ from bs4 import BeautifulSoup
 from utils.logger import logger
 from utils.config import global_config
 from utils.get_file_map import get_map
+from utils.get_font_map import get_map_file
 
 
 class Search():
     def __init__(self):
-        self.cookie = global_config.getRaw('config', 'Cookie')
+        self.cookie = global_config.getRaw('config', 'cookie')
         self.ua = global_config.getRaw('config', 'user-agent')
         self.location_id = global_config.getRaw('config', 'location_id')
         self.ua_engine = Factory.create()
-        self.word_map = get_map('../files/font_map.json')
-        # self.word_map = get_map('./files/font_map.json')
+
+    def update_font_map(self):
+        self.shopNum_map = get_map('./tmp/shopNum.json')
+        self.address_map = get_map('./tmp/address.json')
+        self.tagName = get_map('./tmp/tagName.json')
+        self.reviewTag = get_map('./tmp/reviewTag.json')
 
     def get_header(self):
         if self.ua is not None:
@@ -48,7 +53,7 @@ class Search():
         }
         return header
 
-    def search(self, key_word, need_first_page=True):
+    def search(self, key_word, need_other_page=True):
         assert isinstance(key_word, str)
         assert key_word != None or key_word.strip() != ''
         logger.info('开始搜索:' + key_word)
@@ -56,9 +61,14 @@ class Search():
         url = 'http://www.dianping.com/search/keyword/' + str(self.location_id) + '/0_' + str(key_word)
         r = requests.get(url, headers=header)
         text = r.text
-        for k, v in self.word_map.items():
+        # 获取加密文件
+        get_map_file(text)
+        # 更新加密映射缓存
+        self.update_font_map()
+
+        for k, v in self.shopNum_map.items():
             key = str(k).replace('uni', '&#x')
-            key = key + ';'
+            key = '"shopNum">' + key + ';'
             while key in text:
                 text.replace(key, v)
         html = BeautifulSoup(text, 'lxml')
@@ -95,5 +105,4 @@ class Search():
         print()
 
 
-if __name__ == '__main__':
-    Search().search('大连一方城堡')
+
