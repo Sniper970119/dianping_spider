@@ -69,8 +69,27 @@ class Search():
         for k, v in self.shopNum_map.items():
             key = str(k).replace('uni', '&#x')
             key = '"shopNum">' + key + ';'
-            while key in text:
-                text.replace(key, v)
+            value = '"shopNum">' + v
+            text = text.replace(key, value)
+
+        for k, v in self.address_map.items():
+            key = str(k).replace('uni', '&#x')
+            key = '"address">' + key + ';'
+            value = '"address">' + v
+            text = text.replace(key, value)
+
+        for k, v in self.tagName.items():
+            key = str(k).replace('uni', '&#x')
+            key = '"tagName">' + key + ';'
+            value = '"tagName">' + v
+            text = text.replace(key, value)
+
+        for k, v in self.reviewTag.items():
+            key = str(k).replace('uni', '&#x')
+            key = '"reviewTag">' + key + ';'
+            value = '"reviewTag">' + v
+            text = text.replace(key, value)
+
         html = BeautifulSoup(text, 'lxml')
         logger.info('解析完成:' + key_word)
         shop_all_list = html.select('.shop-list')[0].select('li')
