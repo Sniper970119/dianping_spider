@@ -37,12 +37,20 @@ class Search():
         self.ua_engine = Factory.create()
 
     def update_font_map(self):
+        """
+        更新字体信息
+        :return:
+        """
         self.shopNum_map = get_map('./tmp/shopNum.json')
         self.address_map = get_map('./tmp/address.json')
         self.tagName = get_map('./tmp/tagName.json')
         self.reviewTag = get_map('./tmp/reviewTag.json')
 
     def get_header(self):
+        """
+        获取请求头
+        :return:
+        """
         if self.ua is not None:
             ua = self.ua
         else:
@@ -54,6 +62,13 @@ class Search():
         return header
 
     def search(self, key_word, need_other_page=True):
+        """
+        搜索
+        :param key_word: 关键字
+        :param need_other_page: 只要首页
+        :return:
+        """
+        # Todo 其他页爬取
         assert isinstance(key_word, str)
         assert key_word != None or key_word.strip() != ''
         logger.info('开始搜索:' + key_word)
@@ -61,11 +76,13 @@ class Search():
         url = 'http://www.dianping.com/search/keyword/' + str(self.location_id) + '/0_' + str(key_word)
         r = requests.get(url, headers=header)
         text = r.text
+        # Todo 加密文件是否有必要每次都获取，继续观察
         # 获取加密文件
         get_map_file(text)
         # 更新加密映射缓存
         self.update_font_map()
 
+        # 加密字符串替换
         for k, v in self.shopNum_map.items():
             key = str(k).replace('uni', '&#x')
             key = '"shopNum">' + key + ';'
@@ -90,6 +107,7 @@ class Search():
             value = '"reviewTag">' + v
             text = text.replace(key, value)
 
+        # 网页解析
         html = BeautifulSoup(text, 'lxml')
         logger.info('解析完成:' + key_word)
         shop_all_list = html.select('.shop-list')[0].select('li')
@@ -120,8 +138,5 @@ class Search():
                 review_number = shop.select('.txt')[0].select('.comment')[0].select('.review-num')[0].text
             except:
                 review_number = None
-            print()
+        # Todo 解析信息的保存
         print()
-
-
-
