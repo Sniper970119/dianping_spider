@@ -20,4 +20,12 @@
 
 """
 
-import pymongo
+
+class Saver():
+    def __init__(self):
+        pass
+
+    def save_to_mongo(self, data, type):
+        assert type in ['search', 'detail', 'comment']
+        import pymongo
+

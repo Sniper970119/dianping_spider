@@ -111,6 +111,8 @@ class Search():
         html = BeautifulSoup(text, 'lxml')
         logger.info('解析完成:' + key_word)
         shop_all_list = html.select('.shop-list')[0].select('li')
+
+        search_res = []
         for shop in shop_all_list:
             try:
                 image_path = shop.select('.pic')[0].select('a')[0].select('img')[0]['src']
@@ -138,5 +140,18 @@ class Search():
                 review_number = shop.select('.txt')[0].select('.comment')[0].select('.review-num')[0].text
             except:
                 review_number = None
+            try:
+                mean_price = shop.select('.txt')[0].select('.comment')[0].select('.mean-price')[0].select('b')[0].text
+            except:
+                mean_price = '￥0'
+            try:
+                tags = shop.select('.txt')[0].select('.tag-addr')[0].select('.tag')
+                tag1 = tags[0].text
+                tag2 = tags[1].text
+            except:
+                tag1 = None
+                tag2 = None
+            search_res.append([shop_id, name, star_point, review_number])
+
         # Todo 解析信息的保存
         print()
