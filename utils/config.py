@@ -26,6 +26,7 @@ import configparser
 
 class Config(object):
     def __init__(self, config_file='config.ini'):
+        self.config_file = config_file
         self._path = os.path.join(os.getcwd(), config_file)
         if not os.path.exists(self._path):
             raise FileNotFoundError("No such file: config.ini")
