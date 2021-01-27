@@ -61,8 +61,27 @@ class MongoSaver():
         :return:
         """
         # Todo 判断重复，存数据
+        data_list = []
+        for each in data:
+            data_dict = {
+                '店铺id': each[0],
+                '店铺名称': each[1],
+                '店铺评分': each[2],
+                '评论数量': each[3],
+                '平均价格': each[4],
+                '标签1': each[5],
+                '标签2': each[6],
+                '推荐': each[7],
+                '评分': each[8],
+                '图片链接': each[9],
+                '详情链接': each[10],
+
+            }
+            data_list.append(data_dict)
         col = self.database['info']
-        col.find({'id': data})
+        for each in data_list:
+            col.delete_many({'店铺id': each['店铺id']})
+        col.insert(data_list)
         pass
 
     def save_detail_list(self, data):

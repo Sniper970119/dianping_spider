@@ -45,9 +45,9 @@ def get_search_map_file(page_source):
     # 创建临时缓存文件夹
     create_dir('./tmp')
     # 检查配置文件日期，看是否需要获取字体
-    check_date = check_config('search_font_date')
-    if check_date == get_cur_date():
-        return
+    # check_date = check_config('search_font_date')
+    # if check_date == get_cur_date():
+    #     return
     # 写配置文件
     write_config('search_font_date', get_cur_date())
     # 如果无法在页面信息中解析出字体css文件，说明被反爬或者cookie失效
