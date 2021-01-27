@@ -12,6 +12,7 @@
 - 已实现：
   - 搜索页字体反爬处理，字体映射json生成
   - 评论页字体反爬处理，字体映射json生成
+  - 存储器
   
 - 相关功能笔记
   - [搜索页字体加密加密](http://www.sniper97.cn/index.php/note/carwler/3694/)
