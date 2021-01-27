@@ -1,7 +1,11 @@
 # Sniper
 
-大众点评爬虫框架，开发中。诚邀一同开发的同学。
+*仅限学习交流使用，禁止商用*
 
+[![](https://img.shields.io/badge/python-3-brightgreen.svg)](https://www.python.org/downloads/)
+<a href="https://github.com/pnoker/iot-dc3/blob/master/LICENSE"><img src="https://img.shields.io/github/license/pnoker/iot-dc3.svg"></a>
+
+大众点评爬虫框架，开发中。诚邀一同开发的同学。
 
 
 - 预期实现：
