@@ -46,6 +46,7 @@ def get_search_map_file(page_source):
     # 创建临时缓存文件夹
     create_dir('./tmp')
     # 检查配置文件日期，看是否需要获取字体
+    # Todo 加密文件每日多换，考虑根据文件名强行匹配
     # check_date = check_config('search_font_date')
     # if check_date == get_cur_date():
     #     return
