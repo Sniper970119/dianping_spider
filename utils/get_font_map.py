@@ -22,6 +22,7 @@
 
 import re
 import os
+import sys
 import datetime
 import json
 import pickle
@@ -55,7 +56,7 @@ def get_search_map_file(page_source):
         font_base_url = re.findall(' href="(//s3plus.meituan.net/v1/.*?)">', page_source)[0]
     except:
         global_logger.warning('cookie失效或者被限制访问，更新cookie或登录大众点评滑动验证')
-        return
+        sys.exit()
     global_logger.info('更新搜索页面加密字体映射文件')
     font_base_url = 'https:' + font_base_url
     header = get_header()
@@ -229,3 +230,48 @@ def get_header():
         'User-Agent': ua,
     }
     return header
+
+
+def get_review_map_file(page_source):
+    """
+    获取评论页加密文件
+    :param page_source:
+    :return:
+    """
+    create_dir('./tmp')
+    # //s3plus.meituan.net/v1/mss_0a06a471f9514fc79c981b5466f56b91/svgtextcss/2363017604093a58a1e812c6de506330.css
+    # 如果无法在页面信息中解析出字体css文件，说明被反爬或者cookie失效
+    try:
+        css_url = 'https:' + re.findall(' href="(//s3plus.meituan.net/v1/.*?)">', page_source)[0]
+    except:
+        global_logger.warning('cookie失效或者被限制访问，更新cookie或登录大众点评滑动验证')
+        sys.exit()
+    # 下载css文件
+    r = requests.get(css_url)
+    with open('./tmp/review_css.css', 'wb') as f:
+        f.write(r.content)
+    # 解析css文件
+    css_role = re.findall('.(.*?)\{background:-(.*?)px -(.*?)px;}', r.text, re.S)
+    css_loc = {}
+    for each in css_role:
+        css_loc[each[0]] = [int(float(each[1])), int(float(each[2]))]
+    # 解析cvg字体
+    svg_url = re.findall('\[class\^="(.*?)"\].*?url\((//s3plus.meituan.net/v1/.*?)\)', r.text, re.S)
+    cvg_map = {}
+    for each in svg_url:
+        url = 'https:' + each[1]
+        r = requests.get(url)
+        # 第一种文件格式解析
+        font_loc = re.findall('<path id="(.*?)" d="M0 (.*?) H600"/>', r.text)
+        font_list = re.findall('>(.*?)</textPath>', r.text)
+        # 如果第一种解析失败，尝试第二种文件格式解析
+        if len(font_loc) == 0:
+            font_loc = []
+            font_list = []
+            font_loc_tmp = re.findall('<text x=".*?" y="(.*?)">(.*?)</text>', r.text)
+            for i in range(len(font_loc_tmp)):
+                font_loc.append([str(i + 1), font_loc_tmp[i][0]])
+                font_list.append(font_loc_tmp[i][1])
+        cvg_map[each[0]] = [font_loc, font_list]
+    # Todo cvg_map与css_loc 映射，最终回去编码与字的映射关系
+    print()
