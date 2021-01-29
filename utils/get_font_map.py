@@ -240,7 +240,6 @@ def get_review_map_file(page_source):
     :return:
     """
     create_dir('./tmp')
-    # //s3plus.meituan.net/v1/mss_0a06a471f9514fc79c981b5466f56b91/svgtextcss/2363017604093a58a1e812c6de506330.css
     # 如果无法在页面信息中解析出字体css文件，说明被反爬或者cookie失效
     try:
         css_url = 'https:' + re.findall(' href="(//s3plus.meituan.net/v1/.*?)">', page_source)[0]
@@ -253,26 +252,64 @@ def get_review_map_file(page_source):
         f.write(r.content)
     # 解析css文件
     css_role = re.findall('.(.*?)\{background:-(.*?)px -(.*?)px;}', r.text, re.S)
-    css_loc = {}
+    css_loc = []
+
     for each in css_role:
-        css_loc[each[0]] = [int(float(each[1])), int(float(each[2]))]
-    # 解析cvg字体
+        # 过滤css中的svg信息，也会正则出来
+        if '[' in each[0]:
+            continue
+        css_loc.append([each[0], int(float(each[1])), int(float(each[2]))])
+
+    # 解析svg字体
     svg_url = re.findall('\[class\^="(.*?)"\].*?url\((//s3plus.meituan.net/v1/.*?)\)', r.text, re.S)
-    cvg_map = {}
+    svg_map = {}
+    return_svg_name = []
     for each in svg_url:
         url = 'https:' + each[1]
         r = requests.get(url)
+        svg_name = each[1][-15:]
+        # 缓存svg文件，写到配置信息，以节约解析时间
+        with open('./tmp/' + svg_name, 'wb') as f:
+            f.write(r.content)
+
+        # 字体类型，用于区分不同字体的height、weight偏移不同
+        if '#333' in r.text:
+            font_height_offset = 23
+            font_weight_offset = 0
+        elif '#666' in r.text:
+            font_height_offset = 15
+            font_weight_offset = 0
+        else:
+            global_logger.warning('评论页字体变更，尝试修改代码或者联系作者')
+            sys.exit()
         # 第一种文件格式解析
-        font_loc = re.findall('<path id="(.*?)" d="M0 (.*?) H600"/>', r.text)
+        re_font_loc = re.findall('<path id="(.*?)" d="M0 (.*?) H600"/>', r.text)
+        font_loc = {}
+        for i in range(len(re_font_loc)):
+            font_loc[int(re_font_loc[i][1])] = i + 1
         font_list = re.findall('>(.*?)</textPath>', r.text)
         # 如果第一种解析失败，尝试第二种文件格式解析
         if len(font_loc) == 0:
-            font_loc = []
+            font_loc = {}
             font_list = []
             font_loc_tmp = re.findall('<text x=".*?" y="(.*?)">(.*?)</text>', r.text)
             for i in range(len(font_loc_tmp)):
-                font_loc.append([str(i + 1), font_loc_tmp[i][0]])
+                font_loc[int(font_loc_tmp[i][0])] = i + 1
                 font_list.append(font_loc_tmp[i][1])
-        cvg_map[each[0]] = [font_loc, font_list]
-    # Todo cvg_map与css_loc 映射，最终回去编码与字的映射关系
-    print()
+
+        svg_map[each[0]] = [font_loc, font_list, font_height_offset, font_weight_offset]
+
+    css_map_result = {}
+    # 获取class名和文字的映射
+    for each in css_loc:
+        css_key = each[0][:3]
+        loc_x, loc_y = each[1], each[2]
+        # 字体的长宽偏移量
+        font_height_offset, font_weight_offset = svg_map[css_key][2], svg_map[css_key][3]
+        # 计算文字位置
+        loc_x_line, loc_y_line = (loc_x + font_weight_offset) // 14, svg_map[css_key][0][loc_y + font_height_offset]
+        # 获取文字
+        css_value = svg_map[css_key][1][loc_y_line - 1][loc_x_line]
+        css_map_result[each[0]] = css_value
+    with open('./tmp/review_font_map.json', 'w', encoding='utf-8') as f:
+        json.dump(css_map_result, f, ensure_ascii=False)
