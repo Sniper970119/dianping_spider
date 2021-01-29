@@ -263,14 +263,15 @@ def get_review_map_file(page_source):
     # 解析svg字体
     svg_url = re.findall('\[class\^="(.*?)"\].*?url\((//s3plus.meituan.net/v1/.*?)\)', r.text, re.S)
     svg_map = {}
-    return_svg_name = []
+    return_svg_name = {}
     for each in svg_url:
         url = 'https:' + each[1]
         r = requests.get(url)
-        svg_name = each[1][-15:]
-        # 缓存svg文件，写到配置信息，以节约解析时间
-        with open('./tmp/' + svg_name, 'wb') as f:
-            f.write(r.content)
+        svg_name = each[1][-18:-3] + 'json'
+        # 检查缓存json文件，以节约解析时间
+        if os.path.exists('./tmp/' + svg_name):
+            return_svg_name[each[0]] = './tmp/' + svg_name
+            continue
 
         # 字体类型，用于区分不同字体的height、weight偏移不同
         if '#333' in r.text:
@@ -297,19 +298,27 @@ def get_review_map_file(page_source):
                 font_loc[int(font_loc_tmp[i][0])] = i + 1
                 font_list.append(font_loc_tmp[i][1])
 
-        svg_map[each[0]] = [font_loc, font_list, font_height_offset, font_weight_offset]
+        # Todo 这个svg_map上一个存储结构需要，目前这个存储结构比较冗余，但是为了简单起见继续使用，留给以后重构的时候解决
+        svg_map[each[0]] = [font_loc, font_list, font_height_offset, font_weight_offset, svg_name, each[0]]
 
-    css_map_result = {}
-    # 获取class名和文字的映射
-    for each in css_loc:
+        css_map_result = {}
         css_key = each[0][:3]
-        loc_x, loc_y = each[1], each[2]
-        # 字体的长宽偏移量
-        font_height_offset, font_weight_offset = svg_map[css_key][2], svg_map[css_key][3]
-        # 计算文字位置
-        loc_x_line, loc_y_line = (loc_x + font_weight_offset) // 14, svg_map[css_key][0][loc_y + font_height_offset]
-        # 获取文字
-        css_value = svg_map[css_key][1][loc_y_line - 1][loc_x_line]
-        css_map_result[each[0]] = css_value
-    with open('./tmp/review_font_map.json', 'w', encoding='utf-8') as f:
-        json.dump(css_map_result, f, ensure_ascii=False)
+
+        # 解析css文件
+        for each_css in css_loc:
+            if each_css[0][:3] != each[0]:
+                continue
+            loc_x, loc_y = each_css[1], each_css[2]
+            # 字体的长宽偏移量
+            font_height_offset, font_weight_offset = svg_map[css_key][2], svg_map[css_key][3]
+            # 计算文字位置
+            loc_x_line, loc_y_line = (loc_x + font_weight_offset) // 14, svg_map[css_key][0][loc_y + font_height_offset]
+            # 获取文字
+            css_value = svg_map[css_key][1][loc_y_line - 1][loc_x_line]
+            css_map_result[each[0]] = css_value
+        # 保存json文件
+        with open('./tmp/' + str(svg_map[css_key][4]), 'w', encoding='utf-8') as f:
+            json.dump(css_map_result, f, ensure_ascii=False)
+        return_svg_name[str(svg_map[css_key][5])] = str(svg_map[css_key][4])
+
+    return return_svg_name
