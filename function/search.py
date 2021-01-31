@@ -20,6 +20,7 @@
 
 """
 import requests
+from tqdm import tqdm
 from faker import Factory
 from bs4 import BeautifulSoup
 
@@ -36,6 +37,7 @@ class Search():
         self.cookie = global_config.getRaw('config', 'cookie')
         self.ua = global_config.getRaw('config', 'user-agent')
         self.location_id = global_config.getRaw('config', 'location_id')
+        self.channel_id = global_config.getRaw('config', 'channel_id')
         self.ua_engine = Factory.create()
         self.saver = Saver()
         self.requests_util = requests_util
@@ -77,12 +79,12 @@ class Search():
         assert key_word != None or key_word.strip() != ''
         logger.info('开始搜索:' + key_word)
         header = self.get_header()
-        for i in range(1, needed_pages + 1):
+        for i in tqdm(range(1, needed_pages + 1), desc='页数'):
             # 针对只需要收条的情况，跳出页数循环
             if only_need_first is True and i != 1:
                 break
-            url = 'http://www.dianping.com/search/keyword/' + str(self.location_id) + '/0_' + str(
-                key_word) + '/p' + str(i)
+            url = 'http://www.dianping.com/search/keyword/' + str(self.location_id) + '/' + str(
+                self.channel_id) + '_' + str(key_word) + '/p' + str(i)
             r = requests_util.get_requests(url)
             # r = requests.get(url, headers=header)
             text = r.text
@@ -119,7 +121,6 @@ class Search():
 
             # 网页解析
             html = BeautifulSoup(text, 'lxml')
-            logger.info('解析完成:' + key_word)
             shop_all_list = html.select('.shop-list')[0].select('li')
 
             search_res = []
@@ -164,6 +165,10 @@ class Search():
                     tag1 = None
                     tag2 = None
                 try:
+                    addr = shop.select('.txt')[0].select('.tag-addr')[0].select('.addr')[0].text
+                except:
+                    addr = None
+                try:
                     recommend = shop.select('.recommend')[0].text
                 except:
                     recommend = None
@@ -173,7 +178,7 @@ class Search():
                     commend_list = None
 
                 search_res.append(
-                    [shop_id, name, star_point, review_number, mean_price, tag1, tag2, recommend, commend_list,
+                    [shop_id, name, star_point, review_number, mean_price, tag1, tag2, addr, recommend, commend_list,
                      image_path,
                      detail_url])
                 # 只要首条，跳出
@@ -181,5 +186,5 @@ class Search():
                     break
             # 保存数据
             self.saver.save_data(search_res, 'search')
-        # Todo 解析信息的保存
+        logger.info('解析完成:' + key_word)
         print()

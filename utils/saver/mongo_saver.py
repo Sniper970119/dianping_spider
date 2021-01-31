@@ -71,10 +71,11 @@ class MongoSaver():
                 '平均价格': each[4],
                 '标签1': each[5],
                 '标签2': each[6],
-                '推荐': each[7],
-                '评分': each[8],
-                '图片链接': each[9],
-                '详情链接': each[10],
+                '地址': each[7],
+                '推荐': each[8],
+                '评分': each[9],
+                '图片链接': each[10],
+                '详情链接': each[11],
 
             }
             data_list.append(data_dict)

@@ -54,7 +54,7 @@ def get_search_map_file(page_source):
     except:
         global_logger.warning('cookie失效或者被限制访问，更新cookie或登录大众点评滑动验证')
         sys.exit()
-    global_logger.info('更新搜索页面加密字体映射文件')
+    # global_logger.info('更新搜索页面加密字体映射文件')
     font_base_url = 'https:' + font_base_url
     # header = get_header()
     # r = requests.get(font_base_url, headers=header)
@@ -138,7 +138,7 @@ def get_search_map_file(page_source):
     logger = logging.getLogger()
     logger.setLevel(logging.INFO)
 
-    global_logger.info('加密字体映射文件获取完成')
+    # global_logger.info('加密字体映射文件获取完成')
     return return_file_map
 
 
