@@ -20,12 +20,14 @@
 
 """
 
+import sys
 import time
 import requests
 from tqdm import tqdm
 from faker import Factory
 
 from utils.config import global_config
+from utils.logger import logger
 
 
 class RequestsUtils():
@@ -40,7 +42,11 @@ class RequestsUtils():
 
         self.ua_engine = Factory.create()
 
-        self.stop_times = self.parse_stop_time(requests_times)
+        try:
+            self.stop_times = self.parse_stop_time(requests_times)
+        except:
+            logger.error('配置文件requests_times解析错误，检查输入（必须英文标点）')
+            sys.exit()
         self.global_time = 0
         pass
 

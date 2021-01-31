@@ -61,11 +61,14 @@ def get_search_map_file(page_source):
     r = requests_util.get_requests(url=font_base_url, need_header=False)
     text = r.text
     woff_urls = re.findall(',url\("(.*?\.woff"\).*?\{)', text)
+
     # 设置logger等级，解析woff会生成无关日志，屏蔽
     logger = logging.getLogger()
     logger.setLevel(logging.WARNING)
+
     # 处理css中的woff链接
     for each in woff_urls:
+
         # 解析address woff
         if 'address' in each:
             address_map_woff_url = re.findall('(//.*?woff)', each)[0]
@@ -82,6 +85,7 @@ def get_search_map_file(page_source):
             parse_xml(file_name + '.xml')
             os.remove('./tmp/' + file_name + '.woff')
             os.remove('./tmp/' + file_name + '.xml')
+
         if 'shopNum' in each:
             shop_num_map_woff_url = re.findall('(//.*?woff)', each)[0]
             shop_num_map_woff_url = 'https:' + shop_num_map_woff_url
@@ -97,6 +101,7 @@ def get_search_map_file(page_source):
             parse_xml(file_name + '.xml')
             os.remove('./tmp/' + file_name + '.woff')
             os.remove('./tmp/' + file_name + '.xml')
+
         if 'tagName' in each:
             tag_name_map_woff_url = re.findall('(//.*?woff)', each)[0]
             tag_name_map_woff_url = 'https:' + tag_name_map_woff_url
@@ -112,6 +117,7 @@ def get_search_map_file(page_source):
             parse_xml(file_name + '.xml')
             os.remove('./tmp/' + file_name + '.woff')
             os.remove('./tmp/' + file_name + '.xml')
+
         if 'reviewTag' in each:
             review_tag_map_woff_url = re.findall('(//.*?woff)', each)[0]
             review_tag_map_woff_url = 'https:' + review_tag_map_woff_url
@@ -127,9 +133,11 @@ def get_search_map_file(page_source):
             parse_xml(file_name + '.xml')
             os.remove('./tmp/' + file_name + '.woff')
             os.remove('./tmp/' + file_name + '.xml')
+
     # 将logger等级恢复
     logger = logging.getLogger()
     logger.setLevel(logging.INFO)
+
     global_logger.info('加密字体映射文件获取完成')
     return return_file_map
 
@@ -148,7 +156,7 @@ def create_dir(file_name):
 
 def check_config(key):
     """
-    检查用于获取加密字体文件的相关配置
+    检查配置文件参数（暂未使用）
     :param key:
     :return:
     """
@@ -169,7 +177,7 @@ def check_config(key):
 
 def write_config(key, value):
     """
-    写配置文件
+    写配置文件（暂未使用）
     :param key:
     :param value:
     :return:
@@ -187,7 +195,7 @@ def write_config(key, value):
 
 def get_cur_date():
     """
-    获取当前时间（返回日期）
+    获取当前时间（返回日期）（暂未使用）
     :return:
     """
     return datetime.date.today()
@@ -200,7 +208,6 @@ def download_woff(woff_url, filename):
     :param filename:
     :return:
     """
-    # r = requests.get(woff_url)
     r = requests_util.get_requests(woff_url, need_header=False)
     with open('./tmp/' + filename, 'wb') as f:
         f.write(r.content)
@@ -249,7 +256,7 @@ def parse_woff(filename):
 
 def get_header():
     """
-    生成请求头
+    生成请求头（暂未使用）
     :return:
     """
     ua_engine = Factory.create()
@@ -274,7 +281,6 @@ def get_review_map_file(page_source):
         global_logger.warning('cookie失效或者被限制访问，更新cookie或登录大众点评滑动验证')
         sys.exit()
     # 下载css文件
-    # r = requests.get(css_url)
     r = requests_util.get_requests(css_url, need_header=False)
     with open('./tmp/review_css.css', 'wb') as f:
         f.write(r.content)
@@ -294,7 +300,6 @@ def get_review_map_file(page_source):
     return_svg_name = {}
     for each in svg_url:
         url = 'https:' + each[1]
-        # r = requests.get(url)
         r = requests_util.get_requests(url, need_header=False)
         svg_name = each[1][-18:-3] + 'json'
         # 检查缓存json文件，以节约解析时间
