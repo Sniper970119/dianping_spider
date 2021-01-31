@@ -28,6 +28,7 @@ from utils.config import global_config
 from utils.get_file_map import get_map
 from utils.get_font_map import get_search_map_file
 from utils.saver.saver import Saver
+from utils.requests_utils import requests_util
 
 
 class Search():
@@ -37,6 +38,7 @@ class Search():
         self.location_id = global_config.getRaw('config', 'location_id')
         self.ua_engine = Factory.create()
         self.saver = Saver()
+        self.requests_util = requests_util
 
     def update_font_map(self):
         """
@@ -71,7 +73,6 @@ class Search():
         :param needed_pages: 需要多少页
         :return:
         """
-        # Todo 其他页爬取
         assert isinstance(key_word, str)
         assert key_word != None or key_word.strip() != ''
         logger.info('开始搜索:' + key_word)
@@ -82,7 +83,8 @@ class Search():
                 break
             url = 'http://www.dianping.com/search/keyword/' + str(self.location_id) + '/0_' + str(
                 key_word) + '/p' + str(i)
-            r = requests.get(url, headers=header)
+            r = requests_util.get_requests(url)
+            # r = requests.get(url, headers=header)
             text = r.text
             # Todo 加密文件是否有必要每次都获取，继续观察
             # 获取加密文件

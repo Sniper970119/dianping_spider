@@ -45,9 +45,25 @@ if __name__ == '__main__':
     # Search().search('大连一方城堡', only_need_first=False, needed_pages=1)
 
     # debug review font parse
-    header = get_header()
-    url = 'http://www.dianping.com/shop/i24HGIrTSjD3Tcyy/review_all'
-    r = requests.get(url, headers=header)
-    get_review_map_file(r.text)
+    # header = get_header()
+    # url = 'http://www.dianping.com/shop/i24HGIrTSjD3Tcyy/review_all'
+    # r = requests.get(url, headers=header)
+    # get_review_map_file(r.text)
 
+    # debug requests utils
+    # from utils.requests_utils import requests_util
+    # # print(requests_util.parse_stop_time('5,10;20,100'))
+    # requests_util.get_requests('http://www.baidu.com')
+    # print(1)
+    # requests_util.get_requests('http://www.baidu.com')
+    # print(2)
+    # requests_util.get_requests('http://www.baidu.com')
+    # print(3)
+    # requests_util.get_requests('http://www.baidu.com')
+    # print(4)
+    # requests_util.get_requests('http://www.baidu.com')
+    # print(5)
+    # requests_util.get_requests('http://www.baidu.com')
+    # print(6)
+    # requests_util.get_requests('http://www.baidu.com')
     pass
