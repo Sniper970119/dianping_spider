@@ -8,7 +8,7 @@
 大众点评爬虫框架，开发中。诚邀一同开发的同学。
 
 商家搜索结果展示：
-![image](./imgs/base_info.jpg)
+![](./imgs/base_info.jpg)
 
 - 预期实现：
   - 商家搜索、各种信息获取
@@ -32,4 +32,4 @@
 
 如果你想加快进度或者想请我喝一杯咖啡，欢迎打赏
 
-![image](./imgs/zhifubao.jpg)
+![](./imgs/zhifubao.jpg)
