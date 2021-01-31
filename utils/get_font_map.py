@@ -35,6 +35,7 @@ import logging
 from utils.logger import logger as global_logger
 from utils.config import global_config
 from utils.get_file_map import get_map
+from utils.requests_utils import requests_util
 
 
 def get_search_map_file(page_source):
@@ -45,13 +46,8 @@ def get_search_map_file(page_source):
     """
     # 创建临时缓存文件夹
     create_dir('./tmp')
-    # 检查配置文件日期，看是否需要获取字体
-    # Todo 加密文件每日多换，考虑根据文件名强行匹配
-    # check_date = check_config('search_font_date')
-    # if check_date == get_cur_date():
-    #     return
-    # 写配置文件
-    write_config('search_font_date', get_cur_date())
+    # 返回json映射
+    return_file_map = {}
     # 如果无法在页面信息中解析出字体css文件，说明被反爬或者cookie失效
     try:
         font_base_url = re.findall(' href="(//s3plus.meituan.net/v1/.*?)">', page_source)[0]
@@ -60,8 +56,9 @@ def get_search_map_file(page_source):
         sys.exit()
     global_logger.info('更新搜索页面加密字体映射文件')
     font_base_url = 'https:' + font_base_url
-    header = get_header()
-    r = requests.get(font_base_url, headers=header)
+    # header = get_header()
+    # r = requests.get(font_base_url, headers=header)
+    r = requests_util.get_requests(url=font_base_url, need_header=False)
     text = r.text
     woff_urls = re.findall(',url\("(.*?\.woff"\).*?\{)', text)
     # 设置logger等级，解析woff会生成无关日志，屏蔽
@@ -73,39 +70,68 @@ def get_search_map_file(page_source):
         if 'address' in each:
             address_map_woff_url = re.findall('(//.*?woff)', each)[0]
             address_map_woff_url = 'https:' + address_map_woff_url
-            download_woff(address_map_woff_url, 'address.woff')
-            parse_woff('address.woff')
-            parse_xml('address.xml')
-            os.remove('./tmp/address.woff')
-            os.remove('./tmp/address.xml')
+            # 获取文件名
+            file_name = address_map_woff_url[-13:-5]
+            return_file_map['address'] = './tmp/' + file_name + '.json'
+            # 如果文件存在不用解析
+            if os.path.exists('./tmp/' + file_name + '.json'):
+                continue
+            # 下载字体文件，解析文件
+            download_woff(address_map_woff_url, file_name + '.woff')
+            parse_woff(file_name + '.woff')
+            parse_xml(file_name + '.xml')
+            os.remove('./tmp/' + file_name + '.woff')
+            os.remove('./tmp/' + file_name + '.xml')
         if 'shopNum' in each:
             shop_num_map_woff_url = re.findall('(//.*?woff)', each)[0]
             shop_num_map_woff_url = 'https:' + shop_num_map_woff_url
-            download_woff(shop_num_map_woff_url, 'shopNum.woff')
-            parse_woff('shopNum.woff')
-            parse_xml('shopNum.xml')
-            os.remove('./tmp/shopNum.woff')
-            os.remove('./tmp/shopNum.xml')
+            # 获取文件名
+            file_name = shop_num_map_woff_url[-13:-5]
+            return_file_map['shopNum'] = './tmp/' + file_name + '.json'
+            # 如果文件存在不用解析
+            if os.path.exists('./tmp/' + file_name + '.json'):
+                continue
+            # 下载字体文件，解析文件
+            download_woff(shop_num_map_woff_url, file_name + '.woff')
+            parse_woff(file_name + '.woff')
+            parse_xml(file_name + '.xml')
+            os.remove('./tmp/' + file_name + '.woff')
+            os.remove('./tmp/' + file_name + '.xml')
         if 'tagName' in each:
             tag_name_map_woff_url = re.findall('(//.*?woff)', each)[0]
             tag_name_map_woff_url = 'https:' + tag_name_map_woff_url
-            download_woff(tag_name_map_woff_url, 'tagName.woff')
-            parse_woff('tagName.woff')
-            parse_xml('tagName.xml')
-            os.remove('./tmp/tagName.woff')
-            os.remove('./tmp/tagName.xml')
+            # 获取文件名
+            file_name = tag_name_map_woff_url[-13:-5]
+            return_file_map['tagName'] = './tmp/' + file_name + '.json'
+            # 如果文件存在不用解析
+            if os.path.exists('./tmp/' + file_name + '.json'):
+                continue
+            # 下载字体文件，解析文件
+            download_woff(tag_name_map_woff_url, file_name + '.woff')
+            parse_woff(file_name + '.woff')
+            parse_xml(file_name + '.xml')
+            os.remove('./tmp/' + file_name + '.woff')
+            os.remove('./tmp/' + file_name + '.xml')
         if 'reviewTag' in each:
             review_tag_map_woff_url = re.findall('(//.*?woff)', each)[0]
             review_tag_map_woff_url = 'https:' + review_tag_map_woff_url
-            download_woff(review_tag_map_woff_url, 'reviewTag.woff')
-            parse_woff('reviewTag.woff')
-            parse_xml('reviewTag.xml')
-            os.remove('./tmp/reviewTag.woff')
-            os.remove('./tmp/reviewTag.xml')
+            # 获取文件名
+            file_name = review_tag_map_woff_url[-13:-5]
+            return_file_map['reviewTag'] = './tmp/' + file_name + '.json'
+            # 如果文件存在不用解析
+            if os.path.exists('./tmp/' + file_name + '.json'):
+                continue
+            # 下载字体文件，解析文件
+            download_woff(review_tag_map_woff_url, file_name + '.woff')
+            parse_woff(file_name + '.woff')
+            parse_xml(file_name + '.xml')
+            os.remove('./tmp/' + file_name + '.woff')
+            os.remove('./tmp/' + file_name + '.xml')
     # 将logger等级恢复
     logger = logging.getLogger()
     logger.setLevel(logging.INFO)
-    global_logger.info('加密字体映射文件更新完成')
+    global_logger.info('加密字体映射文件获取完成')
+    return return_file_map
 
 
 def create_dir(file_name):
@@ -174,7 +200,8 @@ def download_woff(woff_url, filename):
     :param filename:
     :return:
     """
-    r = requests.get(woff_url)
+    # r = requests.get(woff_url)
+    r = requests_util.get_requests(woff_url, need_header=False)
     with open('./tmp/' + filename, 'wb') as f:
         f.write(r.content)
 
@@ -247,7 +274,8 @@ def get_review_map_file(page_source):
         global_logger.warning('cookie失效或者被限制访问，更新cookie或登录大众点评滑动验证')
         sys.exit()
     # 下载css文件
-    r = requests.get(css_url)
+    # r = requests.get(css_url)
+    r = requests_util.get_requests(css_url, need_header=False)
     with open('./tmp/review_css.css', 'wb') as f:
         f.write(r.content)
     # 解析css文件
@@ -266,7 +294,8 @@ def get_review_map_file(page_source):
     return_svg_name = {}
     for each in svg_url:
         url = 'https:' + each[1]
-        r = requests.get(url)
+        # r = requests.get(url)
+        r = requests_util.get_requests(url, need_header=False)
         svg_name = each[1][-18:-3] + 'json'
         # 检查缓存json文件，以节约解析时间
         if os.path.exists('./tmp/' + svg_name):

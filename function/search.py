@@ -40,15 +40,15 @@ class Search():
         self.saver = Saver()
         self.requests_util = requests_util
 
-    def update_font_map(self):
+    def update_font_map(self, file_map):
         """
         更新字体信息
         :return:
         """
-        self.shopNum_map = get_map('./tmp/shopNum.json')
-        self.address_map = get_map('./tmp/address.json')
-        self.tagName = get_map('./tmp/tagName.json')
-        self.reviewTag = get_map('./tmp/reviewTag.json')
+        self.shopNum_map = get_map(file_map['shopNum'])
+        self.address_map = get_map(file_map['address'])
+        self.tagName = get_map(file_map['tagName'])
+        self.reviewTag = get_map(file_map['reviewTag'])
 
     def get_header(self):
         """
@@ -88,9 +88,9 @@ class Search():
             text = r.text
             # Todo 加密文件是否有必要每次都获取，继续观察
             # 获取加密文件
-            get_search_map_file(text)
+            file_map = get_search_map_file(text)
             # 更新加密映射缓存
-            self.update_font_map()
+            self.update_font_map(file_map)
 
             # 加密字符串替换
             for k, v in self.shopNum_map.items():
