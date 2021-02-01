@@ -96,33 +96,8 @@ class Search():
             text = r.text
             # 获取加密文件
             file_map = get_search_map_file(text)
-            # 更新加密映射缓存
-            self.update_font_map(file_map)
-
-            # 加密字符串替换
-            for k, v in self.shopNum_map.items():
-                key = str(k).replace('uni', '&#x')
-                key = '"shopNum">' + key + ';'
-                value = '"shopNum">' + v
-                text = text.replace(key, value)
-
-            for k, v in self.address_map.items():
-                key = str(k).replace('uni', '&#x')
-                key = '"address">' + key + ';'
-                value = '"address">' + v
-                text = text.replace(key, value)
-
-            for k, v in self.tagName.items():
-                key = str(k).replace('uni', '&#x')
-                key = '"tagName">' + key + ';'
-                value = '"tagName">' + v
-                text = text.replace(key, value)
-
-            for k, v in self.reviewTag.items():
-                key = str(k).replace('uni', '&#x')
-                key = '"reviewTag">' + key + ';'
-                value = '"reviewTag">' + v
-                text = text.replace(key, value)
+            # 替换加密文件
+            text = requests_util.replace_html(text, file_map)
 
             # 网页解析
             html = BeautifulSoup(text, 'lxml')
