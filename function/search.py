@@ -38,6 +38,7 @@ class Search():
         self.ua = global_config.getRaw('config', 'user-agent')
         self.location_id = global_config.getRaw('config', 'location_id')
         self.channel_id = global_config.getRaw('config', 'channel_id')
+        self.custom_search_url = global_config.getRaw('config', 'search_url')
         self.ua_engine = Factory.create()
         self.saver = Saver()
         self.requests_util = requests_util
@@ -77,18 +78,22 @@ class Search():
         """
         assert isinstance(key_word, str)
         assert key_word != None or key_word.strip() != ''
+        if self.custom_search_url != '':
+            key_word = self.custom_search_url
         logger.info('开始搜索:' + key_word)
-        header = self.get_header()
+        # header = self.get_header()
         for i in tqdm(range(1, needed_pages + 1), desc='页数'):
             # 针对只需要收条的情况，跳出页数循环
             if only_need_first is True and i != 1:
                 break
+
             url = 'http://www.dianping.com/search/keyword/' + str(self.location_id) + '/' + str(
                 self.channel_id) + '_' + str(key_word) + '/p' + str(i)
+            if self.custom_search_url != '':
+                url = self.custom_search_url + str(i)
             r = requests_util.get_requests(url)
             # r = requests.get(url, headers=header)
             text = r.text
-            # Todo 加密文件是否有必要每次都获取，继续观察
             # 获取加密文件
             file_map = get_search_map_file(text)
             # 更新加密映射缓存
