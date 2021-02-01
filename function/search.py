@@ -93,12 +93,22 @@ class Search():
                     name = shop.select('.txt')[0].select('.tit')[0].select('a')[0].text.strip()
                 except:
                     name = None
+                # 两个star方式，有的页面显示详细star分数，有的显示icon
+                # 解析icon
                 try:
                     star_point = \
                         shop.select('.txt')[0].select('.comment')[0].select('.star_icon')[0].select('span')[0]['class'][
                             1].split('_')[1]
+                    star_point = float(star_point) / 10
                 except:
                     star_point = None
+                # 解析详细star
+                try:
+                    star_point = \
+                        shop.select('.txt')[0].select('.comment')[0].select('.star_score')[0].text
+                    star_point = float(star_point)
+                except:
+                    pass
                 try:
                     review_number = shop.select('.txt')[0].select('.comment')[0].select('.review-num')[0].text.replace(
                         '\n', '')
