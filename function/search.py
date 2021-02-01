@@ -34,39 +34,11 @@ from utils.requests_utils import requests_util
 
 class Search():
     def __init__(self):
-        self.cookie = global_config.getRaw('config', 'cookie')
-        self.ua = global_config.getRaw('config', 'user-agent')
         self.location_id = global_config.getRaw('config', 'location_id')
         self.channel_id = global_config.getRaw('config', 'channel_id')
         self.custom_search_url = global_config.getRaw('config', 'search_url')
-        self.ua_engine = Factory.create()
         self.saver = Saver()
         self.requests_util = requests_util
-
-    def update_font_map(self, file_map):
-        """
-        更新字体信息
-        :return:
-        """
-        self.shopNum_map = get_map(file_map['shopNum'])
-        self.address_map = get_map(file_map['address'])
-        self.tagName = get_map(file_map['tagName'])
-        self.reviewTag = get_map(file_map['reviewTag'])
-
-    def get_header(self):
-        """
-        获取请求头
-        :return:
-        """
-        if self.ua is not None:
-            ua = self.ua
-        else:
-            ua = self.ua_engine.user_agent()
-        header = {
-            'User-Agent': ua,
-            'Cookie': self.cookie
-        }
-        return header
 
     def search(self, key_word, only_need_first=True, needed_pages=50):
         """
@@ -167,4 +139,3 @@ class Search():
             # 保存数据
             self.saver.save_data(search_res, 'search')
         logger.info('解析完成:' + key_word)
-        print()
