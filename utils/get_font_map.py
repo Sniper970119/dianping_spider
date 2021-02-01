@@ -134,6 +134,85 @@ def get_search_map_file(page_source):
             os.remove('./tmp/' + file_name + '.woff')
             os.remove('./tmp/' + file_name + '.xml')
 
+        if 'num' in each:
+            review_tag_map_woff_url = re.findall('(//.*?woff)', each)[0]
+            review_tag_map_woff_url = 'https:' + review_tag_map_woff_url
+            # 获取文件名
+            file_name = review_tag_map_woff_url[-13:-5]
+            return_file_map['num'] = './tmp/' + file_name + '.json'
+            # 如果文件存在不用解析
+            if os.path.exists('./tmp/' + file_name + '.json'):
+                continue
+            # 下载字体文件，解析文件
+            download_woff(review_tag_map_woff_url, file_name + '.woff')
+            parse_woff(file_name + '.woff')
+            parse_xml(file_name + '.xml')
+            os.remove('./tmp/' + file_name + '.woff')
+            os.remove('./tmp/' + file_name + '.xml')
+
+        if 'dishname' in each:
+            review_tag_map_woff_url = re.findall('(//.*?woff)', each)[0]
+            review_tag_map_woff_url = 'https:' + review_tag_map_woff_url
+            # 获取文件名
+            file_name = review_tag_map_woff_url[-13:-5]
+            return_file_map['dishname'] = './tmp/' + file_name + '.json'
+            # 如果文件存在不用解析
+            if os.path.exists('./tmp/' + file_name + '.json'):
+                continue
+            # 下载字体文件，解析文件
+            download_woff(review_tag_map_woff_url, file_name + '.woff')
+            parse_woff(file_name + '.woff')
+            parse_xml(file_name + '.xml')
+            os.remove('./tmp/' + file_name + '.woff')
+            os.remove('./tmp/' + file_name + '.xml')
+
+        if 'shopdesc' in each:
+            review_tag_map_woff_url = re.findall('(//.*?woff)', each)[0]
+            review_tag_map_woff_url = 'https:' + review_tag_map_woff_url
+            # 获取文件名
+            file_name = review_tag_map_woff_url[-13:-5]
+            return_file_map['shopdesc'] = './tmp/' + file_name + '.json'
+            # 如果文件存在不用解析
+            if os.path.exists('./tmp/' + file_name + '.json'):
+                continue
+            # 下载字体文件，解析文件
+            download_woff(review_tag_map_woff_url, file_name + '.woff')
+            parse_woff(file_name + '.woff')
+            parse_xml(file_name + '.xml')
+            os.remove('./tmp/' + file_name + '.woff')
+            os.remove('./tmp/' + file_name + '.xml')
+
+        if 'review' in each:
+            review_tag_map_woff_url = re.findall('(//.*?woff)', each)[0]
+            review_tag_map_woff_url = 'https:' + review_tag_map_woff_url
+            # 获取文件名
+            file_name = review_tag_map_woff_url[-13:-5]
+            return_file_map['review'] = './tmp/' + file_name + '.json'
+            # 如果文件存在不用解析
+            if os.path.exists('./tmp/' + file_name + '.json'):
+                continue
+            # 下载字体文件，解析文件
+            download_woff(review_tag_map_woff_url, file_name + '.woff')
+            parse_woff(file_name + '.woff')
+            parse_xml(file_name + '.xml')
+            os.remove('./tmp/' + file_name + '.woff')
+            os.remove('./tmp/' + file_name + '.xml')
+
+        if 'hours' in each:
+            review_tag_map_woff_url = re.findall('(//.*?woff)', each)[0]
+            review_tag_map_woff_url = 'https:' + review_tag_map_woff_url
+            # 获取文件名
+            file_name = review_tag_map_woff_url[-13:-5]
+            return_file_map['hours'] = './tmp/' + file_name + '.json'
+            # 如果文件存在不用解析
+            if os.path.exists('./tmp/' + file_name + '.json'):
+                continue
+            # 下载字体文件，解析文件
+            download_woff(review_tag_map_woff_url, file_name + '.woff')
+            parse_woff(file_name + '.woff')
+            parse_xml(file_name + '.xml')
+            os.remove('./tmp/' + file_name + '.woff')
+            os.remove('./tmp/' + file_name + '.xml')
     # 将logger等级恢复
     logger = logging.getLogger()
     logger.setLevel(logging.INFO)

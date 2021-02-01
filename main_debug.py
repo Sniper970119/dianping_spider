@@ -42,7 +42,7 @@ def get_header():
 
 if __name__ == '__main__':
     # debug search
-    Search().search('火锅', only_need_first=False, needed_pages=2)
+    # Search().search('一方', only_need_first=False, needed_pages=2)
 
     # debug review font parse
     # header = get_header()
@@ -66,4 +66,9 @@ if __name__ == '__main__':
     # requests_util.get_requests('http://www.baidu.com')
     # print(6)
     # requests_util.get_requests('http://www.baidu.com')
+
+    # debug detail
+    from function.detail import Detail
+
+    Detail().get_detail('k30YbaScPKFS0hfP')
     pass
