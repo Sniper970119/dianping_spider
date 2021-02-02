@@ -5,7 +5,9 @@
 [![](https://img.shields.io/badge/python-3-brightgreen.svg)](https://www.python.org/downloads/)
 <a href="https://github.com/pnoker/iot-dc3/blob/master/LICENSE"><img src="https://img.shields.io/github/license/pnoker/iot-dc3.svg"></a>
 
-大众点评爬虫框架，开发中。诚邀一同开发的同学。
+### 求求大家给个star吧！！这个对我真的很重要！！
+
+大众点评爬虫框架，开发中。
 
 商家搜索结果展示：
 ![image](./imgs/base_info.jpg)
