@@ -70,5 +70,5 @@ if __name__ == '__main__':
     # debug detail
     from function.detail import Detail
 
-    Detail().get_detail('k30YbaScPKFS0hfP')
+    Detail().get_detail('k55CTXmrQdpFgFaf')
     pass

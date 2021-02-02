@@ -64,10 +64,11 @@ class Detail():
             pass
         try:
             brief_info = main_info.select('.brief-info')[0]
-            try:
-                score = brief_info.select('.star-wrapper')[0].select('.mid-score')[0].text.strip()
-            except:
-                score = None
+            # Todo 单独json接口响应，js加密参数，由后期慢慢解决
+            # try:
+            #     score = brief_info.select('.star-wrapper')[0].select('.mid-score')[0].text.strip()
+            # except:
+            #     score = None
             try:
                 review_count = brief_info.select('#reviewCount')[0].text.strip()
             except:
