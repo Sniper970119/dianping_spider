@@ -20,10 +20,14 @@
 
 """
 import requests
+import io
+import sys
 from function.search import Search
 from utils.config import global_config
 from utils.get_font_map import get_review_map_file
 
+
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='gb18030')
 cookie = global_config.getRaw('config', 'cookie')
 ua = global_config.getRaw('config', 'user-agent')
 
