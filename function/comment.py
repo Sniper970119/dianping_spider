@@ -1,58 +1,54 @@
-# coding=gbk
+# coding=utf-8
 
 import re
-import json
-from faker import Factory
-from utils.config import global_config
+
 from utils.saver.saver import Saver
 from utils.requests_utils import requests_util
 
 
 class Comment:
     def __init__(self):
-        self.cookie = global_config.getRaw('config', 'cookie')
-        self.ua = global_config.getRaw('config', 'user-agent')
-        self.location_id = global_config.getRaw('config', 'location_id')
-        self.ua_engine = Factory.create()
         self.saver = Saver()
 
-    def get_header(self):
-        if self.ua is not None:
-            ua = self.ua
-        else:
-            ua = self.ua_engine.user_agent()
-        header = {
-            'User-Agent': ua,
-            'Cookie': self.cookie
-        }
-        return header
-
     def get_page_count(self, shop_id):
+        """
+        è·å–é¡µæ•°
+        :param shop_id:
+        :return:
+        """
         r = requests_util.get_requests('http://www.dianping.com/shop/' + shop_id + '/review_all', need_header=True)
         page_count = '"PageLink" title="(.*?)"'
         page_count = re.findall(page_count, r.text, re.S)
         return int(page_count[-1])
 
-    # È¡³öÓÉÃ¿Ò»¸öÆÀÂÛµÄblock×é³ÉµÄlist
     def get_each_comment_block(self, shop_id):
+        """
+        å–å‡ºç”±æ¯ä¸€ä¸ªè¯„è®ºçš„blockç»„æˆçš„list
+        :param shop_id:
+        :return:
+        """
         count = self.get_page_count(shop_id)
-        for c in range(1, count+1):
+        for c in range(1, count + 1):
             url = 'http://www.dianping.com/shop/' + shop_id + '/review_all/p' + str(c)
             r = requests_util.get_requests(url=url, need_header=True)
             block_list = r.text.split('<div class="main-review">')[1:]
             for block in block_list:
                 self.get_comment_info(block)
 
-    # ´ÓÃ¿Ò»¸öblockÖĞÌáÈ¡ĞÅÏ¢
     def get_comment_info(self, block):
+        """
+        ä»æ¯ä¸€ä¸ªblockä¸­æå–ä¿¡æ¯
+        :param block:
+        :return:
+        """
         comment_match = '<div class="review-words Hide">(.*?)<div class="less-words">'
         name_match = '<div class="dper-info">(.*?)</div>'
-        avg_match = 'ÈË¾ù£º(.*?)<'
-        taste_match = '¿ÚÎ¶£º(.*?)<'
-        environment_match = '»·¾³£º(.*?)<'
-        service_match = '·şÎñ£º(.*?)<'
-        ingredient_match = 'Ê³²Ä£º(.*?)<'
-        favorite_match = 'Ï²»¶µÄ²Ë£º(.*?)</div>'
+        avg_match = 'äººå‡ï¼š(.*?)<'
+        taste_match = 'å£å‘³ï¼š(.*?)<'
+        environment_match = 'ç¯å¢ƒï¼š(.*?)<'
+        service_match = 'æœåŠ¡ï¼š(.*?)<'
+        ingredient_match = 'é£Ÿæï¼š(.*?)<'
+        favorite_match = 'å–œæ¬¢çš„èœï¼š(.*?)</div>'
         score_match = 'sml-rank-stars sml-str(.*?) '
         time_match = '<span class="time">(.*?)</span>'
         reply_match = '<p class="shop-reply-content Hide">(.*?)</p>'
@@ -69,60 +65,69 @@ class Comment:
         avg = re.findall(avg_match, block, re.S)
         if name:
             name = self.get_name(name[0])
-            print('ÓÃ»§êÇ³Æ:' + name)
+            print('ç”¨æˆ·æ˜µç§°:' + name)
         else:
-            print('ÓÃ»§êÇ³Æ:ÎŞ')
+            print('ç”¨æˆ·æ˜µç§°:æ— ')
         if score:
             score = int(score[0])
-            print('ÆÀ·Ö:' + str(score//10) + 'ĞÇ')
+            print('è¯„åˆ†:' + str(score // 10) + 'æ˜Ÿ')
         else:
-            print('ÆÀ·Ö:ÎŞ')
+            print('è¯„åˆ†:æ— ')
         if avg:
             avg = avg[0]
-            print('ÈË¾ù:' + avg)
+            print('äººå‡:' + avg)
         else:
-            print('ÈË¾ù:ÎŞ')
+            print('äººå‡:æ— ')
         if comment:
-            print('ÆÀÂÛ:' + comment[0][2:].strip())
+            print('è¯„è®º:' + comment[0][2:].strip())
         else:
-            print('ÆÀÂÛ:ÎŞ')
+            print('è¯„è®º:æ— ')
         if taste:
-            print('¿ÚÎ¶:' + taste[0].strip()[:-2])
+            print('å£å‘³:' + taste[0].strip()[:-2])
         else:
-            print('¿ÚÎ¶:ÎŞ')
+            print('å£å‘³:æ— ')
         if environment:
-            print('»·¾³:' + environment[0].strip()[:-2])
+            print('ç¯å¢ƒ:' + environment[0].strip()[:-2])
         else:
-            print('»·¾³:ÎŞ')
+            print('ç¯å¢ƒ:æ— ')
         if service:
-            print('·şÎñ:' + service[0].strip()[:-2])
+            print('æœåŠ¡:' + service[0].strip()[:-2])
         else:
-            print('·şÎñ:ÎŞ')
+            print('æœåŠ¡:æ— ')
         if ingredient:
-            print('Ê³²Ä:' + ingredient[0].strip()[:-2])
+            print('é£Ÿæ:' + ingredient[0].strip()[:-2])
         else:
-            print('Ê³²Ä:ÎŞ')
+            print('é£Ÿæ:æ— ')
         if favorite:
             favorite = self.get_fav(favorite[0])
-            print('Ï²»¶µÄ²Ë:', favorite)
+            print('å–œæ¬¢çš„èœ:', favorite)
         else:
-            print('Ï²»¶µÄ²Ë:ÎŞ')
+            print('å–œæ¬¢çš„èœ:æ— ')
         if reply:
             reply = reply[0][1:].strip()
-            print('ÉÌ¼Ò»Ø¸´:' + reply)
+            print('å•†å®¶å›å¤:' + reply)
         else:
-            print('ÉÌ¼Ò»Ø¸´:ÎŞ')
+            print('å•†å®¶å›å¤:æ— ')
         if time:
             time = time[0][1:].strip().replace('&nbsp;', '').replace('\n', '')
-            print('ÆÀÂÛÊ±¼ä:' + time)
+            print('è¯„è®ºæ—¶é—´:' + time)
 
     def get_name(self, name_str):
+        """
+        è·å–ç”¨æˆ·å
+        :param name_str:
+        :return:
+        """
         name_match = '>(.*?)<'
         name = re.findall(name_match, name_str, re.S)[0]
         return name.strip()
 
     def get_fav(self, fav_str):
+        """
+        è·å–å–œæ¬¢çš„èœ
+        :param fav_str:
+        :return:
+        """
         fav_match = '>(.*?)<'
         fav = re.findall(fav_match, fav_str)
         return fav
-
