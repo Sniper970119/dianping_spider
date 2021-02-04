@@ -48,20 +48,22 @@ class Comment:
         comment_match = '<div class="review-words Hide">(.*?)<div class="less-words">'
         name_match = '<div class="dper-info">(.*?)</div>'
         avg_match = '人均：(.*?)<'
-        taste_match = '口味：(.*?)<'
-        environment_match = '环境：(.*?)<'
-        service_match = '服务：(.*?)<'
-        ingredient_match = '食材：(.*?)<'
+        rank_match = '<span class="score">(.*?)</div>'
+        # taste_match = '口味：(.*?)<'
+        # environment_match = '环境：(.*?)<'
+        # service_match = '服务：(.*?)<'
+        # ingredient_match = '食材：(.*?)<'
+        rank = re.findall(rank_match, block, re.S)
         favorite_match = '喜欢的菜：(.*?)</div>'
         score_match = 'sml-rank-stars sml-str(.*?) '
         time_match = '<span class="time">(.*?)</span>'
         reply_match = '<p class="shop-reply-content Hide">(.*?)</p>'
         comment = re.findall(comment_match, block, re.S)
         name = re.findall(name_match, block, re.S)
-        taste = re.findall(taste_match, block, re.S)
-        environment = re.findall(environment_match, block, re.S)
-        service = re.findall(service_match, block, re.S)
-        ingredient = re.findall(ingredient_match, block, re.S)
+        # taste = re.findall(taste_match, block, re.S)
+        # environment = re.findall(environment_match, block, re.S)
+        # service = re.findall(service_match, block, re.S)
+        # ingredient = re.findall(ingredient_match, block, re.S)
         favorite = re.findall(favorite_match, block, re.S)
         score = re.findall(score_match, block, re.S)
         reply = re.findall(reply_match, block, re.S)
@@ -86,22 +88,22 @@ class Comment:
             print('评论:' + comment[0][2:].strip())
         else:
             print('评论:无')
-        if taste:
-            print('口味:' + taste[0].strip()[:-2])
-        else:
-            print('口味:无')
-        if environment:
-            print('环境:' + environment[0].strip()[:-2])
-        else:
-            print('环境:无')
-        if service:
-            print('服务:' + service[0].strip()[:-2])
-        else:
-            print('服务:无')
-        if ingredient:
-            print('食材:' + ingredient[0].strip()[:-2])
-        else:
-            print('食材:无')
+        # if taste:
+        #     print('口味:' + taste[0].strip()[:-2])
+        # else:
+        #     print('口味:无')
+        # if environment:
+        #     print('环境:' + environment[0].strip()[:-2])
+        # else:
+        #     print('环境:无')
+        # if service:
+        #     print('服务:' + service[0].strip()[:-2])
+        # else:
+        #     print('服务:无')
+        # if ingredient:
+        #     print('食材:' + ingredient[0].strip()[:-2])
+        # else:
+        #     print('食材:无')
         if favorite:
             favorite = self.get_fav(favorite[0])
             print('喜欢的菜:', favorite)
@@ -125,4 +127,9 @@ class Comment:
         fav_match = '>(.*?)<'
         fav = re.findall(fav_match, fav_str)
         return fav
+
+    def get_rank(self, rank_str):
+        rank_str = rank_str[2:-2].strip().replace('</span>', '').replace('<span class="item">', '').\
+            replace('\n', '').split()
+        return rank_str
 
