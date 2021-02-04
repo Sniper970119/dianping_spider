@@ -51,24 +51,15 @@ if __name__ == '__main__':
     # get_review_map_file(r.text)
 
     # debug requests utils
-    # from utils.requests_utils import requests_util
-    # # print(requests_util.parse_stop_time('5,10;20,100'))
-    # requests_util.get_requests('http://www.baidu.com')
-    # print(1)
-    # requests_util.get_requests('http://www.baidu.com')
-    # print(2)
-    # requests_util.get_requests('http://www.baidu.com')
-    # print(3)
-    # requests_util.get_requests('http://www.baidu.com')
-    # print(4)
-    # requests_util.get_requests('http://www.baidu.com')
-    # print(5)
-    # requests_util.get_requests('http://www.baidu.com')
-    # print(6)
-    # requests_util.get_requests('http://www.baidu.com')
+    from utils.requests_utils import requests_util
+    # print(requests_util.parse_stop_time('5,10;20,100'))
+    for i in range(20):
+        print(i)
+        requests_util.get_requests('http://www.baidu.com')
+
 
     # debug detail
     from function.detail import Detail
 
-    Detail().get_detail('k55CTXmrQdpFgFaf')
+    # Detail().get_detail('k55CTXmrQdpFgFaf')
     pass
