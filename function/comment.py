@@ -33,26 +33,6 @@ class Comment:
         page_count = re.findall(page_count, r.text, re.S)
         return int(page_count[-1])
 
-    def get_comment(self, shop_id):
-        headers = self.get_header()
-        count = self.get_page_count(shop_id)
-        for c in range(1, count+1):
-            r = requests_util.get_requests('http://www.dianping.com/shop/' + shop_id + '/review_all/p' + str(c),
-                                           need_header=True)
-            with open('./review_font_map.json', 'r', encoding='utf8') as f:
-                hash_map = json.load(f)
-            comment_match = '<div class="review-words Hide">(.*?)<div class="less-words">'
-            res = re.findall(comment_match, r.text, re.S)
-            for i in range(len(res)):
-                for k, v in hash_map.items():
-                    s = '<svgmtsi class="' + k + '"></svgmtsi>'
-                    res[i] = res[i].replace(s, v)
-                emoji = '&#x.{2};'
-                temp = re.findall(emoji, res[i], re.S)
-                for j in temp:
-                    res[i] = res[i].replace(j, '')
-                print(res[i])
-
     # 取出由每一个评论的block组成的list
     def get_each_comment_block(self, shop_id):
         count = self.get_page_count(shop_id)
