@@ -33,7 +33,7 @@ class Comment:
         page_count = re.findall(page_count, r.text, re.S)
         return int(page_count[-1])
 
-    # È¡ï¿½ï¿½ï¿½ï¿½Ã¿Ò»ï¿½ï¿½ï¿½ï¿½ï¿½Ûµï¿½blockï¿½ï¿½Éµï¿½list
+    # È¡³öÓÉÃ¿Ò»¸öÆÀÂÛµÄblock×é³ÉµÄlist
     def get_each_comment_block(self, shop_id):
         count = self.get_page_count(shop_id)
         for c in range(1, count+1):
@@ -43,25 +43,27 @@ class Comment:
             for block in block_list:
                 self.get_comment_info(block)
 
-    # ï¿½ï¿½Ã¿Ò»ï¿½ï¿½blockï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½Ï¢
+    # ´ÓÃ¿Ò»¸öblockÖÐÌáÈ¡ÐÅÏ¢
     def get_comment_info(self, block):
         comment_match = '<div class="review-words Hide">(.*?)<div class="less-words">'
         name_match = '<div class="dper-info">(.*?)</div>'
-        avg_match = 'ï¿½Ë¾ï¿½ï¿½ï¿½(.*?)<'
-        taste_match = 'ï¿½ï¿½Î¶ï¿½ï¿½(.*?)<'
-        environment_match = 'ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(.*?)<'
-        service_match = 'ï¿½ï¿½ï¿½ï¿½(.*?)<'
-        ingredient_match = 'Ê³ï¿½Ä£ï¿½(.*?)<'
-        favorite_match = 'Ï²ï¿½ï¿½ï¿½Ä²Ë£ï¿½(.*?)</div>'
+        avg_match = 'ÈË¾ù£º(.*?)<'
+        rank_match = '<span class="score">(.*?)</div>'
+        # taste_match = '¿ÚÎ¶£º(.*?)<'
+        # environment_match = '»·¾³£º(.*?)<'
+        # service_match = '·þÎñ£º(.*?)<'
+        # ingredient_match = 'Ê³²Ä£º(.*?)<'
+        rank = re.findall(rank_match, block, re.S)
+        favorite_match = 'Ï²»¶µÄ²Ë£º(.*?)</div>'
         score_match = 'sml-rank-stars sml-str(.*?) '
         time_match = '<span class="time">(.*?)</span>'
         reply_match = '<p class="shop-reply-content Hide">(.*?)</p>'
         comment = re.findall(comment_match, block, re.S)
         name = re.findall(name_match, block, re.S)
-        taste = re.findall(taste_match, block, re.S)
-        environment = re.findall(environment_match, block, re.S)
-        service = re.findall(service_match, block, re.S)
-        ingredient = re.findall(ingredient_match, block, re.S)
+        # taste = re.findall(taste_match, block, re.S)
+        # environment = re.findall(environment_match, block, re.S)
+        # service = re.findall(service_match, block, re.S)
+        # ingredient = re.findall(ingredient_match, block, re.S)
         favorite = re.findall(favorite_match, block, re.S)
         score = re.findall(score_match, block, re.S)
         reply = re.findall(reply_match, block, re.S)
@@ -69,52 +71,52 @@ class Comment:
         avg = re.findall(avg_match, block, re.S)
         if name:
             name = self.get_name(name[0])
-            print('ï¿½Ã»ï¿½ï¿½Ç³ï¿½:' + name)
+            print('ÓÃ»§êÇ³Æ:' + name)
         else:
-            print('ï¿½Ã»ï¿½ï¿½Ç³ï¿½:ï¿½ï¿½')
+            print('ÓÃ»§êÇ³Æ:ÎÞ')
         if score:
             score = int(score[0])
-            print('ï¿½ï¿½ï¿½ï¿½:' + str(score//10) + 'ï¿½ï¿½')
+            print('ÆÀ·Ö:' + str(score//10) + 'ÐÇ')
         else:
-            print('ï¿½ï¿½ï¿½ï¿½:ï¿½ï¿½')
+            print('ÆÀ·Ö:ÎÞ')
         if avg:
             avg = avg[0]
-            print('ï¿½Ë¾ï¿½:' + avg)
+            print('ÈË¾ù:' + avg)
         else:
-            print('ï¿½Ë¾ï¿½:ï¿½ï¿½')
+            print('ÈË¾ù:ÎÞ')
         if comment:
-            print('ï¿½ï¿½ï¿½ï¿½:' + comment[0][2:].strip())
+            print('ÆÀÂÛ:' + comment[0][2:].strip())
         else:
-            print('ï¿½ï¿½ï¿½ï¿½:ï¿½ï¿½')
-        if taste:
-            print('ï¿½ï¿½Î¶:' + taste[0].strip()[:-2])
-        else:
-            print('ï¿½ï¿½Î¶:ï¿½ï¿½')
-        if environment:
-            print('ï¿½ï¿½ï¿½ï¿½:' + environment[0].strip()[:-2])
-        else:
-            print('ï¿½ï¿½ï¿½ï¿½:ï¿½ï¿½')
-        if service:
-            print('ï¿½ï¿½ï¿½ï¿½:' + service[0].strip()[:-2])
-        else:
-            print('ï¿½ï¿½ï¿½ï¿½:ï¿½ï¿½')
-        if ingredient:
-            print('Ê³ï¿½ï¿½:' + ingredient[0].strip()[:-2])
-        else:
-            print('Ê³ï¿½ï¿½:ï¿½ï¿½')
+            print('ÆÀÂÛ:ÎÞ')
+        # if taste:
+        #     print('¿ÚÎ¶:' + taste[0].strip()[:-2])
+        # else:
+        #     print('¿ÚÎ¶:ÎÞ')
+        # if environment:
+        #     print('»·¾³:' + environment[0].strip()[:-2])
+        # else:
+        #     print('»·¾³:ÎÞ')
+        # if service:
+        #     print('·þÎñ:' + service[0].strip()[:-2])
+        # else:
+        #     print('·þÎñ:ÎÞ')
+        # if ingredient:
+        #     print('Ê³²Ä:' + ingredient[0].strip()[:-2])
+        # else:
+        #     print('Ê³²Ä:ÎÞ')
         if favorite:
             favorite = self.get_fav(favorite[0])
-            print('Ï²ï¿½ï¿½ï¿½Ä²ï¿½:', favorite)
+            print('Ï²»¶µÄ²Ë:', favorite)
         else:
-            print('Ï²ï¿½ï¿½ï¿½Ä²ï¿½:ï¿½ï¿½')
+            print('Ï²»¶µÄ²Ë:ÎÞ')
         if reply:
             reply = reply[0][1:].strip()
-            print('ï¿½Ì¼Ò»Ø¸ï¿½:' + reply)
+            print('ÉÌ¼Ò»Ø¸´:' + reply)
         else:
-            print('ï¿½Ì¼Ò»Ø¸ï¿½:ï¿½ï¿½')
+            print('ÉÌ¼Ò»Ø¸´:ÎÞ')
         if time:
             time = time[0][1:].strip().replace('&nbsp;', '').replace('\n', '')
-            print('ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½:' + time)
+            print('ÆÀÂÛÊ±¼ä:' + time)
 
     def get_name(self, name_str):
         name_match = '>(.*?)<'
@@ -125,4 +127,9 @@ class Comment:
         fav_match = '>(.*?)<'
         fav = re.findall(fav_match, fav_str)
         return fav
+
+    def get_rank(self, rank_str):
+        rank_str = rank_str[2:-2].strip().replace('</span>', '').replace('<span class="item">', ''). \
+            replace('\n', '').split()
+        return rank_str
 
