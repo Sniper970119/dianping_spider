@@ -26,13 +26,11 @@
   - 全局请求监控等待
   
 - 已知问题：
-  - 优惠券信息使用单独的json接口，由js回调，js加密，加密位置已经找到，暂时没时间解出来。
+  - 优惠券信息使用单独的json接口，由js回调，js加密，加密位置已经找到，暂时没时间解出来。(main-shop.min--->195 fun(h)
   - 详情页的部分参数由单独的加密接口获取（看来我逃不过了，唉），近期找时间解决吧
   
 - 相关功能笔记
   - [搜索页字体加密加密](http://www.sniper97.cn/index.php/note/carwler/3694/)
   - [评论页字体加密加密](http://www.sniper97.cn/index.php/note/carwler/3707/)
 
-如果你想加快进度或者想请我喝一杯咖啡，欢迎打赏
-
-![image](./imgs/zhifubao.jpg)
+如果你想加快进度，点个star吧呜呜呜
