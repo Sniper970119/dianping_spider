@@ -42,7 +42,7 @@ def get_header():
 
 if __name__ == '__main__':
     # debug search
-    # Search().search('一方', only_need_first=False, needed_pages=2)
+    Search().search('一方', only_need_first=False, needed_pages=2)
 
     # debug review font parse
     # header = get_header()
@@ -51,11 +51,11 @@ if __name__ == '__main__':
     # get_review_map_file(r.text)
 
     # debug requests utils
-    from utils.requests_utils import requests_util
+    # from utils.requests_utils import requests_util
     # print(requests_util.parse_stop_time('5,10;20,100'))
-    for i in range(20):
-        print(i)
-        requests_util.get_requests('http://www.baidu.com')
+    # for i in range(20):
+    #     print(i)
+    #     requests_util.get_requests('http://www.baidu.com')
 
 
     # debug detail

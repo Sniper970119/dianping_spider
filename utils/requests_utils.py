@@ -38,7 +38,7 @@ class RequestsUtils():
 
     def __init__(self):
         requests_times = global_config.getRaw('config', 'requests_times')
-        self.cookie = global_config.getRaw('config', 'cookie')
+        self.cookie = global_config.getRaw('config', 'Cookie')
         self.ua = global_config.getRaw('config', 'user-agent')
 
         self.ua_engine = Factory.create()

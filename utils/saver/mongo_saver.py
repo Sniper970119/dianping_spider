@@ -60,7 +60,6 @@ class MongoSaver():
         :param data:
         :return:
         """
-        # Todo 判断重复，存数据
         data_list = []
         for each in data:
             data_dict = {
@@ -91,9 +90,24 @@ class MongoSaver():
         :param data:
         :return:
         """
-        # Todo 判断重复，存数据
+        data_list = []
+        for each in data:
+            data_dict = {
+                '店铺id': each[0],
+                '店铺名称': each[1],
+                '评论数量': each[2],
+                '平均价格': each[3],
+                '地址': each[4],
+                '电话': each[5],
+                '其他信息': each[6],
+
+            }
+            data_list.append(data_dict)
         col = self.database['info_detail']
-        pass
+
+        for each in data_list:
+            col.delete_many({'店铺id': each['店铺id']})
+        col.insert(data_list)
 
     def save_comment_list(self, data):
         """

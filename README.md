@@ -10,7 +10,10 @@
 大众点评爬虫框架，开发中。
 
 商家搜索结果展示：
-![image](./imgs/base_info.jpg)
+![image](./imgs/info.jpg)
+
+商家详情页展示：
+![image](./imgs/detail.jpg)
 
 - 预期实现：
   - 商家搜索、各种信息获取

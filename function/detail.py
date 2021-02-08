@@ -49,6 +49,14 @@ class Detail():
         # 解析格式1
         # 基础信息
         main_info = html.select('.main')[0]
+
+        shop_name = None
+        review_count = None
+        avg_price = None
+        comment_score = None
+        address = None
+        phone = None
+        other_info = None
         try:
             base_info = main_info.select('#basic-info')[0]
             try:
@@ -61,6 +69,8 @@ class Detail():
             except:
                 shop_name = None
         except:
+            # Todo 前台显示手动滑动解锁
+            # self.get_detail(shop_id)
             pass
         try:
             brief_info = main_info.select('.brief-info')[0]
@@ -78,10 +88,11 @@ class Detail():
             except:
                 avg_price = None
 
-            try:
-                comment_score = brief_info.select('#comment_score')[0].text.strip()
-            except:
-                comment_score = None
+            # Todo 这个建议使用info中信息，这里的有可能会不准，动态参数由json返回
+            # try:
+            #     comment_score = brief_info.select('#comment_score')[0].text.strip()
+            # except:
+            #     comment_score = None
 
             try:
                 address = main_info.find(attrs={'itemprop': 'street-address'}).text.strip()
@@ -98,6 +109,8 @@ class Detail():
             except:
                 other_info = None
         except:
+            # Todo 前台显示手动滑动解锁
+            # self.get_detail(shop_id)
             pass
         # Todo 促销信息 （单独接口 js加密）
         # try:
@@ -114,5 +127,4 @@ class Detail():
         #                 continue
         # except:
         #     sales = None
-        print()
-        pass
+        return [shop_id, shop_name, review_count, avg_price, address, phone, other_info]

@@ -24,6 +24,8 @@ from tqdm import tqdm
 from faker import Factory
 from bs4 import BeautifulSoup
 
+from function.detail import Detail
+
 from utils.logger import logger
 from utils.config import global_config
 from utils.get_file_map import get_map
@@ -34,9 +36,11 @@ from utils.requests_utils import requests_util
 
 class Search():
     def __init__(self):
-        self.location_id = global_config.getRaw('config', 'location_id')
-        self.channel_id = global_config.getRaw('config', 'channel_id')
-        self.custom_search_url = global_config.getRaw('config', 'search_url')
+        self.location_id = global_config.getRaw('detail', 'location_id')
+        self.channel_id = global_config.getRaw('detail', 'channel_id')
+        self.custom_search_url = global_config.getRaw('detail', 'search_url')
+        self.need_detail = global_config.getRaw('detail', 'need_detail')
+        self.need_comment = global_config.getRaw('detail', 'need_comment')
         self.saver = Saver()
         self.requests_util = requests_util
 
@@ -138,14 +142,20 @@ class Search():
                     commend_list = shop.select('.comment-list')[0].text
                 except:
                     commend_list = None
-
-                search_res.append(
-                    [shop_id, name, star_point, review_number, mean_price, tag1, tag2, addr, recommend, commend_list,
-                     image_path,
-                     detail_url])
+                one_step_search_res = [shop_id, name, star_point, review_number, mean_price, tag1, tag2, addr,
+                                       recommend, commend_list, image_path, detail_url]
+                # 这个数据结构暂时没用
+                search_res.append(one_step_search_res)
                 # 只要首条，跳出
                 if only_need_first is True:
                     break
-            # 保存数据
-            self.saver.save_data(search_res, 'search')
+                if self.need_detail == '1':
+                    try:
+                        detail = Detail().get_detail(shop_id)
+                        print('\n' + ','.join(detail) + '\n')
+                        self.saver.save_data([detail], 'detail')
+                    except:
+                        logger.warning('详情信息获取失败，失败id：', shop_id)
+                # 保存数据
+                self.saver.save_data([one_step_search_res], 'search')
         logger.info('解析完成:' + key_word)
