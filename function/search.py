@@ -149,6 +149,7 @@ class Search():
                 # 只要首条，跳出
                 if only_need_first is True:
                     break
+                # 解析详情页
                 if self.need_detail == '1':
                     try:
                         detail = Detail().get_detail(shop_id)
@@ -156,6 +157,8 @@ class Search():
                         self.saver.save_data([detail], 'detail')
                     except:
                         logger.warning('详情信息获取失败，失败id：', shop_id)
+                else:
+                    print('\n' + ','.join(one_step_search_res) + '\n')
                 # 保存数据
                 self.saver.save_data([one_step_search_res], 'search')
         logger.info('解析完成:' + key_word)
