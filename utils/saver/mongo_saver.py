@@ -97,9 +97,10 @@ class MongoSaver():
                 '店铺名称': each[1],
                 '评论数量': each[2],
                 '平均价格': each[3],
-                '地址': each[4],
-                '电话': each[5],
-                '其他信息': each[6],
+                '评分': each[4],
+                '地址': each[5],
+                '电话': each[6],
+                '其他信息': each[7],
 
             }
             data_list.append(data_dict)
