@@ -33,12 +33,13 @@ class Saver():
         # 构造每个存储方法的存储器
         if 'csv' in save_mode:
             from utils.saver.csv_saver import CSV
+            csv_saver = CSV()
+            self.saver_list.append(csv_saver)
             pass
         if 'mongo' in save_mode:
             from utils.saver.mongo_saver import MongoSaver
             mongo_saver = MongoSaver()
             self.saver_list.append(mongo_saver)
-            pass
 
     def save_data(self, data, data_type):
         """
