@@ -52,6 +52,7 @@ class Search():
         :param needed_pages: 需要多少页
         :return:
         """
+        # Todo 不需要详情页和评论，只需要首页搜索 不需要cookie
         assert isinstance(key_word, str)
         assert key_word != None or key_word.strip() != ''
         if self.custom_search_url != '':
