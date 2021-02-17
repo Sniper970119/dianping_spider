@@ -159,10 +159,19 @@ class Search():
                         print('\n' + ','.join(detail) + '\n')
                         self.saver.save_data([detail], 'detail')
                     except:
-                        logger.warning('详情信息获取失败，失败id：'+ shop_id)
+                        logger.warning('详情信息获取失败，失败id：' + shop_id)
                         print('\n' + ','.join(one_step_search_res) + '\n')
                 else:
                     print('\n' + ','.join(one_step_search_res) + '\n')
+                # 解析评论页
+                if self.need_detail == '1':
+                    try:
+                        pass
+                    except:
+                        pass
+                else:
+                    print('\n' + ','.join(one_step_search_res) + '\n')
+
                 # 保存数据
                 self.saver.save_data([one_step_search_res], 'search')
         logger.info('解析完成:' + key_word)
