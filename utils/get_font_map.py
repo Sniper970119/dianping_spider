@@ -428,10 +428,10 @@ def get_review_map_file(page_source):
             loc_x_line, loc_y_line = (loc_x + font_weight_offset) // 14, svg_map[css_key][0][loc_y + font_height_offset]
             # 获取文字
             css_value = svg_map[css_key][1][loc_y_line - 1][loc_x_line]
-            css_map_result[each[0]] = css_value
+            css_map_result[each_css[0]] = css_value
         # 保存json文件
         with open('./tmp/' + str(svg_map[css_key][4]), 'w', encoding='utf-8') as f:
             json.dump(css_map_result, f, ensure_ascii=False)
-        return_svg_name[str(svg_map[css_key][5])] = str(svg_map[css_key][4])
+        return_svg_name[str(svg_map[css_key][5])] = './tmp/'+str(svg_map[css_key][4])
 
     return return_svg_name

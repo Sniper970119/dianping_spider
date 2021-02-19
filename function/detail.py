@@ -45,7 +45,7 @@ class Detail():
         # 获取加密文件
         file_map = get_search_map_file(text)
         # 替换加密字符串
-        text = requests_util.replace_html(text, file_map)
+        text = requests_util.replace_search_html(text, file_map)
 
         # 网页解析
         html = BeautifulSoup(text, 'lxml')

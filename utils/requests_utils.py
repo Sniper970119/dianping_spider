@@ -99,7 +99,7 @@ class RequestsUtils():
         }
         return header
 
-    def replace_html(self, page_source, file_map):
+    def replace_search_html(self, page_source, file_map):
         """
         替换html文本，根据加密字体文件映射替换page source加密代码
         :param page_source:
@@ -112,6 +112,23 @@ class RequestsUtils():
                 key = str(k).replace('uni', '&#x')
                 key = '"' + str(k_f) + '">' + key + ';'
                 value = '"' + str(k_f) + '">' + v
+                page_source = page_source.replace(key, value)
+        return page_source
+
+
+    def replace_review_html(self, page_source, file_map):
+        """
+        替换html文本，根据加密字体文件映射替换page source加密代码
+        :param page_source:
+        :param file_map:
+        :return:
+        """
+        for k_f, v_f in file_map.items():
+            font_map = get_map(v_f)
+            for k, v in font_map.items():
+                key = str(k).replace('uni', '&#x')
+                key = '"' + str(k) + '"><'
+                value = '"' + str(k) + '">'+str(v)+'<'
                 page_source = page_source.replace(key, value)
         return page_source
 

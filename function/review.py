@@ -24,7 +24,7 @@ from bs4 import BeautifulSoup
 from utils.logger import logger
 from utils.config import global_config
 from utils.get_file_map import get_map
-from utils.get_font_map import get_search_map_file
+from utils.get_font_map import  get_review_map_file
 from utils.saver.saver import Saver
 from utils.requests_utils import requests_util
 
@@ -43,3 +43,10 @@ class Review():
             if r.status_code == 403:
                 logger.warning('评论页请求被ban')
                 raise Exception
+
+            text = r.text
+            # 获取加密文件
+            file_map = get_review_map_file(text)
+            # 替换加密字符串
+            text = requests_util.replace_review_html(text, file_map)
+            print()
