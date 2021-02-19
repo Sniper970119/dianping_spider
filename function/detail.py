@@ -32,7 +32,7 @@ from utils.requests_utils import requests_util
 
 class Detail():
     def __init__(self):
-        self.saver = Saver()
+        # self.saver = Saver()
         self.requests_util = requests_util
 
     def get_detail(self, shop_id):
