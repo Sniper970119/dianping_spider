@@ -49,4 +49,5 @@ class Review():
             file_map = get_review_map_file(text)
             # 替换加密字符串
             text = requests_util.replace_review_html(text, file_map)
+
             print()
