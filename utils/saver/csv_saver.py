@@ -33,7 +33,7 @@ class CSV():
         :param data_type:
         :return:
         """
-        assert data_type in ['search', 'detail', 'comment']
+        assert data_type in ['search', 'detail', 'review']
         if data_type == 'search':
             self.save_search_list(data)
         elif data_type == 'detail':
@@ -75,7 +75,7 @@ class CSV():
                 f.write(','.join(title) + '\n')
             self.save_detail_list(data)
 
-    def save_comment_list(self, data):
+    def save_review_list(self, data):
         """
         保存评论数据
         :param data:

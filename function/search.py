@@ -25,6 +25,7 @@ from faker import Factory
 from bs4 import BeautifulSoup
 
 from function.detail import Detail
+from function.review import Review
 
 from utils.logger import logger
 from utils.config import global_config
@@ -166,9 +167,12 @@ class Search():
                 # 解析评论页
                 if self.need_detail == '1':
                     try:
-                        pass
+                        review = Review().get_review(shop_id)
+                        print('获取', name, '评论', len(review), '条')
+                        self.saver.save_data([review], 'review')
                     except:
-                        pass
+                        logger.warning('评论获取失败，失败id：' + shop_id)
+                        print('\n' + ','.join(one_step_search_res) + '\n')
                 else:
                     print('\n' + ','.join(one_step_search_res) + '\n')
 
