@@ -83,7 +83,11 @@ class Review():
                     time = review.select('.time')[0].text
                 except:
                     time = '-'
-                all_review.append([shop_id, user_name, score, review_text, like, time])
+                try:
+                    review_id = review.select('.actions')[0].select('a')[0].attrs['data-id']
+                except:
+                    review_id = '-'
+                all_review.append([review_id, shop_id, user_name, score, review_text, like, time])
             cur_pages += 1
             all_pages -= 1
         return all_review

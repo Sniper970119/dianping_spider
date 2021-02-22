@@ -38,8 +38,8 @@ class CSV():
             self.save_search_list(data)
         elif data_type == 'detail':
             self.save_detail_list(data)
-        elif data_type == 'comment':
-            self.save_comment_list(data)
+        elif data_type == 'review':
+            self.save_review_list(data)
         else:
             raise Exception
 

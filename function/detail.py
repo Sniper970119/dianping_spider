@@ -106,7 +106,7 @@ class Detail():
                     phone = '-'
 
                 try:
-                    other_info = main_info.select('.other')[0].text.strip()
+                    other_info = main_info.select('.other')[0].text.replace('修改', '').strip()
                 except:
                     other_info = '-'
             except:

@@ -49,8 +49,8 @@ class MongoSaver():
             self.save_search_list(data)
         elif data_type == 'detail':
             self.save_detail_list(data)
-        elif data_type == 'comment':
-            self.save_comment_list(data)
+        elif data_type == 'review':
+            self.save_review_list(data)
         else:
             raise Exception
 
@@ -116,6 +116,20 @@ class MongoSaver():
         :param data:
         :return:
         """
-        # Todo 判断重复，存数据
+        data_list = []
+        for each in data:
+            data_dict = {
+                '评论id': each[0],
+                '店铺id': each[1],
+                '用户名': each[2],
+                '打分': each[3],
+                '评论': each[4],
+                '喜欢': each[5],
+                '发布时间': each[6],
+
+            }
+            data_list.append(data_dict)
         col = self.database['review']
-        pass
+        for each in data_list:
+            col.delete_many({'评论id': each['评论id']})
+        col.insert(data_list)

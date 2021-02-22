@@ -169,12 +169,10 @@ class Search():
                     try:
                         review = Review().get_review(shop_id)
                         print('获取', name, '评论', len(review), '条')
-                        self.saver.save_data([review], 'review')
+                        self.saver.save_data(review, 'review')
                     except:
                         logger.warning('评论获取失败，失败id：' + shop_id)
-                        print('\n' + ','.join(one_step_search_res) + '\n')
-                else:
-                    print('\n' + ','.join(one_step_search_res) + '\n')
+
 
                 # 保存数据
                 self.saver.save_data([one_step_search_res], 'search')
