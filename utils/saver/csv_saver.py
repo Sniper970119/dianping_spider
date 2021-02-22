@@ -81,7 +81,15 @@ class CSV():
         :param data:
         :return:
         """
-        pass
+        if os.path.exists('./output/review_res.csv'):
+            with open('./output/review_res.csv', 'a+', encoding='utf-8') as f:
+                for each in data:
+                    f.write(','.join(each) + '\n')
+        else:
+            with open('./output/review_res.csv', 'a+', encoding='utf-8') as f:
+                title = ['评论id', '店铺id', '用户名', '打分', '评论', '喜欢', '发布时间']
+                f.write(','.join(title) + '\n')
+            self.save_review_list(data)
 
     def create_dir(self, file_name):
         """
