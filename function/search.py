@@ -129,21 +129,21 @@ class Search():
                     mean_price = '￥0'
                 try:
                     tags = shop.select('.txt')[0].select('.tag-addr')[0].select('.tag')
-                    tag1 = tags[0].text
-                    tag2 = tags[1].text
+                    tag1 = tags[0].text.replace('\n', ' ').strip()
+                    tag2 = tags[1].text.replace('\n', ' ').strip()
                 except:
                     tag1 = '-'
                     tag2 = '-'
                 try:
-                    addr = shop.select('.txt')[0].select('.tag-addr')[0].select('.addr')[0].text
+                    addr = shop.select('.txt')[0].select('.tag-addr')[0].select('.addr')[0].text.replace('\n', ' ').strip()
                 except:
                     addr = '-'
                 try:
-                    recommend = shop.select('.recommend')[0].text
+                    recommend = shop.select('.recommend')[0].text.replace('\n', ' ').strip()
                 except:
                     recommend = '-'
                 try:
-                    commend_list = shop.select('.comment-list')[0].text
+                    commend_list = shop.select('.comment-list')[0].text.replace('\n', ' ').strip()
                 except:
                     commend_list = '-'
                 one_step_search_res = [shop_id, name, star_point, review_number, mean_price, tag1, tag2, addr,
@@ -172,7 +172,6 @@ class Search():
                         self.saver.save_data(review, 'review')
                     except:
                         logger.warning('评论获取失败，失败id：' + shop_id)
-
 
                 # 保存数据
                 self.saver.save_data([one_step_search_res], 'search')

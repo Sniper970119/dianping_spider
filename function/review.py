@@ -72,15 +72,16 @@ class Review():
                     score = '-'
                 try:
                     review_text = review.select('.review-words')[0].text.replace(' ', ''). \
-                        replace('收起评价', '').replace('\n', ' ').strip()
+                        replace('收起评价', '').replace('\r', ' ').replace('\n', ' ').strip()
                 except:
                     review_text = '-'
                 try:
-                    like = review.select('.review-recommend')[0].text.replace(' ', '').replace('\n', ' ').strip()
+                    like = review.select('.review-recommend')[0].text.replace(' ', '').\
+                        replace('\r', ' ').replace('\n', ' ').strip()
                 except:
                     like = '-'
                 try:
-                    time = review.select('.time')[0].text
+                    time = review.select('.time')[0].text.strip()
                 except:
                     time = '-'
                 try:
