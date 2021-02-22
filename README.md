@@ -40,6 +40,7 @@
    - search_url：搜索url，详见config.ini内提示。
    - need_detail：是否需要详情页。
    - need_comment：是否需要评论页。
+   - review_pages: 获取的评论页页数。
 
 ### 运行程序
 运行main.py（由于还在开发中，目前咱为main_debug.py）
@@ -52,6 +53,10 @@
 
 ### 商家详情页展示：
 ![image](./imgs/detail.jpg)
+
+
+### 商家评论页展示：
+![image](./imgs/review.jpg)
 
 ## 其他
     
