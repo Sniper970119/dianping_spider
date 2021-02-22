@@ -117,5 +117,5 @@ class MongoSaver():
         :return:
         """
         # Todo 判断重复，存数据
-        col = self.database['comment']
+        col = self.database['review']
         pass
