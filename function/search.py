@@ -165,7 +165,7 @@ class Search():
                 else:
                     print('\n' + ','.join(one_step_search_res) + '\n')
                 # 解析评论页
-                if self.need_detail == '1':
+                if self.need_comment == '1':
                     try:
                         review = Review().get_review(shop_id)
                         print('获取', name, '评论', len(review), '条')
