@@ -78,7 +78,10 @@ class RequestsUtils():
         for each_stop_time in self.stop_times:
             if self.global_time % int(each_stop_time[0]) == 0:
                 for i in tqdm(range(int(each_stop_time[1])), desc='全局等待'):
-                    time.sleep(1)
+                    import random
+                    sleep_time = 1 + (random.randint(1, 10) / 100)
+                    time.sleep(sleep_time)
+                # 全局魂系
                 break
         header = self.get_header()
         r = requests.get(url, headers=header)
@@ -115,7 +118,6 @@ class RequestsUtils():
                 page_source = page_source.replace(key, value)
         return page_source
 
-
     def replace_review_html(self, page_source, file_map):
         """
         替换html文本，根据加密字体文件映射替换page source加密代码
@@ -128,9 +130,12 @@ class RequestsUtils():
             for k, v in font_map.items():
                 key = str(k).replace('uni', '&#x')
                 key = '"' + str(k) + '"><'
-                value = '"' + str(k) + '">'+str(v)+'<'
+                value = '"' + str(k) + '">' + str(v) + '<'
                 page_source = page_source.replace(key, value)
         return page_source
+
+    def update_cookie(self):
+        self.cookie = global_config.getRaw('config', 'Cookie')
 
 
 requests_util = RequestsUtils()

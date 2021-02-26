@@ -42,7 +42,7 @@ def get_header():
 
 if __name__ == '__main__':
     # debug search
-    Search().search('一方', only_need_first=False, needed_pages=1)
+    Search().search('一方', only_need_first=False, needed_pages=10)
 
     # debug review font parse
     # header = get_header()

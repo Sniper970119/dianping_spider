@@ -39,8 +39,14 @@ class Detail():
         url = 'http://www.dianping.com/shop/' + str(shop_id)
         r = requests_util.get_requests(url)
         if r.status_code == 403:
-            logger.warning('详情页请求被ban')
-            raise Exception
+            print('检查浏览器，处理验证码,替换cookie，输入y解除限制', 'http://www.dianping.com/shop/' + str(shop_id))
+            while input() != 'y':
+                import time
+                time.sleep(1)
+            self.requests_util.update_cookie()
+            r = requests_util.get_requests(url)
+            # logger.warning('详情页请求被ban')
+            # raise Exception
         text = r.text
         # 获取加密文件
         file_map = get_search_map_file(text)

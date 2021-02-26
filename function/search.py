@@ -135,7 +135,8 @@ class Search():
                     tag1 = '-'
                     tag2 = '-'
                 try:
-                    addr = shop.select('.txt')[0].select('.tag-addr')[0].select('.addr')[0].text.replace('\n', ' ').strip()
+                    addr = shop.select('.txt')[0].select('.tag-addr')[0].select('.addr')[0].text.replace('\n',
+                                                                                                         ' ').strip()
                 except:
                     addr = '-'
                 try:
@@ -162,6 +163,10 @@ class Search():
                     except:
                         logger.warning('详情信息获取失败，失败id：' + shop_id)
                         print('\n' + ','.join(one_step_search_res) + '\n')
+                        print('检查浏览器，处理验证码，输入y解除限制', 'http://www.dianping.com/shop/' + str(shop_id))
+                        while input() != 'y':
+                            import time
+                            time.sleep(1)
                 else:
                     print('\n' + ','.join(one_step_search_res) + '\n')
                 # 解析评论页
