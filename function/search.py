@@ -29,7 +29,6 @@ from function.review import Review
 
 from utils.logger import logger
 from utils.config import global_config
-from utils.get_file_map import get_map
 from utils.get_font_map import get_search_map_file
 from utils.saver.saver import Saver
 from utils.requests_utils import requests_util
