@@ -27,6 +27,9 @@ from utils.requests_utils import requests_util
 
 
 class Detail():
+    """
+
+    """
     def __init__(self):
         self.requests_util = requests_util
 
