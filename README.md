@@ -1,9 +1,19 @@
 # Sniper
 
-*仅限学习交流使用，禁止商用*
+
 
 [![](https://img.shields.io/badge/python-3-brightgreen.svg)](https://www.python.org/downloads/)
-<a href="https://github.com/pnoker/iot-dc3/blob/master/LICENSE"><img src="https://img.shields.io/github/license/pnoker/iot-dc3.svg"></a>
+<img src="https://img.shields.io/badge/license-GPL--3.0-brightgreen">
+
+*仅限学习交流使用，禁止商用*
+
+*本项目遵守GPT-3.0开源协议*
+
+*您可以使用本项目for yourself，如果您使用本项目获利（包括但不限于商用、程序代做以及其他私活），则不被允许；除非给我分红 : >*
+
+##### 如果您使用本项目获利，本人保留因侵权造成的一切追责行为
+
+
 
 ### 求求大家给个star吧！！这个对我真的很重要！！
 
