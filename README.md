@@ -53,7 +53,7 @@
    - review_pages: 获取的评论页页数。
 
 ### 运行程序
-运行main.py（由于还在开发中，目前咱为main_debug.py）
+运行main.py
 
 如果遇到其他问题，详见[这里](https://github.com/Sniper970119/dianping_spider#可能遇到的问题)
  
