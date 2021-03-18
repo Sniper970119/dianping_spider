@@ -419,7 +419,7 @@ def get_review_map_file(page_source):
 
         # 解析css文件
         for each_css in css_loc:
-            if each_css[0][:3] != each[0]:
+            if each_css[0][:len(each[0])] != each[0]:
                 continue
             loc_x, loc_y = each_css[1], each_css[2]
             # 字体的长宽偏移量
