@@ -58,6 +58,21 @@ class Search():
         if self.custom_search_url != '':
             key_word = self.custom_search_url
         logger.info('开始搜索:' + key_word)
+        if not only_need_first and needed_pages is None:
+            url = 'http://www.dianping.com/search/keyword/' + str(self.location_id) + '/' + str(
+                self.channel_id) + '_' + str(key_word) + '/p' + str(1)
+            if self.custom_search_url != '':
+                url = self.custom_search_url + str(1)
+            r = requests_util.get_requests(url)
+            text = r.text
+            html = BeautifulSoup(text, 'lxml')
+            pages = len(html.select('.PageLink'))
+            if pages == 0:
+                needed_pages = 1
+            else:
+                needed_pages = int(html.select('.PageLink')[pages - 1].text.strip())
+            print("长度为", needed_pages)
+
         # header = self.get_header()
         for i in tqdm(range(1, needed_pages + 1), desc='页数'):
             # 针对只需要收条的情况，跳出页数循环
