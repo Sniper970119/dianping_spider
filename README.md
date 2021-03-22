@@ -34,7 +34,7 @@
 
 其他环境配置：
 
-    pip install -r requestments.txt
+    pip install -r requirements.txt
 
 ## 使用方法：
 ### 配置配置文件
