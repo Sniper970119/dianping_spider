@@ -75,6 +75,8 @@ class MongoSaver():
                 '评分': each[9],
                 '图片链接': each[10],
                 '详情链接': each[11],
+                'detail': each[12],
+                'review': each[13],
 
             }
             data_list.append(data_dict)

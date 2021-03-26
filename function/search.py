@@ -43,6 +43,7 @@ class Search():
         self.need_comment = global_config.getRaw('detail', 'need_comment')
         self.saver = Saver()
         self.requests_util = requests_util
+        self.jump_wait = False
 
     def search(self, key_word, only_need_first=True, needed_pages=50):
         """
@@ -147,7 +148,7 @@ class Search():
                 except:
                     commend_list = '-'
                 one_step_search_res = [shop_id, name, star_point, review_number, mean_price, tag1, tag2, addr,
-                                       recommend, commend_list, image_path, detail_url]
+                                       recommend, commend_list, image_path, detail_url, 1, 1]  # 最后两位是搜索标记
                 # 这个数据结构暂时没用
                 search_res.append(one_step_search_res)
                 # 只要首条，跳出
@@ -160,12 +161,16 @@ class Search():
                         print('\n' + ','.join(detail) + '\n')
                         self.saver.save_data([detail], 'detail')
                     except:
+                        # 设置标记
+                        one_step_search_res[-2] = 0
                         logger.warning('详情信息获取失败，失败id：' + shop_id)
                         print('\n' + ','.join(one_step_search_res) + '\n')
-                        print('检查浏览器，处理验证码，输入y解除限制', 'http://www.dianping.com/shop/' + str(shop_id))
-                        while input() != 'y':
-                            import time
-                            time.sleep(1)
+                        if self.jump_wait is False:
+                            print('检查浏览器，处理验证码，输入y程序继续运行,输入n跳过检查', 'http://www.dianping.com/shop/' + str(shop_id))
+                            if input() == 'y':
+                                continue
+                            elif input() == 'n':
+                                self.jump_wait = True
                 else:
                     print('\n' + ','.join(one_step_search_res) + '\n')
                 # 解析评论页
@@ -175,6 +180,8 @@ class Search():
                         print('获取', name, '评论', len(review), '条')
                         self.saver.save_data(review, 'review')
                     except:
+                        # 设置标记
+                        one_step_search_res[-1] = 0
                         logger.warning('评论获取失败，失败id：' + shop_id)
 
                 # 保存数据
