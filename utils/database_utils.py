@@ -38,13 +38,25 @@ class DataBaseUtils():
             sys.exit()
 
     def get_no_detail(self):
+        """
+        获取没有爬取detail的条数
+        """
         pass
 
-    def update_no_detail(self):
+    def update_no_detail(self, sid):
+        """
+        更新数据库信息
+        """
         pass
 
     def get_no_review(self):
+        """
+        获取没有爬取review的条数
+        """
         pass
 
-    def update_no_detail(self):
+    def update_no_review(self,sid):
+        """
+        更新数据库信息
+        """
         pass
