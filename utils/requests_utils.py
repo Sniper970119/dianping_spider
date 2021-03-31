@@ -98,6 +98,7 @@ class RequestsUtils():
             ua = self.ua_engine.user_agent()
         header = {
             'User-Agent': ua,
+            # 'Host': 'http://www.dianping.com/',
             'Cookie': self.cookie
         }
         return header
