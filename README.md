@@ -21,6 +21,13 @@
 
 本程序可以爬取大众点评搜索页、详情页以及评论页中的相关信息，并将结果写入文件或数据库中。
 
+目前开发：
+
+由于大众点评封号率高，目前使用两种方法规避，全部在开发中。
+>对详情和评论进行标记，封号后继续爬取可见部分，对没有爬取的部分后期进行再次爬取。
+>
+> 添加cookie池，动态切换cookie
+
 目前支持的写入类型如下：
 - MongoDB数据库
 - csv
@@ -40,17 +47,30 @@
 ### 配置配置文件
 首先配置config.ini，参数意义在文件内已经有了详细说明，这里进行简单说明。
 
-   - Cookie：Cookie信息（注意大写，之所以不一样是方便将浏览器信息直接复制进去而不做更改）。
-   - user-agent：浏览器UA信息，不填则随机UA。
-   - save_mode：保存方式，具体格式参照config.ini提示。
-   - mongo_path：mongo数据库配置，具体格式参照config.ini提示。
-   - requests_times：爬虫间隔时间，具体格式参照config.ini提示。
-   - location_id：地区id，具体格式参照config.ini提示。
-   - channel_id：频道id，具体格式参照config.ini提示。
-   - search_url：搜索url，详见config.ini内提示。
-   - need_detail：是否需要详情页。
-   - need_comment：是否需要评论页。
-   - review_pages: 获取的评论页页数。
+|参数|说明|
+|:-----  |-----|
+|config：      |  |
+|use_cookie_pool      |是否使用cookie池（开发中）  |
+|Cookie      |Cookie信息（注意大写，之所以不一样是方便将浏览器信息直接复制进去而不做更改）。|
+|user-agent      |浏览器UA信息，不填则随机UA。|
+|save_mode      |保存方式，具体格式参照config.ini提示。|
+|mongo_path      |mongo数据库配置，具体格式参照config.ini提示|
+|requests_times      |爬虫间隔时间，具体格式参照config.ini提示。  |
+|detail：      |  |
+|keyword      | 搜索关键字 |
+|location_id      |地区id，具体格式参照config.ini提示。  |
+|channel_id      |频道id，具体格式参照config.ini提示。  |
+|search_url      |搜索url，详见config.ini内提示。  |
+|need_detail      |是否需要详情页  |
+|need_comment      |是否需要评论页  |
+|need_first      |是否只需要首页首条  |
+|need_pages      |需要搜索的页数（搜索页）  |
+|save:      |  |
+|review_pages      |获取的评论页页数  |
+|      |  |
+|      |  |
+|      |  |
+
 
 ### 运行程序
 运行main.py
