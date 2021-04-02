@@ -4,3 +4,4 @@ tqdm>=4.46.1
 faker>=5.6.5
 beautifulsoup4>=4.6.0
 PyExecJS
+schedule>=1.0.0
