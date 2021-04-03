@@ -19,8 +19,11 @@
           ┗━┻━┛   ┗━┻━┛
 
 """
-
+import requests
 import schedule
+from faker import Factory
+
+from utils.config import global_config
 
 
 class CookieCache():
@@ -28,6 +31,7 @@ class CookieCache():
         self.all_cookie = []
         self.valid_cookie = []
         self.invalid_cookie = []
+        self.init_cookie()
 
     def init_cookie(self):
         """
@@ -36,8 +40,18 @@ class CookieCache():
         with open('cookies.txt', 'r', encoding='utf-8') as f:
             lines = f.readlines()
         for line in lines:
-            # cookie detail_valid_tag   review_valid_tag
             self.all_cookie.append([line, 0, 0])
+
+    def get_header(self, cookie):
+        ua = global_config.getRaw('config', 'user-agent')
+        if ua is None:
+            ua_engine = Factory.create()
+            ua = ua_engine.user_agent()
+        header = {
+            'User-Agent': ua,
+            'Cookie': cookie
+        }
+        return header
 
     def check_cookie(self):
         """
@@ -45,8 +59,15 @@ class CookieCache():
         """
         review_test_url = 'http://www.dianping.com/shop/F8oeMhRBwBa99Z70/review_all/p34'
         detail_test_url = 'http://www.dianping.com/shop/G1PUPaOlLNpU8Z1h'
-        for cookie in self.all_cookie:
-            pass
+        for i in range(len(self.all_cookie)):
+            # check detail
+            r = requests.get(detail_test_url, headers=self.get_header(str(self.all_cookie[i][0]).strip()))
+            if r.status_code != 200:
+                self.all_cookie[i][1] = 1
+            # check review
+            r = requests.get(review_test_url, headers=self.get_header(str(self.all_cookie[i][0]).strip()))
+            if r.status_code != 200:
+                self.all_cookie[i][2] = 1
 
     def timing_check(self):
         """
