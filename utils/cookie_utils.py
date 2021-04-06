@@ -42,7 +42,7 @@ class CookieCache():
         with open('cookies.txt', 'r', encoding='utf-8') as f:
             lines = f.readlines()
         for line in lines:
-            self.all_cookie.append([line, 0, 0])
+            self.all_cookie.append([line, 0, 0, 0])
 
     def get_header(self, cookie):
         ua = global_config.getRaw('config', 'user-agent')
@@ -61,19 +61,26 @@ class CookieCache():
         """
         review_test_url = 'http://www.dianping.com/shop/F8oeMhRBwBa99Z70/review_all/p34'
         detail_test_url = 'http://www.dianping.com/shop/G1PUPaOlLNpU8Z1h'
+        search_test_url = 'http://www.dianping.com/dalian/ch10/g110p5'
         for i in range(len(self.all_cookie)):
-            # check detail
-            r = requests.get(detail_test_url, headers=self.get_header(str(self.all_cookie[i][0]).strip()))
+            # check search
+            r = requests.get(search_test_url, headers=self.get_header(str(self.all_cookie[i][0]).strip()))
             if r.status_code != 200:
                 self.all_cookie[i][1] = 1
             if r.status_code == 200:
                 self.all_cookie[i][1] = 0
-            # check review
-            r = requests.get(review_test_url, headers=self.get_header(str(self.all_cookie[i][0]).strip()))
+            # check detail
+            r = requests.get(detail_test_url, headers=self.get_header(str(self.all_cookie[i][0]).strip()))
             if r.status_code != 200:
                 self.all_cookie[i][2] = 1
             if r.status_code == 200:
                 self.all_cookie[i][2] = 0
+            # check review
+            r = requests.get(review_test_url, headers=self.get_header(str(self.all_cookie[i][0]).strip()))
+            if r.status_code != 200:
+                self.all_cookie[i][3] = 1
+            if r.status_code == 200:
+                self.all_cookie[i][3] = 0
 
     def timing_check(self):
         """
@@ -97,11 +104,13 @@ class CookieCache():
         :param mission_type: 获取cookie所用于的任务
         :return:
         """
-        assert mission_type in ['review', 'detail']
+        assert mission_type in ['search', 'review', 'detail']
         if mission_type == 'review':
-            tag = 1
-        elif mission_type == 'detail':
             tag = 2
+        elif mission_type == 'detail':
+            tag = 3
+        elif mission_type == 'search':
+            tag = 1
         for each in self.all_cookie:
             if each[tag] == 1:
                 return each[0]
@@ -116,9 +125,11 @@ class CookieCache():
         """
         assert mission_type in ['review', 'detail']
         if mission_type == 'review':
-            tag = 1
-        elif mission_type == 'detail':
             tag = 2
+        elif mission_type == 'detail':
+            tag = 3
+        elif mission_type == 'search':
+            tag = 1
         for each in self.all_cookie:
             if each[0] == cookie:
                 each[tag] = 1

@@ -73,7 +73,7 @@ class RequestsUtils():
         :param url:
         :return:
         """
-        assert request_type in ['detail', 'review', 'no header']
+        assert request_type in ['search', 'detail', 'review', 'no header']
         # 不需要请求头的请求不计入统计（比如字体文件下载）
         if request_type == 'no header':
             r = requests.get(url)
