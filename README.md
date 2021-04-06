@@ -68,14 +68,13 @@
 |save:      |  |
 |review_pages      |获取的评论页页数  |
 |      |  |
-|      |  |
-|      |  |
 
 
 ### 运行程序
 运行main.py
 
 如果遇到其他问题，详见[这里](https://github.com/Sniper970119/dianping_spider#可能遇到的问题)
+
  
 ## 字段结果展示
 由于大众点评反扒措施相对严重以及不同频道字段格式复杂，因此很多数据在爬取阶段不做处理。原样保存，后续自行清洗。
@@ -88,6 +87,11 @@
 
 ### 商家评论页展示：
 ![image](./imgs/review.jpg)
+
+## 一些碎碎念
+
+
+[关于cookie以及cookie池的一些碎碎念](./docs/cookie_pool.md)
 
 ## 其他
     
