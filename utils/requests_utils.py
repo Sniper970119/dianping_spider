@@ -29,6 +29,7 @@ from faker import Factory
 from utils.config import global_config
 from utils.logger import logger
 from utils.get_file_map import get_map
+from utils.cookie_utils import cookie_cache
 
 
 class RequestsUtils():
@@ -42,6 +43,9 @@ class RequestsUtils():
         self.ua = global_config.getRaw('config', 'user-agent')
 
         self.ua_engine = Factory.create()
+
+        self.cookie_pool = global_config.getRaw('config', 'use_cookie_pool')
+        self.cookie_pool = True if self.cookie_pool == 'True' else False
 
         try:
             self.stop_times = self.parse_stop_time(requests_times)
@@ -63,14 +67,15 @@ class RequestsUtils():
             stop_time.append(each_stop[i].split(','))
         return stop_time
 
-    def get_requests(self, url, need_header=True):
+    def get_requests(self, url, request_type):
         """
         获取请求
         :param url:
         :return:
         """
+        assert request_type in ['detail', 'review', 'no header']
         # 不需要请求头的请求不计入统计（比如字体文件下载）
-        if need_header is False:
+        if request_type == 'no header':
             r = requests.get(url)
             return r
         # 需要请求头的请求全局监控，全局暂停
@@ -83,11 +88,15 @@ class RequestsUtils():
                     time.sleep(sleep_time)
                 # 全局魂系
                 break
-        header = self.get_header()
+        if self.cookie_pool is True:
+            cookie = cookie_cache.get_cookie(request_type)
+        else:
+            cookie = None
+        header = self.get_header(cookie)
         r = requests.get(url, headers=header)
         return r
 
-    def get_header(self):
+    def get_header(self, cookie):
         """
         获取请求头
         :return:
@@ -96,10 +105,14 @@ class RequestsUtils():
             ua = self.ua
         else:
             ua = self.ua_engine.user_agent()
+
+        # cookie选择
+        if cookie is None:
+            cookie = self.cookie
         header = {
             'User-Agent': ua,
             # 'Host': 'http://www.dianping.com/',
-            'Cookie': self.cookie
+            'Cookie': cookie
         }
         return header
 
