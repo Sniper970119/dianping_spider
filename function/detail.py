@@ -30,19 +30,20 @@ class Detail():
     """
 
     """
+
     def __init__(self):
         self.requests_util = requests_util
 
     def get_detail(self, shop_id):
         url = 'http://www.dianping.com/shop/' + str(shop_id)
-        r = requests_util.get_requests(url)
+        r = requests_util.get_requests(url, request_type='detail')
         if r.status_code == 403:
             print('检查浏览器，处理验证码,替换cookie，输入y解除限制', 'http://www.dianping.com/shop/' + str(shop_id))
             while input() != 'y':
                 import time
                 time.sleep(1)
             self.requests_util.update_cookie()
-            r = requests_util.get_requests(url)
+            r = requests_util.get_requests(url,request_type='detail')
             # logger.warning('详情页请求被ban')
             # raise Exception
         text = r.text

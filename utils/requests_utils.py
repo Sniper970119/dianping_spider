@@ -20,6 +20,7 @@
 
 """
 
+import os
 import sys
 import time
 import requests
@@ -42,11 +43,20 @@ class RequestsUtils():
         self.cookie = global_config.getRaw('config', 'Cookie')
         self.ua = global_config.getRaw('config', 'user-agent')
 
-        self.ua_engine = Factory.create()
+        # Todo 这句话加在这里会明显拖慢加载速度，但是单独取出并不会浪费很长时间，因此暂时搁置虚假请求头
+        # Todo 作为对策，在这里判断ua不能为None
+        # self.ua_engine = Factory.create()
+        if self.ua is None:
+            logger.error('user agent 暂时不支持为空')
+            sys.exit()
 
         self.cookie_pool = global_config.getRaw('config', 'use_cookie_pool')
         self.cookie_pool = True if self.cookie_pool == 'True' else False
-
+        if self.cookie_pool is True:
+            logger.info('使用cookie池')
+            if not os.path.exists('cookies.txt'):
+                logger.error('cookies.txt文件不存在')
+                sys.exit()
         try:
             self.stop_times = self.parse_stop_time(requests_times)
         except:
@@ -54,6 +64,17 @@ class RequestsUtils():
             sys.exit()
         self.global_time = 0
         pass
+
+    def create_dir(self, file_name):
+        """
+        创建文件夹
+        :param file_name:
+        :return:
+        """
+        if os.path.exists(file_name):
+            return
+        else:
+            os.mkdir(file_name)
 
     def parse_stop_time(self, requests_times):
         """
@@ -94,6 +115,12 @@ class RequestsUtils():
             cookie = None
         header = self.get_header(cookie)
         r = requests.get(url, headers=header)
+        if r.status_code != 200:
+            if cookie is not None:
+                cookie_cache.change_state(cookie, requests_util)
+        else:
+            return r
+        # Todo 以后将403响应的解析挪到这里统一处理
         return r
 
     def get_header(self, cookie):

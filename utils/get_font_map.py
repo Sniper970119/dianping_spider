@@ -58,7 +58,7 @@ def get_search_map_file(page_source):
     font_base_url = 'https:' + font_base_url
     # header = get_header()
     # r = requests.get(font_base_url, headers=header)
-    r = requests_util.get_requests(url=font_base_url, need_header=False)
+    r = requests_util.get_requests(url=font_base_url, request_type='no header')
     text = r.text
     woff_urls = re.findall(',url\("(.*?\.woff"\).*?\{)', text)
 
@@ -287,7 +287,7 @@ def download_woff(woff_url, filename):
     :param filename:
     :return:
     """
-    r = requests_util.get_requests(woff_url, need_header=False)
+    r = requests_util.get_requests(woff_url, request_type='no header')
     with open('./tmp/' + filename, 'wb') as f:
         f.write(r.content)
 
@@ -360,7 +360,7 @@ def get_review_map_file(page_source):
         global_logger.warning('cookie失效或者被限制访问，更新cookie或登录大众点评滑动验证')
         sys.exit()
     # 下载css文件
-    r = requests_util.get_requests(css_url, need_header=False)
+    r = requests_util.get_requests(css_url, request_type='no header')
     with open('./tmp/review_css.css', 'wb') as f:
         f.write(r.content)
     # 解析css文件
@@ -379,7 +379,7 @@ def get_review_map_file(page_source):
     return_svg_name = {}
     for each in svg_url:
         url = 'https:' + each[1]
-        r = requests_util.get_requests(url, need_header=False)
+        r = requests_util.get_requests(url, request_type='no header')
         svg_name = each[1][-18:-3] + 'json'
         # 检查缓存json文件，以节约解析时间
         if os.path.exists('./tmp/' + svg_name):
@@ -432,6 +432,6 @@ def get_review_map_file(page_source):
         # 保存json文件
         with open('./tmp/' + str(svg_map[css_key][4]), 'w', encoding='utf-8') as f:
             json.dump(css_map_result, f, ensure_ascii=False)
-        return_svg_name[str(svg_map[css_key][5])] = './tmp/'+str(svg_map[css_key][4])
+        return_svg_name[str(svg_map[css_key][5])] = './tmp/' + str(svg_map[css_key][4])
 
     return return_svg_name

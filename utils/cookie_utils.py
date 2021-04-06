@@ -22,6 +22,7 @@
 import _thread
 import requests
 import schedule
+import time
 from faker import Factory
 
 from utils.config import global_config
@@ -42,7 +43,7 @@ class CookieCache():
         with open('cookies.txt', 'r', encoding='utf-8') as f:
             lines = f.readlines()
         for line in lines:
-            self.all_cookie.append([line, 0, 0, 0])
+            self.all_cookie.append([line.strip(), 0, 0, 0])
 
     def get_header(self, cookie):
         ua = global_config.getRaw('config', 'user-agent')
@@ -87,9 +88,9 @@ class CookieCache():
         定时任务，用于定时启动check_cookie
         :return:
         """
-        schedule.every().minute.at(':00').do(self.check_cookie)
         while True:
-            schedule.run_pending()
+            time.sleep(60)
+            self.check_cookie()
 
     def start_check(self):
         """
@@ -112,7 +113,7 @@ class CookieCache():
         elif mission_type == 'search':
             tag = 1
         for each in self.all_cookie:
-            if each[tag] == 1:
+            if each[tag] == 0:
                 return each[0]
         return None
 

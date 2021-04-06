@@ -19,9 +19,7 @@
           ┗━┻━┛   ┗━┻━┛
 
 """
-import requests
 from tqdm import tqdm
-from faker import Factory
 from bs4 import BeautifulSoup
 
 from function.detail import Detail
@@ -69,7 +67,7 @@ class Search():
                 self.channel_id) + '_' + str(key_word) + '/p' + str(i)
             if self.custom_search_url != '':
                 url = self.custom_search_url + str(i)
-            r = requests_util.get_requests(url)
+            r = requests_util.get_requests(url, request_type='search')
             # r = requests.get(url, headers=header)
             text = r.text
             # 获取加密文件

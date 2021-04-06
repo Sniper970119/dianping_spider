@@ -20,7 +20,7 @@
 
 """
 
-from function.search import *
+from function.search import Search
 from utils.config import global_config
 
 if __name__ == '__main__':

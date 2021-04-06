@@ -5,3 +5,5 @@ faker>=5.6.5
 beautifulsoup4>=4.6.0
 PyExecJS
 schedule>=1.0.0
+fontTools>=4.22.0
+pymongo>=3.11.3
