@@ -90,7 +90,11 @@
 ## 一些碎碎念
 
 
-[关于cookie以及cookie池的一些碎碎念](./docs/cookie_pool.md)
+关于cookie以及cookie池的一些碎碎念：[这里](./docs/cookie_pool.md)
+
+一些可能遇到的小问题：[这里](./docs/problems.md)
+
+
 
 ## 其他
     
@@ -115,15 +119,7 @@
  
  #### 十分希望有能力的大佬帮助解决一下，我也能学习学习，感谢。
 
-## 可能遇到的问题
-1.显示：
 
-        2021-02-09 16:18:47,166 - 23532-MainThread - function\detail.py[line:42] - WARNING: 详情页请求被ban
-        2021-02-09 16:18:47,166 - 23532-MainThread - function\search.py[line:161] - WARNING: 详情信息获取失败，失败id：xxx
-        
-原因：由于大众点评过于苛刻的，出现这个意味着您触发了大众点评的反爬措施，暂时不能访问详情页（但是并不意味着您不能访问搜索页以及评论页）
-
-解决方法： 调整config.ini requests_times参数然后，just wait（等解封）。或者暂时只爬取详情页。（后期可能会添加补救方法）
   
 ## 相关功能笔记
   - [搜索页字体加密加密](http://www.sniper97.cn/index.php/note/carwler/3694/)
