@@ -73,6 +73,7 @@
 运行main.py
 
 如果遇到其他问题，详见[这里](https://github.com/Sniper970119/dianping_spider#可能遇到的问题)
+和[issues](https://github.com/Sniper970119/dianping_spider/issues?q=is%3Aissue+is%3Aclosed)
 
  
 ## 字段结果展示
