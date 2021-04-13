@@ -43,9 +43,7 @@ class RequestsUtils():
         self.cookie = global_config.getRaw('config', 'Cookie')
         self.ua = global_config.getRaw('config', 'user-agent')
 
-        # Todo 这句话加在这里会明显拖慢加载速度，但是单独取出并不会浪费很长时间，因此暂时搁置虚假请求头
-        # Todo 作为对策，在这里判断ua不能为None
-        # self.ua_engine = Factory.create()
+        self.ua_engine = Factory.create()
         if self.ua is None:
             logger.error('user agent 暂时不支持为空')
             sys.exit()
