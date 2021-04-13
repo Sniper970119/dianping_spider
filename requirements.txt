@@ -7,3 +7,4 @@ PyExecJS
 schedule>=1.0.0
 fontTools>=4.22.0
 pymongo>=3.11.3
+urllib3>=1.25.7
