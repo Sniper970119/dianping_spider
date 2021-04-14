@@ -23,8 +23,7 @@
 
 目前开发：
 
-由于大众点评封号率高，目前使用两种方法规避，全部在开发中。
->对详情和评论进行标记，封号后继续爬取可见部分，对没有爬取的部分后期进行再次爬取。
+由于大众点评封号率高，目前使用两种方法规避，分别是使用cookie池以及标记数据二次爬取，目前二次爬取还在开发中。
 
 
 目前支持的写入类型如下：
@@ -49,7 +48,7 @@
 |参数|说明|
 |:-----  |-----|
 |config：      |  |
-|use_cookie_pool      |是否使用cookie池（开发中）  |
+|use_cookie_pool      |是否使用cookie池 |
 |Cookie      |Cookie信息（注意大写，之所以不一样是方便将浏览器信息直接复制进去而不做更改）。|
 |user-agent      |浏览器UA信息，不填则随机UA。|
 |save_mode      |保存方式，具体格式参照config.ini提示。|
@@ -72,7 +71,7 @@
 ### 运行程序
 运行main.py
 
-如果遇到其他问题，详见[这里](https://github.com/Sniper970119/dianping_spider#可能遇到的问题)
+如果遇到其他问题，详见[这里](./docs/problems.md)
 和[issues](https://github.com/Sniper970119/dianping_spider/issues?q=is%3Aissue+is%3Aclosed)
 
  
