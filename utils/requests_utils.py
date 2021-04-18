@@ -107,12 +107,15 @@ class RequestsUtils():
                     time.sleep(sleep_time)
                 break
 
+        # cookie初始化
         cookie = None
         if self.cookie_pool is True:
             while cookie is None:
                 cookie = cookie_cache.get_cookie(request_type)
                 logger.info('所有cookie均已失效，替换（替换后会自动继续）或等待解封')
                 time.sleep(60)
+        else:
+            cookie = self.cookie
         header = self.get_header(cookie)
         r = requests.get(url, headers=header)
         if r.status_code != 200:
