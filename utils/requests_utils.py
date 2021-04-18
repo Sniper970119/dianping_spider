@@ -105,12 +105,14 @@ class RequestsUtils():
                     import random
                     sleep_time = 1 + (random.randint(1, 10) / 100)
                     time.sleep(sleep_time)
-                # 全局魂系
                 break
+
+        cookie = None
         if self.cookie_pool is True:
-            cookie = cookie_cache.get_cookie(request_type)
-        else:
-            cookie = None
+            while cookie is None:
+                cookie = cookie_cache.get_cookie(request_type)
+                logger.info('所有cookie均已失效，替换（替换后会自动继续）或等待解封')
+                time.sleep(60)
         header = self.get_header(cookie)
         r = requests.get(url, headers=header)
         if r.status_code != 200:
