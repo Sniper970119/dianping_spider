@@ -116,14 +116,17 @@ class RequestsUtils():
                 time.sleep(60)
         else:
             cookie = self.cookie
+
         header = self.get_header(cookie)
         r = requests.get(url, headers=header)
         if r.status_code != 200:
             if cookie is not None:
                 cookie_cache.change_state(cookie, requests_util)
+                #  失效之后重复调用本方法直至200（也算是处理403了）
+                return self.get_requests(url, request_type)
         else:
             return r
-        # Todo 以后将403响应的解析挪到这里统一处理
+        # 这里是cookie为None并且响应非200会调用到这，目前的逻辑应该不存在这种情况，不过为了保险起见依然选择返回r
         return r
 
     def get_header(self, cookie):
