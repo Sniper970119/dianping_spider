@@ -127,7 +127,7 @@ class CookieCache():
         :param mission_type:
         :return:
         """
-        assert mission_type in ['review', 'detail']
+        assert mission_type in ['search', 'review', 'detail']
         if mission_type == 'review':
             tag = 2
         elif mission_type == 'detail':
