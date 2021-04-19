@@ -37,6 +37,8 @@
 ## 环境配置
 语言：python3
 
+开发环境：python 3.6 （其他版本没有测试，不排除有问题）
+
 系统：Windows/Linux/MacOS
 
 其他环境配置：
