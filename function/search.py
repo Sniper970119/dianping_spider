@@ -65,8 +65,16 @@ class Search():
 
             url = 'http://www.dianping.com/search/keyword/' + str(self.location_id) + '/' + str(
                 self.channel_id) + '_' + str(key_word) + '/p' + str(i)
+            # 第一页不是用页码标识，会出发验证码
+            if i == 1:
+                url = 'http://www.dianping.com/search/keyword/' + str(self.location_id) + '/' + str(
+                    self.channel_id) + '_' + str(key_word)
+
+                # 替换url，并且过滤掉p1（p1会触发验证码）
             if self.custom_search_url != '':
                 url = self.custom_search_url + str(i)
+                if i == 1:
+                    url = self.custom_search_url[:-1]
             r = requests_util.get_requests(url, request_type='search')
             # r = requests.get(url, headers=header)
             text = r.text
@@ -146,7 +154,7 @@ class Search():
                 except:
                     commend_list = '-'
                 one_step_search_res = [shop_id, name, star_point, review_number, mean_price, tag1, tag2, addr,
-                                       recommend, commend_list, image_path, detail_url, 1, 1]  # 最后两位是搜索标记
+                                       recommend, commend_list, image_path, detail_url, '1', '1']  # 最后两位是搜索标记
                 # 这个数据结构暂时没用
                 search_res.append(one_step_search_res)
                 # 只要首条，跳出
