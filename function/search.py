@@ -168,7 +168,7 @@ class Search():
                         self.saver.save_data([detail], 'detail')
                     except:
                         # 设置标记
-                        one_step_search_res[-2] = 0
+                        one_step_search_res[-2] = '0'
                         logger.warning('详情信息获取失败，失败id：' + shop_id)
                         print('\n' + ','.join(one_step_search_res) + '\n')
                         if self.jump_wait is False:
@@ -187,7 +187,7 @@ class Search():
                         self.saver.save_data(review, 'review')
                     except:
                         # 设置标记
-                        one_step_search_res[-1] = 0
+                        one_step_search_res[-1] = '0'
                         logger.warning('评论获取失败，失败id：' + shop_id)
 
                 # 保存数据

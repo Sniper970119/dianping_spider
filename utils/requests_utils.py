@@ -55,6 +55,12 @@ class RequestsUtils():
             if not os.path.exists('cookies.txt'):
                 logger.error('cookies.txt文件不存在')
                 sys.exit()
+
+        self.ip_proxy = global_config.getRaw('proxy', 'use_proxy')
+        self.ip_proxy = True if self.ip_proxy == 'True' else False
+        if self.ip_proxy:
+            self.proxy_pool = []
+
         try:
             self.stop_times = self.parse_stop_time(requests_times)
         except:
@@ -97,28 +103,35 @@ class RequestsUtils():
         if request_type == 'no header':
             r = requests.get(url)
             return r
-        # 需要请求头的请求全局监控，全局暂停
-        self.global_time += 1
-        for each_stop_time in self.stop_times:
-            if self.global_time % int(each_stop_time[0]) == 0:
-                for i in tqdm(range(int(each_stop_time[1])), desc='全局等待'):
-                    import random
-                    sleep_time = 1 + (random.randint(1, 10) / 100)
-                    time.sleep(sleep_time)
-                break
+        # 需要请求头的请求全局监控，全局暂停，只对非代理情况暂停
+        if self.ip_proxy is False:
+        # if self.ip_proxy is True:
+            self.global_time += 1
+            for each_stop_time in self.stop_times:
+                if self.global_time % int(each_stop_time[0]) == 0:
+                    for i in tqdm(range(int(each_stop_time[1])), desc='全局等待'):
+                        import random
+                        sleep_time = 1 + (random.randint(1, 10) / 100)
+                        time.sleep(sleep_time)
+                    break
 
         # cookie初始化
         cookie = None
         if self.cookie_pool is True:
-            while cookie is None:
+            while True:
                 cookie = cookie_cache.get_cookie(request_type)
+                if cookie is not None:
+                    break
                 logger.info('所有cookie均已失效，替换（替换后会自动继续）或等待解封')
                 time.sleep(60)
         else:
             cookie = self.cookie
 
         header = self.get_header(cookie)
-        r = requests.get(url, headers=header)
+        if self.ip_proxy:
+            r = requests.get(url, headers=header, proxies=self.get_proxy())
+        else:
+            r = requests.get(url, headers=header)
         if r.status_code != 200:
             if cookie is not None:
                 cookie_cache.change_state(cookie, requests_util)
@@ -148,6 +161,55 @@ class RequestsUtils():
             'Cookie': cookie
         }
         return header
+
+    def get_proxy(self):
+        """
+        获取代理
+        """
+        try:
+            repeat_nub = int(global_config.getRaw('proxy', 'repeat_nub'))
+        except:
+            logger.warning('repeat_nub 格式不正确，应为正整数')
+            sys.exit()
+        # http 提取模式
+        if global_config.getRaw('proxy', 'http_extract') == '1':
+            # 代理池为空，提取代理
+            if len(self.proxy_pool) == 0:
+                proxy_url = global_config.getRaw('proxy', 'http_link')
+                r = requests.get(proxy_url)
+                r_json = r.json()
+                for proxy in r_json:
+                    # 重复添加，多次利用
+                    for _ in range(repeat_nub):
+                        self.proxy_pool.append([proxy['ip'], proxy['port']])
+                # 获取ip
+                proxies = self.http_proxy_utils(self.proxy_pool[0][0], self.proxy_pool[0][1])
+                self.proxy_pool.remove(self.proxy_pool[0])
+                return proxies
+        # 秘钥提取模式
+        elif global_config.getRaw('proxy', 'key_extract') == '1':
+            pass
+        pass
+
+    def http_proxy_utils(self, ip, port):
+        """
+        专属http链接的代理格式
+        @param ip:
+        @param port:
+        @return:
+        """
+        proxyMeta = "http://%(host)s:%(port)s" % {
+
+            "host": ip,
+            "port": port,
+        }
+
+        proxies = {
+
+            "http": proxyMeta,
+            "https": proxyMeta
+        }
+        return proxies
 
     def replace_search_html(self, page_source, file_map):
         """

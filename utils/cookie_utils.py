@@ -107,9 +107,9 @@ class CookieCache():
         :return:
         """
         assert mission_type in ['search', 'review', 'detail']
-        if mission_type == 'review':
+        if mission_type == 'detail':
             tag = 2
-        elif mission_type == 'detail':
+        elif mission_type == 'review':
             tag = 3
         elif mission_type == 'search':
             tag = 1
@@ -128,9 +128,9 @@ class CookieCache():
         :return:
         """
         assert mission_type in ['search', 'review', 'detail']
-        if mission_type == 'review':
+        if mission_type == 'detail':
             tag = 2
-        elif mission_type == 'detail':
+        elif mission_type == 'review':
             tag = 3
         elif mission_type == 'search':
             tag = 1
