@@ -28,7 +28,7 @@ from function.review import Review
 from utils.logger import logger
 from utils.config import global_config
 from utils.get_font_map import get_search_map_file
-from utils.saver.saver import Saver
+from utils.saver.saver import saver
 from utils.requests_utils import requests_util
 
 
@@ -39,7 +39,6 @@ class Search():
         self.custom_search_url = global_config.getRaw('detail', 'search_url')
         self.need_detail = global_config.getRaw('detail', 'need_detail')
         self.need_comment = global_config.getRaw('detail', 'need_comment')
-        self.saver = Saver()
         self.requests_util = requests_util
         self.jump_wait = False
 
@@ -165,7 +164,7 @@ class Search():
                     try:
                         detail = Detail().get_detail(shop_id)
                         print('\n' + ','.join(detail) + '\n')
-                        self.saver.save_data([detail], 'detail')
+                        # self.saver.save_data([detail], 'detail')
                     except:
                         # 设置标记
                         one_step_search_res[-2] = '0'
@@ -184,12 +183,12 @@ class Search():
                     try:
                         review = Review().get_review(shop_id)
                         print('获取', name, '评论', len(review), '条')
-                        self.saver.save_data(review, 'review')
+                        # self.saver.save_data(review, 'review')
                     except:
                         # 设置标记
                         one_step_search_res[-1] = '0'
                         logger.warning('评论获取失败，失败id：' + shop_id)
 
                 # 保存数据
-                self.saver.save_data([one_step_search_res], 'search')
+                saver.save_data([one_step_search_res], 'search')
         logger.info('解析完成:' + key_word)

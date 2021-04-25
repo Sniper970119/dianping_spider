@@ -22,6 +22,7 @@
 
 from bs4 import BeautifulSoup
 
+from utils.saver.saver import saver
 from utils.get_font_map import get_search_map_file
 from utils.requests_utils import requests_util
 
@@ -43,7 +44,7 @@ class Detail():
                 import time
                 time.sleep(1)
             self.requests_util.update_cookie()
-            r = requests_util.get_requests(url,request_type='detail')
+            r = requests_util.get_requests(url, request_type='detail')
             # logger.warning('详情页请求被ban')
             # raise Exception
         text = r.text
@@ -161,4 +162,6 @@ class Detail():
         #         # self.get_detail(shop_id)
         #         pass
         #     pass
-        return [shop_id, shop_name, review_count, avg_price, score, address, phone, other_info]
+        detail_info = [shop_id, shop_name, review_count, avg_price, score, address, phone, other_info]
+        saver.save_data(detail_info, 'detail')
+        return detail_info

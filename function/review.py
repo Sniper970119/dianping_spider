@@ -22,6 +22,7 @@
 from bs4 import BeautifulSoup
 
 from utils.logger import logger
+from utils.saver.saver import saver
 from utils.config import global_config
 from utils.get_font_map import get_review_map_file
 from utils.requests_utils import requests_util
@@ -31,6 +32,7 @@ class Review():
     def __init__(self):
         self.requests_util = requests_util
         self.pages_needed = global_config.getRaw('save', 'review_pages')
+        # self.saver = saver
         pass
 
     def get_review(self, shop_id):
@@ -42,7 +44,7 @@ class Review():
             # 访问p1会触发验证码，因此对第一页单独处理
             if cur_pages == 1:
                 url = 'http://www.dianping.com/shop/' + str(shop_id) + '/review_all'
-            r = requests_util.get_requests(url,request_type='review')
+            r = requests_util.get_requests(url, request_type='review')
             if r.status_code == 403:
                 logger.warning('评论页请求被ban')
                 raise Exception
@@ -74,7 +76,7 @@ class Review():
                 except:
                     review_text = '-'
                 try:
-                    like = review.select('.review-recommend')[0].text.replace(' ', '').\
+                    like = review.select('.review-recommend')[0].text.replace(' ', ''). \
                         replace('\r', ' ').replace('\n', ' ').strip()
                 except:
                     like = '-'
@@ -89,4 +91,5 @@ class Review():
                 all_review.append([review_id, shop_id, user_name, score, review_text, like, time])
             cur_pages += 1
             all_pages -= 1
+        saver.save_data(all_review, 'review')
         return all_review
