@@ -85,8 +85,23 @@
 
 
 ### 运行程序
-运行main.py
 
+正常搜索（完整流程，搜索->详情[可选]->评论[可选]）：
+- 运行main.py
+
+定制化搜索（不需要搜索，只需要详情或评论）:
+- 只需要详情 （只给命令行格式，编译器运行则自行配置或修改代码）
+
+    `python main.py --normal 0 --detail 1  --shop_id k30YbaScPKFS0hfP`
+
+- 只需要评论 （只给命令行格式，编译器运行则自行配置或修改代码）
+
+    `python main.py --normal 0 --review 1  --shop_id k30YbaScPKFS0hfP`
+
+- 需要详情和评论 （只给命令行格式，编译器运行则自行配置或修改代码）
+
+    `python main.py --normal 0  --detail 1 --review 1  --shop_id k30YbaScPKFS0hfP`
+    
 如果遇到其他问题，详见[这里](./docs/problems.md)
 和[issues](https://github.com/Sniper970119/dianping_spider/issues?q=is%3Aissue+is%3Aclosed)
 

@@ -52,14 +52,14 @@ if __name__ == '__main__':
         from function.detail import Detail
 
         shop_id = args.shop_id
-        logger.info('爬取店铺id：' + shop_id, '详情')
+        logger.info('爬取店铺id：' + shop_id + '详情')
         d = Detail()
         d.get_detail(shop_id)
     elif args.review == 1:
         from function.review import Review
 
         shop_id = args.shop_id
-        logger.info('爬取店铺id：' + shop_id, '评论')
+        logger.info('爬取店铺id：' + shop_id+ '评论')
         r = Review()
         r.get_review(shop_id)
     else:
