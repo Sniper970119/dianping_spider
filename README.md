@@ -41,9 +41,12 @@
 
 - cookie池
 
+- ip代理
+
+
 ### 计划支持
 
-- ip代理
+- 强势优化ip代理的作用（真的很强）
 
 - 优惠券信息
 
@@ -82,6 +85,14 @@
 |need_pages      |需要搜索的页数（搜索页）  |
 |save:      |  |
 |review_pages      |获取的评论页页数  |
+|proxy:      |  |
+|use_proxy |是否使用代理 |
+|repeat_nub |ip重复次数，详见config.ini |
+|http_extract |http提取 |
+|key_extract |秘钥提取 |
+|http_link |http提取接口 |
+|key_id |秘钥id |
+|key_key |秘钥key |
 
 
 ### 运行程序
@@ -124,6 +135,8 @@
 关于cookie以及cookie池的一些碎碎念：[这里](./docs/cookie_pool.md)
 
 关于存储的一些碎碎念：[这里](./docs/save.md)
+
+关于ip代理的一些碎碎念：[这里](./docs/proxy.md)
 
 一些可能遇到的小问题：[这里](./docs/problems.md)
 

@@ -8,6 +8,8 @@
 
 不要问我 “如果我想xxxx我是不是应该xxxx”， “xxxx应该怎么办？”，不接受小白和伸手党的提问，提问的时候展示你思考和验证的过程。
 
+一些配置相关问题可以查看[我的碎碎念](https://github.com/Sniper970119/dianping_spider#一些碎碎念 )
+
 #### 1. WARNING: 详情页请求被ban：
 
         2021-02-09 16:18:47,166 - 23532-MainThread - function\detail.py[line:42] - WARNING: 详情页请求被ban
