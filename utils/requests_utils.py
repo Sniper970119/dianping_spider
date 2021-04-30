@@ -98,8 +98,11 @@ class RequestsUtils():
         :param url:
         :return:
         """
-        assert request_type in ['search', 'detail', 'review', 'no header']
+        assert request_type in ['search', 'detail', 'review', 'no header','json']
         # 不需要请求头的请求不计入统计（比如字体文件下载）
+        if request_type == 'no header':
+            r = requests.get(url)
+            return r
         if request_type == 'no header':
             r = requests.get(url)
             return r
@@ -134,7 +137,7 @@ class RequestsUtils():
             r = requests.get(url, headers=header)
         if r.status_code != 200:
             if cookie is not None:
-                cookie_cache.change_state(cookie, requests_util)
+                cookie_cache.change_state(cookie, request_type)
                 #  失效之后重复调用本方法直至200（也算是处理403了）
                 return self.get_requests(url, request_type)
         else:
