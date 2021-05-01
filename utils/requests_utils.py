@@ -98,17 +98,30 @@ class RequestsUtils():
         :param url:
         :return:
         """
-        assert request_type in ['search', 'detail', 'review', 'no header','json']
+        assert request_type in ['search', 'detail', 'review', 'no header', 'json']
         # 不需要请求头的请求不计入统计（比如字体文件下载）
         if request_type == 'no header':
             r = requests.get(url)
             return r
-        if request_type == 'no header':
-            r = requests.get(url)
+        if request_type == 'json':
+            if self.ip_proxy:
+                r = requests.get(url, headers=self.get_header(None, False), proxies=self.get_proxy())
+                # # 由于json这个请求方式不会出现被ban的情况，而代理ip有的时候是失效的
+                # # 因此这里直接while 检查，直至有效
+                # flag = True
+                # while flag:
+                #     r = requests.get(url, headers=self.get_header(None, False), proxies=self.get_proxy())
+                #     if r.status_code == 200:
+                #         flag = False
+                #     if flag:
+                #         print('retry')
+            else:
+                r = requests.get(url, headers=self.get_header(None, False))
             return r
+
         # 需要请求头的请求全局监控，全局暂停，只对非代理情况暂停
         if self.ip_proxy is False:
-        # if self.ip_proxy is True:
+            # if self.ip_proxy is True:
             self.global_time += 1
             for each_stop_time in self.stop_times:
                 if self.global_time % int(each_stop_time[0]) == 0:
@@ -145,7 +158,7 @@ class RequestsUtils():
         # 这里是cookie为None并且响应非200会调用到这，目前的逻辑应该不存在这种情况，不过为了保险起见依然选择返回r
         return r
 
-    def get_header(self, cookie):
+    def get_header(self, cookie, need_cookie=True):
         """
         获取请求头
         :return:
@@ -158,11 +171,18 @@ class RequestsUtils():
         # cookie选择
         if cookie is None:
             cookie = self.cookie
-        header = {
-            'User-Agent': ua,
-            # 'Host': 'http://www.dianping.com/',
-            'Cookie': cookie
-        }
+
+        if need_cookie:
+            header = {
+                'User-Agent': ua,
+                # 'Host': 'http://www.dianping.com/',
+                'Cookie': cookie
+            }
+        else:
+            header = {
+                'User-Agent': ua,
+                # 'Host': 'http://www.dianping.com/',
+            }
         return header
 
     def get_proxy(self):
@@ -185,10 +205,10 @@ class RequestsUtils():
                     # 重复添加，多次利用
                     for _ in range(repeat_nub):
                         self.proxy_pool.append([proxy['ip'], proxy['port']])
-                # 获取ip
-                proxies = self.http_proxy_utils(self.proxy_pool[0][0], self.proxy_pool[0][1])
-                self.proxy_pool.remove(self.proxy_pool[0])
-                return proxies
+            # 获取ip
+            proxies = self.http_proxy_utils(self.proxy_pool[0][0], self.proxy_pool[0][1])
+            self.proxy_pool.remove(self.proxy_pool[0])
+            return proxies
         # 秘钥提取模式
         elif global_config.getRaw('proxy', 'key_extract') == '1':
             pass
@@ -245,6 +265,22 @@ class RequestsUtils():
                 value = '"' + str(k) + '">' + str(v) + '<'
                 page_source = page_source.replace(key, value)
         return page_source
+
+    def replace_json_text(self, json_text, file_map):
+        """
+        替换json文本，根据加密字体文件映射替换json加密文本
+        :param page_source:
+        :param file_map:
+        :return:
+        """
+        for k_f, v_f in file_map.items():
+            font_map = get_map(v_f)
+            for k, v in font_map.items():
+                key = str(k).replace('uni', '&#x')
+                key = '\\"' + str(k_f) + '\\">' + key + ';'
+                value = '\\"' + str(k_f) + '\\">' + v
+                json_text = json_text.replace(key, value)
+        return json_text
 
     def update_cookie(self):
         self.cookie = global_config.getRaw('config', 'Cookie')

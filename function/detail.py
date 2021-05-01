@@ -22,6 +22,7 @@
 
 from bs4 import BeautifulSoup
 
+from utils.cache import cache
 from utils.saver.saver import saver
 from utils.get_font_map import get_search_map_file
 from utils.requests_utils import requests_util
@@ -35,7 +36,7 @@ class Detail():
     def __init__(self):
         self.requests_util = requests_util
 
-    def get_detail(self, shop_id):
+    def get_detail(self, shop_id, just_need_map=False):
         url = 'http://www.dianping.com/shop/' + str(shop_id)
         r = requests_util.get_requests(url, request_type='detail')
         if r.status_code == 403:
@@ -50,6 +51,9 @@ class Detail():
         text = r.text
         # 获取加密文件
         file_map = get_search_map_file(text)
+        cache.search_font_map = file_map
+        if just_need_map:
+            return
         # 替换加密字符串
         text = requests_util.replace_search_html(text, file_map)
 
