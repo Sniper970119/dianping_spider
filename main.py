@@ -40,7 +40,7 @@ args = parser.parse_args()
 if __name__ == '__main__':
     # args.review = 1
     # args.normal = 0
-    # args.shop_id = 'k30YbaScPKFS0hfP'
+    # args.shop_id = 'l8QDQukrl2tXhzmY'
     if args.normal == 1:
         keyword = global_config.getRaw('detail', 'keyword')
         need_first = True if global_config.getRaw('detail', 'need_first') is 'True' else False
@@ -48,19 +48,18 @@ if __name__ == '__main__':
 
         s = Search()
         s.search(keyword, need_first, need_pages)
-    elif args.detail == 1:
+    if args.detail == 1:
         from function.detail import Detail
 
         shop_id = args.shop_id
         logger.info('爬取店铺id：' + shop_id + '详情')
         d = Detail()
         d.get_detail(shop_id)
-    elif args.review == 1:
+    if args.review == 1:
         from function.review import Review
 
         shop_id = args.shop_id
         logger.info('爬取店铺id：' + shop_id+ '评论')
         r = Review()
         r.get_review(shop_id)
-    else:
-        pass
+
