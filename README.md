@@ -59,6 +59,10 @@
 
 其他环境配置：
 
+需要：lxml、requests、tqdm、faker、beautifulsoup4、fontTools、pymongo（optional）
+
+或者一键配置：
+
     pip install -r requirements.txt
 
 ## 使用方法：
