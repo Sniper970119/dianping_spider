@@ -28,7 +28,8 @@ from bs4 import BeautifulSoup
 
 from utils.requests_utils import requests_util
 from utils.cache import cache
-from function.search import Search
+from utils.logger import logger
+
 from function.detail import Detail
 
 
@@ -65,7 +66,6 @@ def get_font_msg():
     else:
         Detail().get_detail('l3BEUN08X4TT52bm', just_need_map=True)
         return cache.search_font_map
-        pass
 
 
 def get_basic_hidden_info(shop_id):
@@ -74,8 +74,6 @@ def get_basic_hidden_info(shop_id):
     @param shop_id:
     @return:
     """
-    # Todo 等到确定加密接口不拦截的时候实现
-    #  （看了一下，接口应该是突破口，全更新完成后有望解决大规模爬取的问题）
     assert len(shop_id) == len('H2noKWCDigM0H9c1')
     shop_url = get_shop_url(shop_id)
     url = 'http://www.dianping.com/ajax/json/shopDynamic/basicHideInfo?' \
@@ -85,9 +83,19 @@ def get_basic_hidden_info(shop_id):
     r = requests_util.get_requests(url, request_type='json')
     r_text = requests_util.replace_json_text(r.text, get_font_msg())
     r_json = json.loads(r_text)
-    # BeautifulSoup(r_json['msg']['shopInfo']['address'],'lxml').text
-    print(r.text)
-    pass
+    # 验证码处理
+    if r_json['code'] == 406:
+        verify_page_url = r_json['customData']['verifyPageUrl']
+        logger.warning('处理验证码，按任意键继续：', verify_page_url)
+        input()
+    elif r_json['code'] == 200:
+        msg = r_json['msg']['shopInfo']
+        shop_name = msg['shopName']
+        shop_address = BeautifulSoup(msg['address'], 'lxml').text + BeautifulSoup(msg['crossRoad'], 'lxml').text
+        shop_number = BeautifulSoup(msg['phoneNo'], 'lxml').text + BeautifulSoup(msg['phoneNo2'], 'lxml').text
+        return [shop_name, shop_address, shop_number]
+    else:
+        logger.warning('json响应码异常，尝试更改提pr，或者提issue')
 
 
 def get_review_and_star(shop_id):
@@ -96,9 +104,34 @@ def get_review_and_star(shop_id):
     @param shop_id:
     @return:
     """
-    # Todo 等到确定加密接口不拦截的时候实现
-    #  （看了一下，接口应该是突破口，全更新完成后有望解决大规模爬取的问题）
-    pass
+    assert len(shop_id) == len('H2noKWCDigM0H9c1')
+    shop_url = get_shop_url(shop_id)
+    url = 'http://www.dianping.com/ajax/json/shopDynamic/reviewAndStar?shopId=' + str(
+        shop_id) + '&cityId=19&mainCategoryId=2821&_token=' + str(get_token(
+        shop_url)) + '&uuid=38af1c67-4a50-3220-06f6-bf9f16e71c41.1611146098&platform=1&partner=150&optimusCode=10' \
+                     '&originUrl=' + shop_url
+    r = requests_util.get_requests(url, request_type='json')
+    r_text = requests_util.replace_json_text(r.text, get_font_msg())
+    r_json = json.loads(r_text)
+    # 验证码处理
+    if r_json['code'] == 406:
+        verify_page_url = r_json['customData']['verifyPageUrl']
+        logger.warning('处理验证码，按任意键继续：', verify_page_url)
+        input()
+    elif r_json['code'] == 200:
+        shop_base_score = r_json['fiveScore']
+        score_title_list = r_json['shopScoreTitleList']
+        avg_price = BeautifulSoup(r_json['avgPrice'], 'lxml').text
+        review_count = BeautifulSoup(r_json['defaultReviewCount'], 'lxml').text
+        score_list = []
+        for each in r_json['shopRefinedScoreValueList']:
+            score_list.append(BeautifulSoup(each, 'lxml').text)
+        scores = ''
+        for i, score in enumerate(score_list):
+            scores = scores + ' ' + score_title_list[i] + score_list[i]
+        return [shop_base_score, scores, avg_price, review_count]
+    else:
+        logger.warning('json响应码异常，尝试更改提pr，或者提issue')
 
 
 def get_shop_tabs(shop_id):
@@ -107,9 +140,28 @@ def get_shop_tabs(shop_id):
     @param shop_id:
     @return:
     """
-    # Todo 等到确定加密接口不拦截的时候实现
-    #   这个可能会比前两个优先级高一点
-    pass
+    assert len(shop_id) == len('H2noKWCDigM0H9c1')
+    shop_url = get_shop_url(shop_id)
+    url = 'ttp://www.dianping.com/ajax/json/shopDynamic/reviewAndStar?shopId=' + str(
+        shop_id) + '&cityId=19&mainCategoryId=2821&_token=' + str(get_token(
+        shop_url)) + '&uuid=38af1c67-4a50-3220-06f6-bf9f16e71c41.1611146098&platform=1&partner=150&optimusCode=10' \
+                     '&originUrl=' + shop_url
+    r = requests_util.get_requests(url, request_type='json')
+    r_text = requests_util.replace_json_text(r.text, get_font_msg())
+    r_json = json.loads(r_text)
+    # 验证码处理
+    if r_json['code'] == 406:
+        verify_page_url = r_json['customData']['verifyPageUrl']
+        logger.warning('处理验证码，按任意键继续：', verify_page_url)
+        input()
+    elif r_json['code'] == 200:
+        msg = r_json['msg']['shopInfo']
+        shop_name = msg['shopName']
+        shop_address = BeautifulSoup(msg['address'], 'lxml').text + BeautifulSoup(msg['crossRoad'], 'lxml').text
+        shop_number = BeautifulSoup(msg['phoneNo'], 'lxml').text + BeautifulSoup(msg['phoneNo2'], 'lxml').text
+        return [shop_name, shop_address, shop_number]
+    else:
+        logger.warning('json响应码异常，尝试更改提pr，或者提issue')
 
 
 def get_promo_info(shop_id):
@@ -118,5 +170,25 @@ def get_promo_info(shop_id):
     @param shop_id:
     @return:
     """
-    # Todo 等到确定加密接口不拦截的时候实现
-    pass
+    assert len(shop_id) == len('H2noKWCDigM0H9c1')
+    shop_url = get_shop_url(shop_id)
+    url = 'ttp://www.dianping.com/ajax/json/shopDynamic/reviewAndStar?shopId=' + str(
+        shop_id) + '&cityId=19&mainCategoryId=2821&_token=' + str(get_token(
+        shop_url)) + '&uuid=38af1c67-4a50-3220-06f6-bf9f16e71c41.1611146098&platform=1&partner=150&optimusCode=10' \
+                     '&originUrl=' + shop_url
+    r = requests_util.get_requests(url, request_type='json')
+    r_text = requests_util.replace_json_text(r.text, get_font_msg())
+    r_json = json.loads(r_text)
+    # 验证码处理
+    if r_json['code'] == 406:
+        verify_page_url = r_json['customData']['verifyPageUrl']
+        logger.warning('处理验证码，按任意键继续：', verify_page_url)
+        input()
+    elif r_json['code'] == 200:
+        msg = r_json['msg']['shopInfo']
+        shop_name = msg['shopName']
+        shop_address = BeautifulSoup(msg['address'], 'lxml').text + BeautifulSoup(msg['crossRoad'], 'lxml').text
+        shop_number = BeautifulSoup(msg['phoneNo'], 'lxml').text + BeautifulSoup(msg['phoneNo2'], 'lxml').text
+        return [shop_name, shop_address, shop_number]
+    else:
+        logger.warning('json响应码异常，尝试更改提pr，或者提issue')
