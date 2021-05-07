@@ -161,7 +161,7 @@ def get_shop_tabs(shop_id):
         shop_number = BeautifulSoup(msg['phoneNo'], 'lxml').text + BeautifulSoup(msg['phoneNo2'], 'lxml').text
         return [shop_name, shop_address, shop_number]
     else:
-        logger.warning('json响应码异常，尝试更改提pr，或者提issue')
+        logger.warning('json响应码异常，尝试更改提pr，或者提issue。')
 
 
 def get_promo_info(shop_id):
