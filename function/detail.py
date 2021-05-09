@@ -36,6 +36,15 @@ class Detail():
     def __init__(self):
         self.requests_util = requests_util
 
+    def get_detail_font_mapping(self, shop_id):
+        url = 'http://www.dianping.com/shop/' + str(shop_id)
+        r = requests_util.get_requests(url, request_type='json')
+        text = r.text
+        # 获取加密文件
+        file_map = get_search_map_file(text)
+        cache.search_font_map = file_map
+        return file_map
+
     def get_detail(self, shop_id, just_need_map=False):
         url = 'http://www.dianping.com/shop/' + str(shop_id)
         r = requests_util.get_requests(url, request_type='detail')

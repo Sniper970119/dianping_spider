@@ -64,7 +64,7 @@ def get_font_msg():
     if cache.search_font_map != {}:
         return cache.search_font_map
     else:
-        Detail().get_detail('l3BEUN08X4TT52bm', just_need_map=True)
+        Detail().get_detail_font_mapping('H2noKWCDigM0H9c1')
         return cache.search_font_map
 
 
@@ -214,21 +214,72 @@ def get_basic_review(shop_id):
         verify_page_url = r_json['customData']['verifyPageUrl']
         logger.warning('处理验证码，按任意键继续：', verify_page_url)
         input()
+        get_basic_review(shop_id)
     elif r_json['code'] == 200:
+        # 获取评论的标签以及每个标签的个数
         summaries = []
         for summary in r_json['summarys']:
+            summaries.append({
+                '描述': summary['summaryString'],
+                '个数': summary['summaryCount']
+            })
 
-            pass
-        shop_base_score = r_json['fiveScore']
-        score_title_list = r_json['shopScoreTitleList']
-        avg_price = BeautifulSoup(r_json['avgPrice'], 'lxml').text
-        review_count = BeautifulSoup(r_json['defaultReviewCount'], 'lxml').text
-        score_list = []
-        for each in r_json['shopRefinedScoreValueList']:
-            score_list.append(BeautifulSoup(each, 'lxml').text)
-        scores = ''
-        for i, score in enumerate(score_list):
-            scores = scores + ' ' + score_title_list[i] + score_list[i]
-        return [shop_base_score, scores, avg_price, review_count]
+        # 获取评论数量信息
+        all_review_count = r_json['reviewCountAll']
+        review_with_pic_count = r_json['reviewCountPic']
+        good_review_count = r_json['reviewCountGood']
+        mid_review_count = r_json['reviewCountCommon']
+        bad_review_count = r_json['reviewCountBad']
+
+        # 获取精选评论详情信息
+        reviews = []
+        for review in r_json['reviewAllDOList']:
+            # 基础评论信息
+            review_info = review['reviewDataVO']
+            review_id = review_info['reviewData']['reviewId']
+            review_star = review_info['reviewData']['star']
+            review_body = BeautifulSoup(review_info['reviewData']['reviewBody'], 'lxml').text
+            review_vote_count = review_info['reviewData']['voteCount']
+            review_reply_count = review_info['reviewData']['replyCount']
+            review_view_count = review_info['reviewData']['viewCount']
+
+            # 喜欢的菜
+            if review_info['reviewData']['extInfoList'] is not None:
+                review_like_dish = review_info['reviewData']['extInfoList'][0]['values']
+            else:
+                review_like_dish = []
+
+            review_avg_price = review_info['reviewData']['avgPrice']
+            review_publish_time = review_info['addTimeVO']
+            # 商家回复
+            review_merchant_reply = review_info['followNoteString']
+
+            # 用户评论图片
+            if review['picList'] is None:
+                review_pic_list = []
+                for each_pic in review['picList']:
+                    review_pic_list.append(each_pic['bigPicture'])
+            else:
+                review_pic_list = []
+
+            # 获取用户相关信息
+            review_username = review['user']['userNickName']
+            user_id = review['user']['userId']
+
+            each_review = [shop_id, review_id, user_id, review_username, review_star, review_body, review_vote_count,
+                           review_reply_count, review_view_count, review_avg_price, review_like_dish,
+                           review_publish_time, review_merchant_reply, review_pic_list]
+            # each_review = {
+            #     'shop id':shop_id,
+            #     'review id':review_id,
+            #     'user id':user_id,
+            # }
+            reviews.append(each_review)
+
+        # 推荐菜
+        dish_tag_list = r_json['dishTagStrList']
+
+        return [summaries, all_review_count, good_review_count, mid_review_count, bad_review_count,
+                review_with_pic_count, reviews, dish_tag_list]
     else:
         logger.warning('json响应码异常，尝试更改提pr，或者提issue')
