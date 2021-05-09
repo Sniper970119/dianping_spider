@@ -70,13 +70,13 @@ class Config():
         # require 的 shop phone
         self.NEED_DETAIL = True if require_config.getRaw('shop_phone', 'need') == 'True' else False
         self.NEED_PHONE_DETAIL = True if require_config.getRaw('shop_phone', 'need_detail') == 'True' else False
-        if self.NEED_PHONE_DETAIL is False:
+        if self.NEED_PHONE_DETAIL:
             logger.warn('开启了电话详情模式，会降低速度并增加反爬概率')
 
         # require 的 shop review
         self.NEED_REVIEW = True if require_config.getRaw('shop_review', 'need') == 'True' else False
         self.NEED_REVIEW_DETAIL = True if require_config.getRaw('shop_review', 'more_detail') == 'True' else False
-        if self.NEED_REVIEW_DETAIL is False:
+        if self.NEED_REVIEW_DETAIL:
             logger.warn('开启了评论详情模式，会降低速度并增加反爬概率')
             try:
                 self.NEED_REVIEW_PAGES = int(require_config.getRaw('shop_review', 'need_pages'))
