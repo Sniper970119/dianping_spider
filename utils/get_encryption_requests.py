@@ -92,8 +92,13 @@ def get_basic_hidden_info(shop_id):
         msg = r_json['msg']['shopInfo']
         shop_name = msg['shopName']
         shop_address = BeautifulSoup(msg['address'], 'lxml').text + BeautifulSoup(msg['crossRoad'], 'lxml').text
-        shop_number = BeautifulSoup(msg['phoneNo'], 'lxml').text + BeautifulSoup(msg['phoneNo2'], 'lxml').text
-        return [shop_name, shop_address, shop_number]
+        shop_number = BeautifulSoup(msg['phoneNo'], 'lxml').text + ', ' + BeautifulSoup(msg['phoneNo2'], 'lxml').text
+        # return [shop_name, shop_address, shop_number]
+        return {
+            '店铺名': shop_name,
+            '店铺地址': shop_address,
+            '店铺电话': shop_number
+        }
     else:
         logger.warning('json响应码异常，尝试更改提pr，或者提issue')
 
@@ -126,72 +131,43 @@ def get_review_and_star(shop_id):
         score_list = []
         for each in r_json['shopRefinedScoreValueList']:
             score_list.append(BeautifulSoup(each, 'lxml').text)
-        scores = ''
+        # scores = ''
+        # for i, score in enumerate(score_list):
+        #     scores = scores + ' ' + score_title_list[i] + score_list[i]
+        scores = {}
         for i, score in enumerate(score_list):
-            scores = scores + ' ' + score_title_list[i] + score_list[i]
-        return [shop_base_score, scores, avg_price, review_count]
+            scores[score_title_list[i]] = score_list[i]
+        # return [shop_base_score, scores, avg_price, review_count]
+        return {
+            '店铺总分': shop_base_score,
+            '店铺评分': scores,
+            '人均价格': avg_price,
+            '评论总数': review_count
+        }
     else:
         logger.warning('json响应码异常，尝试更改提pr，或者提issue')
 
 
-# def get_shop_tabs(shop_id):
-#     """
-#     获取招牌菜、店铺环境等
-#     @param shop_id:
-#     @return:
-#     """
-#     assert len(shop_id) == len('H2noKWCDigM0H9c1')
-#     shop_url = get_shop_url(shop_id)
-#     url = 'ttp://www.dianping.com/ajax/json/shopDynamic/reviewAndStar?shopId=' + str(
-#         shop_id) + '&cityId=19&mainCategoryId=2821&_token=' + str(get_token(
-#         shop_url)) + '&uuid=38af1c67-4a50-3220-06f6-bf9f16e71c41.1611146098&platform=1&partner=150&optimusCode=10' \
-#                      '&originUrl=' + shop_url
-#     r = requests_util.get_requests(url, request_type='json')
-#     r_text = requests_util.replace_json_text(r.text, get_font_msg())
-#     r_json = json.loads(r_text)
-#     # 验证码处理
-#     if r_json['code'] == 406:
-#         verify_page_url = r_json['customData']['verifyPageUrl']
-#         logger.warning('处理验证码，按任意键继续：', verify_page_url)
-#         input()
-#     elif r_json['code'] == 200:
-#         msg = r_json['msg']['shopInfo']
-#         shop_name = msg['shopName']
-#         shop_address = BeautifulSoup(msg['address'], 'lxml').text + BeautifulSoup(msg['crossRoad'], 'lxml').text
-#         shop_number = BeautifulSoup(msg['phoneNo'], 'lxml').text + BeautifulSoup(msg['phoneNo2'], 'lxml').text
-#         return [shop_name, shop_address, shop_number]
-#     else:
-#         logger.warning('json响应码异常，尝试更改提pr，或者提issue。')
+def get_shop_tabs(shop_id):
+    """
+    获取招牌菜、店铺环境等
+    @param shop_id:
+    @return:
+    """
+    assert len(shop_id) == len('H2noKWCDigM0H9c1')
+    shop_url = get_shop_url(shop_id)
+    # Todo 这个接口需要登录，以后再说
 
 
-# def get_promo_info(shop_id):
-#     """
-#     优惠券信息
-#     @param shop_id:
-#     @return:
-#     """
-#     assert len(shop_id) == len('H2noKWCDigM0H9c1')
-#     shop_url = get_shop_url(shop_id)
-#     url = 'ttp://www.dianping.com/ajax/json/shopDynamic/reviewAndStar?shopId=' + str(
-#         shop_id) + '&cityId=19&mainCategoryId=2821&_token=' + str(get_token(
-#         shop_url)) + '&uuid=38af1c67-4a50-3220-06f6-bf9f16e71c41.1611146098&platform=1&partner=150&optimusCode=10' \
-#                      '&originUrl=' + shop_url
-#     r = requests_util.get_requests(url, request_type='json')
-#     r_text = requests_util.replace_json_text(r.text, get_font_msg())
-#     r_json = json.loads(r_text)
-#     # 验证码处理
-#     if r_json['code'] == 406:
-#         verify_page_url = r_json['customData']['verifyPageUrl']
-#         logger.warning('处理验证码，按任意键继续：', verify_page_url)
-#         input()
-#     elif r_json['code'] == 200:
-#         msg = r_json['msg']['shopInfo']
-#         shop_name = msg['shopName']
-#         shop_address = BeautifulSoup(msg['address'], 'lxml').text + BeautifulSoup(msg['crossRoad'], 'lxml').text
-#         shop_number = BeautifulSoup(msg['phoneNo'], 'lxml').text + BeautifulSoup(msg['phoneNo2'], 'lxml').text
-#         return [shop_name, shop_address, shop_number]
-#     else:
-#         logger.warning('json响应码异常，尝试更改提pr，或者提issue')
+def get_promo_info(shop_id):
+    """
+    优惠券信息
+    @param shop_id:
+    @return:
+    """
+    assert len(shop_id) == len('H2noKWCDigM0H9c1')
+    shop_url = get_shop_url(shop_id)
+    # Todo 这个接口需要登录，以后再说
 
 
 def get_basic_review(shop_id):
