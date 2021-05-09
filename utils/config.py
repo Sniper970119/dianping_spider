@@ -29,7 +29,7 @@ class Config(object):
         self.config_file = config_file
         self._path = os.path.join(os.getcwd(), config_file)
         if not os.path.exists(self._path):
-            raise FileNotFoundError("No such file: config.ini")
+            raise FileNotFoundError("No such file: " + config_file)
         self._config = configparser.ConfigParser()
         self._config.read(self._path, encoding='utf-8-sig')
         self._configRaw = configparser.RawConfigParser()
@@ -43,3 +43,4 @@ class Config(object):
 
 
 global_config = Config('./config.ini')
+require_config = Config('./require.ini')
