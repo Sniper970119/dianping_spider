@@ -31,6 +31,7 @@ from utils.config import global_config
 from utils.logger import logger
 from utils.get_file_map import get_map
 from utils.cookie_utils import cookie_cache
+from utils.spider_config import spider_config
 
 
 class RequestsUtils():
@@ -39,25 +40,29 @@ class RequestsUtils():
     """
 
     def __init__(self):
-        requests_times = global_config.getRaw('config', 'requests_times')
-        self.cookie = global_config.getRaw('config', 'Cookie')
-        self.ua = global_config.getRaw('config', 'user-agent')
-
+        # requests_times = global_config.getRaw('config', 'requests_times')
+        requests_times = spider_config.REQUESTS_TIMES
+        # self.cookie = global_config.getRaw('config', 'Cookie')
+        self.cookie = spider_config.COOKIE
+        # self.ua = global_config.getRaw('config', 'user-agent')
+        self.ua = spider_config.USER_AGENT
         self.ua_engine = Factory.create()
         if self.ua is None:
             logger.error('user agent 暂时不支持为空')
             sys.exit()
 
-        self.cookie_pool = global_config.getRaw('config', 'use_cookie_pool')
-        self.cookie_pool = True if self.cookie_pool == 'True' else False
+        # self.cookie_pool = global_config.getRaw('config', 'use_cookie_pool')
+        self.cookie_pool = spider_config.USE_COOKIE_POOL
+        # self.cookie_pool = True if self.cookie_pool == 'True' else False
         if self.cookie_pool is True:
             logger.info('使用cookie池')
             if not os.path.exists('cookies.txt'):
                 logger.error('cookies.txt文件不存在')
                 sys.exit()
 
-        self.ip_proxy = global_config.getRaw('proxy', 'use_proxy')
-        self.ip_proxy = True if self.ip_proxy == 'True' else False
+        # self.ip_proxy = global_config.getRaw('proxy', 'use_proxy')
+        self.ip_proxy = spider_config.USE_PROXY
+        # self.ip_proxy = True if self.ip_proxy == 'True' else False
         if self.ip_proxy:
             self.proxy_pool = []
 

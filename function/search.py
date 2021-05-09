@@ -34,15 +34,16 @@ from utils.requests_utils import requests_util
 
 class Search():
     def __init__(self):
-        self.location_id = global_config.getRaw('detail', 'location_id')
-        self.channel_id = global_config.getRaw('detail', 'channel_id')
-        self.custom_search_url = global_config.getRaw('detail', 'search_url')
-        self.need_detail = global_config.getRaw('detail', 'need_detail')
-        self.need_comment = global_config.getRaw('detail', 'need_comment')
-        self.requests_util = requests_util
-        self.jump_wait = False
+        # self.location_id = global_config.getRaw('detail', 'location_id')
+        # self.channel_id = global_config.getRaw('detail', 'channel_id')
+        # self.custom_search_url = global_config.getRaw('detail', 'search_url')
+        # self.need_detail = global_config.getRaw('detail', 'need_detail')
+        # self.need_comment = global_config.getRaw('detail', 'need_comment')
+        # self.requests_util = requests_util
+        # self.jump_wait = False
+        pass
 
-    def search(self, key_word, only_need_first=True, needed_pages=50):
+    def search(self, search_url):
         """
         搜索
         :param key_word: 关键字
@@ -51,12 +52,13 @@ class Search():
         :return:
         """
         # Todo 不需要详情页和评论，只需要首页搜索 不需要cookie
-        assert isinstance(key_word, str)
-        assert key_word != None or key_word.strip() != ''
-        if self.custom_search_url != '':
-            key_word = self.custom_search_url
-        logger.info('开始搜索:' + key_word)
+        # assert isinstance(key_word, str)
+        # assert key_word != None or key_word.strip() != ''
+        # if self.custom_search_url != '':
+        #     key_word = self.custom_search_url
+        # logger.info('开始搜索:' + key_word)
         # header = self.get_header()
+        r = requests_util.get_requests(url, request_type='search')
         for i in tqdm(range(1, needed_pages + 1), desc='页数'):
             # 针对只需要收条的情况，跳出页数循环
             if only_need_first is True and i != 1:

@@ -87,4 +87,4 @@ class Config():
             self.NEED_REVIEW_PAGES = 0
 
 
-config = Config()
+spider_config = Config()

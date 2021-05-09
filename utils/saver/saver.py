@@ -20,6 +20,7 @@
 
 """
 from utils.config import global_config
+from utils.spider_config import spider_config
 
 
 class Saver():
@@ -28,7 +29,8 @@ class Saver():
     """
 
     def __init__(self):
-        save_mode = global_config.get('config', 'save_mode')
+        # save_mode = global_config.get('config', 'save_mode')
+        save_mode = spider_config.SAVE_MODE
         self.saver_list = []
         # 构造每个存储方法的存储器
         if 'csv' in save_mode:

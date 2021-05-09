@@ -23,11 +23,13 @@ import sys
 
 from utils.config import global_config
 from utils.logger import logger
+from utils.spider_config import spider_config
 
 
 class MongoSaver():
     def __init__(self):
-        mongo_url = global_config.get('config', 'mongo_path')
+        # mongo_url = global_config.get('config', 'mongo_path')
+        mongo_url = spider_config.MONGO_PATH
         try:
             import pymongo
             client = pymongo.MongoClient(mongo_url)
