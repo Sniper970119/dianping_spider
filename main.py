@@ -48,14 +48,10 @@ if __name__ == '__main__':
     if args.normal == 1:
         controller.main()
     if args.detail == 1:
-        from function.detail import Detail
-
         shop_id = args.shop_id
         logger.info('爬取店铺id：' + shop_id + '详情')
         controller.get_detail(shop_id, detail=args.need_more)
     if args.review == 1:
-        from function.review import Review
-
         shop_id = args.shop_id
         logger.info('爬取店铺id：' + shop_id + '评论')
         controller.get_review(shop_id, detail=args.need_more)
