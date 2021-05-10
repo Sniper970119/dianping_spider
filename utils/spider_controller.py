@@ -65,18 +65,18 @@ class Controller():
             # each_search_res = self.s.search(search_url, request_type)
             """
             {
-                '店铺id': shop_id,
-                '店铺名': name,
-                '评论个数': review_number,
-                '人均价格': mean_price,
-                '标签1': tag1,
-                '标签2': tag2,
-                '店铺地址': addr,
-                '详情链接': detail_url,
-                '图片链接': image_path,
-                '详细评分': comment_list,
-                '推荐菜': recommend,
-                '店铺均分': star_point,
+                '店铺id': -,
+                '店铺名': -,
+                '评论个数': -,
+                '人均价格': -,
+                '标签1': -,
+                '标签2': -,
+                '店铺地址': -,
+                '详情链接': -,
+                '图片链接': -,
+                '详细评分': -,
+                '推荐菜': -,
+                '店铺均分': -,
             }
             """
             search_res = self.s.search(search_url, request_type)
