@@ -80,7 +80,7 @@ class Controller():
             }
             """
             search_res = self.s.search(search_url, request_type)
-            for each_search_res in tqdm(search_res,desc='详细爬取'):
+            for each_search_res in tqdm(search_res, desc='详细爬取'):
                 each_detail_res = {}
                 each_review_res = {}
                 # 爬取详情
@@ -159,6 +159,33 @@ class Controller():
                         each_review_res = get_basic_review(shop_id)
                 self.saver(each_search_res, each_detail_res, each_review_res['精选评论'])
 
+    def get_review(self, shop_id, detail=False):
+        if detail:
+            each_review_res = self.r.get_review(shop_id)
+        else:
+            each_review_res = get_basic_review(shop_id)
+        saver.save_data(each_review_res['精选评论'], 'review')
+
+    def get_detail(self, shop_id, detail=False):
+        each_detail_res = {}
+        if detail:
+            each_detail_res = self.d.get_detail(shop_id)
+            # 多版本爬取格式适配
+            each_detail_res.update({
+                '店铺总分': '-',
+                '店铺评分': '-',
+            })
+        else:
+            hidden_info = get_basic_hidden_info(shop_id)
+            review_and_star = get_review_and_star(shop_id)
+            each_detail_res.update(hidden_info)
+            each_detail_res.update(review_and_star)
+            # 多版本爬取格式适配
+            each_detail_res.update({
+                '其他信息': '-'
+            })
+        saver.save_data(each_detail_res, 'detail')
+
     def get_search_url(self, cur_page):
         """
         获取搜索链接
@@ -181,3 +208,6 @@ class Controller():
         # save review
         if spider_config.NEED_REVIEW:
             saver.save_data(each_review_res, 'review')
+
+
+controller = Controller()
