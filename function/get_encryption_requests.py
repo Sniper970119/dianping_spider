@@ -79,27 +79,44 @@ def get_basic_hidden_info(shop_id):
     url = 'http://www.dianping.com/ajax/json/shopDynamic/basicHideInfo?' \
           'shopId=' + str(shop_id) + \
           '&_token=' + str(get_token(shop_url)) + \
-          '&tcv=ck9rmnrofg' \
+          '&tcv=' + str(spider_config.TCV) + \
           '&uuid=' + str(spider_config.UUID) + \
           '&platform=1' \
           '&partner=150' \
           '&optimusCode=10' \
           '&originUrl=' + str(shop_url)
-    r = requests_util.get_requests(url, request_type='json')
-    r_text = requests_util.replace_json_text(r.text, get_font_msg())
-    r_json = json.loads(r_text)
+    # 这里处理解决请求会异常的问题
+    while True:
+        r = requests_util.get_requests(url, request_type='json')
+        r_text = requests_util.replace_json_text(r.text, get_font_msg())
+        try:
+            r_json = json.loads(r_text)
+            # 前置验证码过滤
+            if r_json['code'] == 200:
+                break
+        except:
+            pass
     # 验证码处理
     if r_json['code'] == 406:
         verify_page_url = r_json['customData']['verifyPageUrl']
-        logger.warning('处理验证码，按任意键继续：', verify_page_url)
+        print('处理验证码，按任意键继续：', verify_page_url)
         input()
     elif r_json['code'] == 200:
         msg = r_json['msg']['shopInfo']
         shop_name = msg['shopName']
-        shop_address = BeautifulSoup(msg['address'], 'lxml').text + BeautifulSoup(msg['crossRoad'], 'lxml').text
-        shop_number = BeautifulSoup(msg['phoneNo'], 'lxml').text + ', ' + BeautifulSoup(msg['phoneNo2'], 'lxml').text
-        # return [shop_name, shop_address, shop_number]
+
+        shop_address = BeautifulSoup(msg['address'], 'lxml').text if msg['address'] is not None else '' + \
+                                                                                                     BeautifulSoup(msg[
+                                                                                                                       'crossRoad'],
+                                                                                                                   'lxml').text if \
+            msg['crossRoad'] is not None else ''
+        shop_number = BeautifulSoup(msg['phoneNo'], 'lxml').text if msg['phoneNo'] is not None else '' + ', ' + \
+                                                                                                    BeautifulSoup(
+                                                                                                        msg['phoneNo2'],
+                                                                                                        'lxml').text if \
+            msg['phoneNo2'] is not None else ''
         return {
+            '店铺id': shop_id,
             '店铺名': shop_name,
             '店铺地址': shop_address,
             '店铺电话': shop_number
@@ -126,13 +143,21 @@ def get_review_and_star(shop_id):
           '&partner=150' \
           '&optimusCode=10' \
           '&originUrl=' + shop_url
-    r = requests_util.get_requests(url, request_type='json')
-    r_text = requests_util.replace_json_text(r.text, get_font_msg())
-    r_json = json.loads(r_text)
+    # 这里处理解决请求会异常的问题
+    while True:
+        r = requests_util.get_requests(url, request_type='json')
+        r_text = requests_util.replace_json_text(r.text, get_font_msg())
+        try:
+            r_json = json.loads(r_text)
+            # 前置验证码过滤
+            if r_json['code'] == 200:
+                break
+        except:
+            pass
     # 验证码处理
     if r_json['code'] == 406:
         verify_page_url = r_json['customData']['verifyPageUrl']
-        logger.warning('处理验证码，按任意键继续：', verify_page_url)
+        print('处理验证码，按任意键继续：', verify_page_url)
         input()
     elif r_json['code'] == 200:
         shop_base_score = r_json['fiveScore']
@@ -150,6 +175,7 @@ def get_review_and_star(shop_id):
             scores[score_title_list[i]] = score_list[i]
         # return [shop_base_score, scores, avg_price, review_count]
         return {
+            '店铺id': shop_id,
             '店铺总分': shop_base_score,
             '店铺评分': scores,
             '人均价格': avg_price,
@@ -193,21 +219,28 @@ def get_basic_review(shop_id):
           'shopId=' + str(shop_id) + \
           '&cityId=19' \
           '&shopType=10' \
-          '&tcv=owgl06hbkv' \
+          '&tcv=' + str(spider_config.TCV) + \
           '&_token=' + str(get_token(shop_url)) + \
           '&uuid=' + str(spider_config.UUID) + \
           '&platform=1' \
           '&partner=150' \
           '&optimusCode=10' \
           '&originUrl=' + shop_url
-    r = requests_util.get_requests(url, request_type='json')
-    r_text = requests_util.replace_json_text(r.text, get_font_msg())
-    # Todo 这里可能会因为请求问题json没办法load
-    r_json = json.loads(r_text)
+    # 这里处理解决请求会异常的问题
+    while True:
+        r = requests_util.get_requests(url, request_type='json')
+        r_text = requests_util.replace_json_text(r.text, get_font_msg())
+        try:
+            r_json = json.loads(r_text)
+            # 前置验证码过滤
+            if r_json['code'] == 200:
+                break
+        except:
+            pass
     # 验证码处理
     if r_json['code'] == 406:
         verify_page_url = r_json['customData']['verifyPageUrl']
-        logger.warning('处理验证码，按任意键继续：', verify_page_url)
+        print('处理验证码，按任意键继续：', verify_page_url)
         input()
         get_basic_review(shop_id)
     elif r_json['code'] == 200:
@@ -288,6 +321,7 @@ def get_basic_review(shop_id):
         # return [summaries, all_review_count, good_review_count, mid_review_count, bad_review_count,
         #         review_with_pic_count, reviews, dish_tag_list]
         return {
+            '商铺id': shop_id,
             '评论摘要': summaries,
             '评论总数': all_review_count,
             '好评个数': good_review_count,

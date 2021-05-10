@@ -62,30 +62,33 @@ class MongoSaver():
         :param data:
         :return:
         """
-        data_list = []
-        for each in data:
-            data_dict = {
-                '店铺id': each[0],
-                '店铺名称': each[1],
-                '店铺评分': each[2],
-                '评论数量': each[3],
-                '平均价格': each[4],
-                '标签1': each[5],
-                '标签2': each[6],
-                '地址': each[7],
-                '推荐': each[8],
-                '评分': each[9],
-                '图片链接': each[10],
-                '详情链接': each[11],
-                'detail': each[12],
-                'review': each[13],
-
-            }
-            data_list.append(data_dict)
         col = self.database['info']
-        for each in data_list:
-            col.delete_many({'店铺id': each['店铺id']})
-        col.insert(data_list)
+        col.delete_many({'店铺id': data['店铺id']})
+        col.insert(data)
+        # data_list = []
+        # for each in data:
+        #     data_dict = {
+        #         '店铺id': each[0],
+        #         '店铺名称': each[1],
+        #         '店铺评分': each[2],
+        #         '评论数量': each[3],
+        #         '平均价格': each[4],
+        #         '标签1': each[5],
+        #         '标签2': each[6],
+        #         '地址': each[7],
+        #         '推荐': each[8],
+        #         '评分': each[9],
+        #         '图片链接': each[10],
+        #         '详情链接': each[11],
+        #         'detail': each[12],
+        #         'review': each[13],
+        #
+        #     }
+        #     data_list.append(data_dict)
+        # col = self.database['info']
+        # for each in data_list:
+        #     col.delete_many({'店铺id': each['店铺id']})
+        # col.insert(data_list)
         pass
 
     def save_detail_list(self, data):
@@ -94,25 +97,28 @@ class MongoSaver():
         :param data:
         :return:
         """
-        data_list = []
-        for each in data:
-            data_dict = {
-                '店铺id': each[0],
-                '店铺名称': each[1],
-                '评论数量': each[2],
-                '平均价格': each[3],
-                '评分': each[4],
-                '地址': each[5],
-                '电话': each[6],
-                '其他信息': each[7],
-
-            }
-            data_list.append(data_dict)
         col = self.database['info_detail']
-
-        for each in data_list:
-            col.delete_many({'店铺id': each['店铺id']})
-        col.insert(data_list)
+        col.delete_many({'店铺id': data['店铺id']})
+        col.insert(data)
+        # data_list = []
+        # for each in data:
+        #     data_dict = {
+        #         '店铺id': each[0],
+        #         '店铺名称': each[1],
+        #         '评论数量': each[2],
+        #         '平均价格': each[3],
+        #         '评分': each[4],
+        #         '地址': each[5],
+        #         '电话': each[6],
+        #         '其他信息': each[7],
+        #
+        #     }
+        #     data_list.append(data_dict)
+        # col = self.database['info_detail']
+        #
+        # for each in data_list:
+        #     col.delete_many({'店铺id': each['店铺id']})
+        # col.insert(data_list)
 
     def save_review_list(self, data):
         """
@@ -120,20 +126,7 @@ class MongoSaver():
         :param data:
         :return:
         """
-        data_list = []
-        for each in data:
-            data_dict = {
-                '评论id': each[0],
-                '店铺id': each[1],
-                '用户名': each[2],
-                '打分': each[3],
-                '评论': each[4],
-                '喜欢': each[5],
-                '发布时间': each[6],
-
-            }
-            data_list.append(data_dict)
         col = self.database['review']
-        for each in data_list:
+        for each in data:
             col.delete_many({'评论id': each['评论id']})
-        col.insert(data_list)
+            col.insert(each)

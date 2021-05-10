@@ -37,7 +37,8 @@ class Config():
         self.SAVE_MODE = global_config.getRaw('config', 'save_mode')
         self.MONGO_PATH = global_config.getRaw('config', 'mongo_path')
         self.REQUESTS_TIMES = global_config.getRaw('config', 'requests_times')
-        self.UUID = global_config.getRaw('config','uuid')
+        self.UUID = global_config.getRaw('config', 'uuid')
+        self.TCV = global_config.getRaw('config', 'tcv')
 
         # config 的 detail
         self.KEYWORD = global_config.getRaw('detail', 'keyword')

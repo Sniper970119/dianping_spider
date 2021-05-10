@@ -103,27 +103,27 @@ class RequestsUtils():
         :param url:
         :return:
         """
-        assert request_type in ['search', 'detail', 'review', 'no header', 'json']
+        assert request_type in ['search', 'detail', 'review', 'no header', 'json', 'no proxy, no cookie']
         # 不需要请求头的请求不计入统计（比如字体文件下载）
         if request_type == 'no header':
             r = requests.get(url)
             return r
         if request_type == 'json':
             if self.ip_proxy:
-                r = requests.get(url, headers=self.get_header(None, False), proxies=self.get_proxy())
-                # # 由于json这个请求方式不会出现被ban的情况，而代理ip有的时候是失效的
-                # # 因此这里直接while 检查，直至有效
-                # flag = True
-                # while flag:
-                #     r = requests.get(url, headers=self.get_header(None, False), proxies=self.get_proxy())
-                #     if r.status_code == 200:
-                #         flag = False
-                #     if flag:
-                #         print('retry')
+                # 这个while是处理代理失效的问题（通常是超时等问题）
+                while True:
+                    try:
+                        r = requests.get(url, headers=self.get_header(None, False), proxies=self.get_proxy())
+                        break
+                    except:
+                        pass
             else:
                 r = requests.get(url, headers=self.get_header(None, False))
-            return r
+            return self.handle_verify(r, url, request_type)
 
+        if request_type == 'no proxy, no cookie':
+            r = requests.get(url, headers=self.get_header(None, False))
+            return self.handle_verify(r, url, request_type)
         # 需要请求头的请求全局监控，全局暂停，只对非代理情况暂停
         if self.ip_proxy is False:
             # if self.ip_proxy is True:
@@ -159,9 +159,19 @@ class RequestsUtils():
                 #  失效之后重复调用本方法直至200（也算是处理403了）
                 return self.get_requests(url, request_type)
         else:
-            return r
+            return self.handle_verify(r, url, request_type)
         # 这里是cookie为None并且响应非200会调用到这，目前的逻辑应该不存在这种情况，不过为了保险起见依然选择返回r
         return r
+
+    def handle_verify(self, r, url, request_type):
+        if 'verify' in r.url:
+            # print('处理验证码，按任意键继续', r.url)
+            # input()
+            print('verify')
+            # self.get_requests('http://www.dianping.com', request_type)
+            return self.get_requests(url, request_type)
+        else:
+            return r
 
     def get_header(self, cookie, need_cookie=True):
         """

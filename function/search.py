@@ -115,13 +115,13 @@ class Search():
             except:
                 comment_list = '-'
             one_step_search_res = {
-                '商铺id': shop_id,
-                '商铺名': name,
+                '店铺id': shop_id,
+                '店铺名': name,
                 '评论个数': review_number,
                 '人均价格': mean_price,
                 '标签1': tag1,
                 '标签2': tag2,
-                '商铺地址': addr,
+                '店铺地址': addr,
                 '详情链接': detail_url,
                 '图片链接': image_path,
                 '详细评分': comment_list,
@@ -129,5 +129,5 @@ class Search():
                 '店铺均分': star_point,
             }
             search_res.append(one_step_search_res)
-            yield one_step_search_res
-        # return search_res
+            # yield one_step_search_res
+        return search_res

@@ -171,7 +171,7 @@ class Detail():
         detail_info = {
             '店铺id': shop_id,
             '店铺名': shop_name,
-            '评论个数': review_count,
+            '评论总数': review_count,
             '人均价格': avg_price,
             '店铺地址': address,
             '店铺电话': phone,
