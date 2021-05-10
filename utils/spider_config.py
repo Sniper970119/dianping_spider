@@ -37,12 +37,14 @@ class Config():
         self.SAVE_MODE = global_config.getRaw('config', 'save_mode')
         self.MONGO_PATH = global_config.getRaw('config', 'mongo_path')
         self.REQUESTS_TIMES = global_config.getRaw('config', 'requests_times')
+        self.UUID = global_config.getRaw('config','uuid')
 
         # config 的 detail
         self.KEYWORD = global_config.getRaw('detail', 'keyword')
         self.LOCATION_ID = global_config.getRaw('detail', 'location_id')
         self.CHANNEL_ID = global_config.getRaw('detail', 'channel_id')
         self.SEARCH_URL = global_config.getRaw('detail', 'search_url')
+        assert self.SEARCH_URL == '' or self.SEARCH_URL.endswith('p'), 'search_url 没有拼接p'
         self.NEED_FIRST = True if global_config.getRaw('detail', 'need_first') == 'True' else False
         try:
             self.NEED_SEARCH_PAGES = int(global_config.getRaw('detail', 'need_pages'))

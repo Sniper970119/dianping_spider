@@ -126,7 +126,8 @@ class Search():
                 '图片链接': image_path,
                 '详细评分': comment_list,
                 '推荐菜': recommend,
-                '店铺均分':star_point,
+                '店铺均分': star_point,
             }
             search_res.append(one_step_search_res)
-        return search_res
+            yield one_step_search_res
+        # return search_res

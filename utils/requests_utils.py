@@ -194,16 +194,12 @@ class RequestsUtils():
         """
         获取代理
         """
-        try:
-            repeat_nub = int(global_config.getRaw('proxy', 'repeat_nub'))
-        except:
-            logger.warning('repeat_nub 格式不正确，应为正整数')
-            sys.exit()
+        repeat_nub = spider_config.REPEAT_NUMBER
         # http 提取模式
-        if global_config.getRaw('proxy', 'http_extract') == '1':
+        if spider_config.HTTP_EXTRACT:
             # 代理池为空，提取代理
             if len(self.proxy_pool) == 0:
-                proxy_url = global_config.getRaw('proxy', 'http_link')
+                proxy_url = spider_config.HTTP_LINK
                 r = requests.get(proxy_url)
                 r_json = r.json()
                 for proxy in r_json:
@@ -215,7 +211,7 @@ class RequestsUtils():
             self.proxy_pool.remove(self.proxy_pool[0])
             return proxies
         # 秘钥提取模式
-        elif global_config.getRaw('proxy', 'key_extract') == '1':
+        elif spider_config.KEY_EXTRACT:
             pass
         pass
 

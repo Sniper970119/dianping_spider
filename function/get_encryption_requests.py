@@ -23,12 +23,12 @@ import json
 import zlib
 import base64
 import time
-import datetime
 from bs4 import BeautifulSoup
 
 from utils.requests_utils import requests_util
 from utils.cache import cache
 from utils.logger import logger
+from utils.spider_config import spider_config
 
 from function.detail import Detail
 
@@ -77,9 +77,14 @@ def get_basic_hidden_info(shop_id):
     assert len(shop_id) == len('H2noKWCDigM0H9c1')
     shop_url = get_shop_url(shop_id)
     url = 'http://www.dianping.com/ajax/json/shopDynamic/basicHideInfo?' \
-          'shopId=' + str(shop_id) + '&_token=' + str(get_token(
-        shop_url)) + '&tcv=ck9rmnrofg&uuid=6ca1f51a-7653-b987-3cd6-95f3aadb13b8.1619854599&platform=1' \
-                     '&partner=150&optimusCode=10&originUrl=' + str(shop_url)
+          'shopId=' + str(shop_id) + \
+          '&_token=' + str(get_token(shop_url)) + \
+          '&tcv=ck9rmnrofg' \
+          '&uuid=' + str(spider_config.UUID) + \
+          '&platform=1' \
+          '&partner=150' \
+          '&optimusCode=10' \
+          '&originUrl=' + str(shop_url)
     r = requests_util.get_requests(url, request_type='json')
     r_text = requests_util.replace_json_text(r.text, get_font_msg())
     r_json = json.loads(r_text)
@@ -111,10 +116,16 @@ def get_review_and_star(shop_id):
     """
     assert len(shop_id) == len('H2noKWCDigM0H9c1')
     shop_url = get_shop_url(shop_id)
-    url = 'http://www.dianping.com/ajax/json/shopDynamic/reviewAndStar?shopId=' + str(
-        shop_id) + '&cityId=19&mainCategoryId=2821&_token=' + str(get_token(
-        shop_url)) + '&uuid=38af1c67-4a50-3220-06f6-bf9f16e71c41.1611146098&platform=1&partner=150&optimusCode=10' \
-                     '&originUrl=' + shop_url
+    url = 'http://www.dianping.com/ajax/json/shopDynamic/reviewAndStar?' \
+          'shopId=' + str(shop_id) + \
+          '&cityId=19' \
+          '&mainCategoryId=2821' \
+          '&_token=' + str(get_token(shop_url)) + \
+          '&uuid=' + str(spider_config.UUID) + \
+          '&platform=1' \
+          '&partner=150' \
+          '&optimusCode=10' \
+          '&originUrl=' + shop_url
     r = requests_util.get_requests(url, request_type='json')
     r_text = requests_util.replace_json_text(r.text, get_font_msg())
     r_json = json.loads(r_text)
@@ -178,10 +189,17 @@ def get_basic_review(shop_id):
     """
     assert len(shop_id) == len('H2noKWCDigM0H9c1')
     shop_url = get_shop_url(shop_id)
-    url = 'http://www.dianping.com/ajax/json/shopDynamic/allReview?shopId=' + str(
-        shop_id) + '&cityId=19&shopType=10&tcv=owgl06hbkv&_token=' + str(get_token(
-        shop_url)) + '&uuid=38af1c67-4a50-3220-06f6-bf9f16e71c41.1611146098&platform=1&partner=150&optimusCode=10' \
-                     '&originUrl=' + shop_url
+    url = 'http://www.dianping.com/ajax/json/shopDynamic/allReview?' \
+          'shopId=' + str(shop_id) + \
+          '&cityId=19' \
+          '&shopType=10' \
+          '&tcv=owgl06hbkv' \
+          '&_token=' + str(get_token(shop_url)) + \
+          '&uuid=' + str(spider_config.UUID) + \
+          '&platform=1' \
+          '&partner=150' \
+          '&optimusCode=10' \
+          '&originUrl=' + shop_url
     r = requests_util.get_requests(url, request_type='json')
     r_text = requests_util.replace_json_text(r.text, get_font_msg())
     # Todo 这里可能会因为请求问题json没办法load
