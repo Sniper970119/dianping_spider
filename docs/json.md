@@ -45,7 +45,7 @@
 ![image](../imgs/show3.jpg)
 
 刷新网页（F5），然后就会发现右侧多了好多请求。
-点击allReview（箭头打错为止了）或者basicHiddenInfo
+点击allReview（箭头打错位置了）或者basicHiddenInfo
 ![image](../imgs/show4.jpg)
 
 我们以allReview为例，点击后点击小箭头
