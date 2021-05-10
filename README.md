@@ -7,7 +7,6 @@
 
 *仅限学习交流使用，禁止商用*
 
-本分支为为了适配json带来的巨大性能提升而对框架进行重构，开发中，开发完成之后会合并分支。
 
 ##### 本项目遵守GPT-3.0开源协议
 
@@ -22,8 +21,8 @@
 本程序可以爬取大众点评搜索页、详情页以及评论页中的相关信息，并将结果写入文件或数据库中。支持多cookie。
 
 目前支持的写入类型如下：
-- MongoDB数据库
-- csv
+- MongoDB数据库（支持）
+- csv（新版可能会报错，还没适配 2021.05.10）
 
 如果您需要其他数据库支持，联系我们或者您添加后提PR。
 
@@ -45,10 +44,10 @@
 
 - ip代理
 
+- 通过匿名接口，强势优化ip代理的作用
+
 
 ### 计划支持
-
-- 强势优化ip代理的作用（真的很强）
 
 - 优惠券信息
 
@@ -76,6 +75,8 @@
 |config：      |  |
 |use_cookie_pool      |是否使用cookie池 |
 |Cookie      |Cookie信息（注意大写，之所以不一样是方便将浏览器信息直接复制进去而不做更改）。|
+|uuid      |uuid信息，[详见](./docs/json.md)|
+|tcv      |tcv信息，[详见](./docs/json.md)|
 |user-agent      |浏览器UA信息，不填则随机UA。|
 |save_mode      |保存方式，具体格式参照config.ini提示。|
 |mongo_path      |mongo数据库配置，具体格式参照config.ini提示|
@@ -85,12 +86,8 @@
 |location_id      |地区id，具体格式参照config.ini提示。  |
 |channel_id      |频道id，具体格式参照config.ini提示。  |
 |search_url      |搜索url，详见config.ini内提示。  |
-|need_detail      |是否需要详情页  |
-|need_comment      |是否需要评论页  |
 |need_first      |是否只需要首页首条  |
 |need_pages      |需要搜索的页数（搜索页）  |
-|save:      |  |
-|review_pages      |获取的评论页页数  |
 |proxy:      |  |
 |use_proxy |是否使用代理 |
 |repeat_nub |ip重复次数，详见config.ini |
@@ -100,6 +97,20 @@
 |key_id |秘钥id |
 |key_key |秘钥key |
 
+然后配置require.ini，该配置文件用于选择爬取策略。
+
+|参数|说明|谨慎选择|
+|:-----  |-----|-----|
+|shop_phone：      |  | |
+|need      |是否需要店铺电话 |否|
+|need_detail   |是否需要店铺电话细节（不需要为 12345678** ，需要详情为 12345678910） |是|
+|shop_review：      |  | |
+|need      |是否需要店铺电话 |否|
+|need_detail   |是否需要店铺电话细节 （不需要则只有10条精选） |是|
+|need_pages   |如果需要更多评论，需要多少页（一页30条） |否|
+
+值得一提的是，对于谨慎选择的配置，由于需要登录才能获取，
+因此请求会携带cookie，频繁请求会造成封号（过段时间自动解开）。
 
 ### 运行程序
 
@@ -109,15 +120,15 @@
 定制化搜索（不需要搜索，只需要详情或评论）:
 - 只需要详情,shop_id 自行修改 （只给命令行格式，编译器运行则自行配置或修改代码）
 
-    `python main.py --normal 0 --detail 1  --shop_id k30YbaScPKFS0hfP`
+    `python main.py --normal 0 --detail 1 --review 0  --shop_id k30YbaScPKFS0hfP --need_more False` 
 
 - 只需要评论 
 
-    `python main.py --normal 0 --review 1  --shop_id k30YbaScPKFS0hfP`
+    `python main.py --normal 0 --detail 0 --review 1 --shop_id k30YbaScPKFS0hfP --need_more False`
 
-- 需要详情和评论 
+- 需要详情和评论
 
-    `python main.py --normal 0  --detail 1 --review 1  --shop_id k30YbaScPKFS0hfP`
+    `python main.py --normal 0  --detail 1 --review 1  --shop_id k30YbaScPKFS0hfP --need_more False`
     
 如果遇到其他问题，详见[这里](./docs/problems.md)
 和[issues](https://github.com/Sniper970119/dianping_spider/issues?q=is%3Aissue+is%3Aclosed)
@@ -126,14 +137,16 @@
 ## 字段结果展示
 由于大众点评反扒措施相对严重以及不同频道字段格式复杂，因此很多数据在爬取阶段不做处理。原样保存，后续自行清洗。
 ### 商家搜索结果展示：
-![image](./imgs/info.jpg)
+![image](./imgs/search.jpg)
 
 ### 商家详情页展示：
 ![image](./imgs/detail.jpg)
 
+![image](./imgs/detail_json.jpg)
+
 
 ### 商家评论页展示：
-![image](./imgs/review.jpg)
+![image](./imgs/review_json.jpg)
 
 ## 一些碎碎念
 
@@ -141,6 +154,8 @@
 关于cookie以及cookie池的一些碎碎念：[这里](./docs/cookie_pool.md)
 
 关于存储的一些碎碎念：[这里](./docs/save.md)
+
+关于使用加密接口的一些碎碎念：[这里](./docs/json.md)
 
 关于ip代理的一些碎碎念：[这里](./docs/proxy.md)
 
