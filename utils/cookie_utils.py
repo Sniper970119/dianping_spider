@@ -27,6 +27,7 @@ import random
 from faker import Factory
 
 from utils.config import global_config
+from utils.spider_config import spider_config
 
 
 class CookieCache():
@@ -47,7 +48,8 @@ class CookieCache():
             self.all_cookie.append([line.strip(), 0, 0, 0])
 
     def get_header(self, cookie):
-        ua = global_config.getRaw('config', 'user-agent')
+        # ua = global_config.getRaw('config', 'user-agent')
+        ua = spider_config.USER_AGENT
         if ua is None:
             ua_engine = Factory.create()
             ua = ua_engine.user_agent()

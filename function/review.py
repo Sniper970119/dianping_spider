@@ -22,18 +22,14 @@
 from bs4 import BeautifulSoup
 
 from utils.logger import logger
-from utils.saver.saver import saver
-from utils.config import global_config
 from utils.get_font_map import get_review_map_file
 from utils.requests_utils import requests_util
+from utils.spider_config import spider_config
 
 
 class Review():
     def __init__(self):
-        self.requests_util = requests_util
-        self.pages_needed = global_config.getRaw('save', 'review_pages')
-        # self.saver = saver
-        pass
+        self.pages_needed = spider_config.NEED_REVIEW_PAGES
 
     def get_review(self, shop_id):
         all_pages = -1
@@ -61,7 +57,6 @@ class Review():
 
             reviews = html.select('.reviews-items')[0].select('.main-review')
             for review in reviews:
-                # single_review = []
                 try:
                     user_name = review.select('.name')[0].text.strip()
                 except:
@@ -88,8 +83,17 @@ class Review():
                     review_id = review.select('.actions')[0].select('a')[0].attrs['data-id']
                 except:
                     review_id = '-'
-                all_review.append([review_id, shop_id, user_name, score, review_text, like, time])
+                each_review = {
+                    '商铺id': shop_id,
+                    '评论id': review_id,
+                    '用户名': user_name,
+                    '用户打分': score,
+                    '评论正文': review_text,
+                    '评论点赞': like,
+                    '发表时间': time,
+                }
+                all_review.append(each_review)
             cur_pages += 1
             all_pages -= 1
-        saver.save_data(all_review, 'review')
+        # saver.save_data(all_review, 'review')
         return all_review

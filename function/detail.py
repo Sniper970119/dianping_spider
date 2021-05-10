@@ -23,40 +23,42 @@
 from bs4 import BeautifulSoup
 
 from utils.cache import cache
-from utils.saver.saver import saver
 from utils.get_font_map import get_search_map_file
 from utils.requests_utils import requests_util
 
 
 class Detail():
-    """
-
-    """
-
     def __init__(self):
-        self.requests_util = requests_util
+        pass
 
-    def get_detail(self, shop_id, just_need_map=False):
+    def get_detail_font_mapping(self, shop_id):
+        """
+        获取detail的字体映射，不要解析，只要加密字体映射，给json用
+        @param shop_id:
+        @return:
+        """
         url = 'http://www.dianping.com/shop/' + str(shop_id)
-        r = requests_util.get_requests(url, request_type='detail')
+        r = requests_util.get_requests(url, request_type='json')
+        text = r.text
+        file_map = get_search_map_file(text)
+        cache.search_font_map = file_map
+        return file_map
+
+    def get_detail(self, shop_id, request_type='detail'):
+        url = 'http://www.dianping.com/shop/' + str(shop_id)
+        r = requests_util.get_requests(url, request_type=request_type)
         if r.status_code == 403:
             print('检查浏览器，处理验证码,替换cookie，输入y解除限制', 'http://www.dianping.com/shop/' + str(shop_id))
             while input() != 'y':
                 import time
                 time.sleep(1)
-            self.requests_util.update_cookie()
-            r = requests_util.get_requests(url, request_type='detail')
-            # logger.warning('详情页请求被ban')
-            # raise Exception
+            requests_util.update_cookie()
+            r = requests_util.get_requests(url, request_type=request_type)
         text = r.text
         # 获取加密文件
         file_map = get_search_map_file(text)
-        cache.search_font_map = file_map
-        if just_need_map:
-            return
         # 替换加密字符串
         text = requests_util.replace_search_html(text, file_map)
-
         # 网页解析
         html = BeautifulSoup(text, 'lxml')
         """
@@ -166,6 +168,13 @@ class Detail():
         #         # self.get_detail(shop_id)
         #         pass
         #     pass
-        detail_info = [shop_id, shop_name, review_count, avg_price, score, address, phone, other_info]
-        saver.save_data(detail_info, 'detail')
+        detail_info = {
+            '店铺id': shop_id,
+            '店铺名': shop_name,
+            '评论总数': review_count,
+            '人均价格': avg_price,
+            '店铺地址': address,
+            '店铺电话': phone,
+            '其他信息': other_info
+        }
         return detail_info

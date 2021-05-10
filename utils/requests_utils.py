@@ -31,6 +31,7 @@ from utils.config import global_config
 from utils.logger import logger
 from utils.get_file_map import get_map
 from utils.cookie_utils import cookie_cache
+from utils.spider_config import spider_config
 
 
 class RequestsUtils():
@@ -39,25 +40,29 @@ class RequestsUtils():
     """
 
     def __init__(self):
-        requests_times = global_config.getRaw('config', 'requests_times')
-        self.cookie = global_config.getRaw('config', 'Cookie')
-        self.ua = global_config.getRaw('config', 'user-agent')
-
+        # requests_times = global_config.getRaw('config', 'requests_times')
+        requests_times = spider_config.REQUESTS_TIMES
+        # self.cookie = global_config.getRaw('config', 'Cookie')
+        self.cookie = spider_config.COOKIE
+        # self.ua = global_config.getRaw('config', 'user-agent')
+        self.ua = spider_config.USER_AGENT
         self.ua_engine = Factory.create()
         if self.ua is None:
             logger.error('user agent 暂时不支持为空')
             sys.exit()
 
-        self.cookie_pool = global_config.getRaw('config', 'use_cookie_pool')
-        self.cookie_pool = True if self.cookie_pool == 'True' else False
+        # self.cookie_pool = global_config.getRaw('config', 'use_cookie_pool')
+        self.cookie_pool = spider_config.USE_COOKIE_POOL
+        # self.cookie_pool = True if self.cookie_pool == 'True' else False
         if self.cookie_pool is True:
             logger.info('使用cookie池')
             if not os.path.exists('cookies.txt'):
                 logger.error('cookies.txt文件不存在')
                 sys.exit()
 
-        self.ip_proxy = global_config.getRaw('proxy', 'use_proxy')
-        self.ip_proxy = True if self.ip_proxy == 'True' else False
+        # self.ip_proxy = global_config.getRaw('proxy', 'use_proxy')
+        self.ip_proxy = spider_config.USE_PROXY
+        # self.ip_proxy = True if self.ip_proxy == 'True' else False
         if self.ip_proxy:
             self.proxy_pool = []
 
@@ -98,27 +103,27 @@ class RequestsUtils():
         :param url:
         :return:
         """
-        assert request_type in ['search', 'detail', 'review', 'no header', 'json']
+        assert request_type in ['search', 'detail', 'review', 'no header', 'json', 'no proxy, no cookie']
         # 不需要请求头的请求不计入统计（比如字体文件下载）
         if request_type == 'no header':
             r = requests.get(url)
             return r
         if request_type == 'json':
             if self.ip_proxy:
-                r = requests.get(url, headers=self.get_header(None, False), proxies=self.get_proxy())
-                # # 由于json这个请求方式不会出现被ban的情况，而代理ip有的时候是失效的
-                # # 因此这里直接while 检查，直至有效
-                # flag = True
-                # while flag:
-                #     r = requests.get(url, headers=self.get_header(None, False), proxies=self.get_proxy())
-                #     if r.status_code == 200:
-                #         flag = False
-                #     if flag:
-                #         print('retry')
+                # 这个while是处理代理失效的问题（通常是超时等问题）
+                while True:
+                    try:
+                        r = requests.get(url, headers=self.get_header(None, False), proxies=self.get_proxy())
+                        break
+                    except:
+                        pass
             else:
                 r = requests.get(url, headers=self.get_header(None, False))
-            return r
+            return self.handle_verify(r, url, request_type)
 
+        if request_type == 'no proxy, no cookie':
+            r = requests.get(url, headers=self.get_header(None, False))
+            return self.handle_verify(r, url, request_type)
         # 需要请求头的请求全局监控，全局暂停，只对非代理情况暂停
         if self.ip_proxy is False:
             # if self.ip_proxy is True:
@@ -154,9 +159,19 @@ class RequestsUtils():
                 #  失效之后重复调用本方法直至200（也算是处理403了）
                 return self.get_requests(url, request_type)
         else:
-            return r
+            return self.handle_verify(r, url, request_type)
         # 这里是cookie为None并且响应非200会调用到这，目前的逻辑应该不存在这种情况，不过为了保险起见依然选择返回r
         return r
+
+    def handle_verify(self, r, url, request_type):
+        if 'verify' in r.url:
+            # print('处理验证码，按任意键继续', r.url)
+            # input()
+            print('verify')
+            # self.get_requests('http://www.dianping.com', request_type)
+            return self.get_requests(url, request_type)
+        else:
+            return r
 
     def get_header(self, cookie, need_cookie=True):
         """
@@ -189,16 +204,12 @@ class RequestsUtils():
         """
         获取代理
         """
-        try:
-            repeat_nub = int(global_config.getRaw('proxy', 'repeat_nub'))
-        except:
-            logger.warning('repeat_nub 格式不正确，应为正整数')
-            sys.exit()
+        repeat_nub = spider_config.REPEAT_NUMBER
         # http 提取模式
-        if global_config.getRaw('proxy', 'http_extract') == '1':
+        if spider_config.HTTP_EXTRACT:
             # 代理池为空，提取代理
             if len(self.proxy_pool) == 0:
-                proxy_url = global_config.getRaw('proxy', 'http_link')
+                proxy_url = spider_config.HTTP_LINK
                 r = requests.get(proxy_url)
                 r_json = r.json()
                 for proxy in r_json:
@@ -210,7 +221,7 @@ class RequestsUtils():
             self.proxy_pool.remove(self.proxy_pool[0])
             return proxies
         # 秘钥提取模式
-        elif global_config.getRaw('proxy', 'key_extract') == '1':
+        elif spider_config.KEY_EXTRACT:
             pass
         pass
 
