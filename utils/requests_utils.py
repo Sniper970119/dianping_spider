@@ -40,29 +40,22 @@ class RequestsUtils():
     """
 
     def __init__(self):
-        # requests_times = global_config.getRaw('config', 'requests_times')
         requests_times = spider_config.REQUESTS_TIMES
-        # self.cookie = global_config.getRaw('config', 'Cookie')
         self.cookie = spider_config.COOKIE
-        # self.ua = global_config.getRaw('config', 'user-agent')
         self.ua = spider_config.USER_AGENT
         self.ua_engine = Factory.create()
         if self.ua is None:
             logger.error('user agent 暂时不支持为空')
             sys.exit()
 
-        # self.cookie_pool = global_config.getRaw('config', 'use_cookie_pool')
         self.cookie_pool = spider_config.USE_COOKIE_POOL
-        # self.cookie_pool = True if self.cookie_pool == 'True' else False
         if self.cookie_pool is True:
             logger.info('使用cookie池')
             if not os.path.exists('cookies.txt'):
                 logger.error('cookies.txt文件不存在')
                 sys.exit()
 
-        # self.ip_proxy = global_config.getRaw('proxy', 'use_proxy')
         self.ip_proxy = spider_config.USE_PROXY
-        # self.ip_proxy = True if self.ip_proxy == 'True' else False
         if self.ip_proxy:
             self.proxy_pool = []
 
@@ -72,7 +65,6 @@ class RequestsUtils():
             logger.error('配置文件requests_times解析错误，检查输入（必须英文标点）')
             sys.exit()
         self.global_time = 0
-        pass
 
     def create_dir(self, file_name):
         """
@@ -103,12 +95,33 @@ class RequestsUtils():
         :param url:
         :return:
         """
-        assert request_type in ['search', 'detail', 'review', 'no header', 'json', 'no proxy, no cookie']
+        assert request_type in ['no header', 'no proxy, cookie', 'no proxy, no cookie', 'proxy, no cookie',
+                                'proxy, cookie']
+
         # 不需要请求头的请求不计入统计（比如字体文件下载）
         if request_type == 'no header':
-            r = requests.get(url)
+            r = requests.get(url=url)
             return r
-        if request_type == 'json':
+
+        # 所有本地ip的请求都进入全局监控，no header由于只用于字体文件下载，不计入监控
+        if 'no proxy' in request_type:
+            self.freeze_time()
+
+            if request_type == 'no proxy, no cookie':
+                r = requests.get(url, headers=self.get_header(cookie=None, need_cookie=False))
+
+            if request_type == 'no proxy, cookie':
+                cur_cookie = self.get_cookie(url)
+                r = requests.get(url, headers=self.get_header(cookie=cur_cookie, need_cookie=True))
+
+            return self.handle_verify(r=r, url=url, request_type=request_type)
+
+        """
+        下面两个虽然标记使用代理，但是依然判断。
+        使用这种标记的意味着这些请求可以由代理完成，但是理所应当可以不用代理。
+        当然，建议使用代理。
+        """
+        if request_type == 'proxy, no cookie':
             if self.ip_proxy:
                 # 这个while是处理代理失效的问题（通常是超时等问题）
                 while True:
@@ -121,13 +134,42 @@ class RequestsUtils():
                 r = requests.get(url, headers=self.get_header(None, False))
             return self.handle_verify(r, url, request_type)
 
-        if request_type == 'no proxy, no cookie':
-            r = requests.get(url, headers=self.get_header(None, False))
+        if request_type == 'proxy, cookie':
+            # 对于携带cookie的请求，依然计入全局监控
+            self.freeze_time()
+
+            cur_cookie = self.get_cookie(url)
+            header = self.get_header(cookie=cur_cookie, need_cookie=True)
+
+            if self.ip_proxy:
+                while True:
+                    try:
+                        r = requests.get(url, headers=header, proxies=self.get_proxy())
+                        break
+                    except:
+                        pass
+            else:
+                r = requests.get(url, headers=header)
+
+            # 对于cookie池的使用，反馈cookie池状态
+            if spider_config.USE_COOKIE_POOL and r.status_code != 200:
+                if cur_cookie is not None:
+                    cookie_cache.change_state(cur_cookie, self.judge_request_type(url))
+                    #  失效之后重复调用本方法直至200
+                    return self.get_requests(url, request_type)
+            else:
+                return self.handle_verify(r, url, request_type)
             return self.handle_verify(r, url, request_type)
-        # 需要请求头的请求全局监控，全局暂停，只对非代理情况暂停
-        if self.ip_proxy is False:
-            # if self.ip_proxy is True:
-            self.global_time += 1
+        # 其他
+        raise AttributeError
+
+    def freeze_time(self):
+        """
+        时间暂停术！
+        @return:
+        """
+        self.global_time += 1
+        if self.global_time != 1:
             for each_stop_time in self.stop_times:
                 if self.global_time % int(each_stop_time[0]) == 0:
                     for i in tqdm(range(int(each_stop_time[1])), desc='全局等待'):
@@ -136,42 +178,53 @@ class RequestsUtils():
                         time.sleep(sleep_time)
                     break
 
-        # cookie初始化
-        cookie = None
-        if self.cookie_pool is True:
+    def handle_verify(self, r, url, request_type):
+        if 'verify' in r.url:
+            """
+            不管是使用真实ip还是真实cookie，都对验证码进行处理
+            这里有一个特例，就是cookie池到底处不处理验证码，如果处理，
+            一定程度上丧失了cookie池的意义，如果不处理，失效的太快。
+            暂时处理
+            """
+            if request_type is not 'proxy, no cookie' or not spider_config.USE_PROXY:
+                print('处理验证码，按任意键回车后继续', r.url)
+                input()
+            else:
+                print('verify')
+            return self.get_requests(url, request_type)
+        else:
+            return r
+
+    def get_cookie(self, url):
+        """
+        获取cookie
+        @return:
+        """
+        if spider_config.USE_COOKIE_POOL:
             while True:
-                cookie = cookie_cache.get_cookie(request_type)
-                if cookie is not None:
+                cur_cookie = cookie_cache.get_cookie(mission_type=self.judge_request_type(url))
+                if cur_cookie is not None:
                     break
                 logger.info('所有cookie均已失效，替换（替换后会自动继续）或等待解封')
                 time.sleep(60)
         else:
-            cookie = self.cookie
+            cur_cookie = self.cookie
+        return cur_cookie
 
-        header = self.get_header(cookie)
-        if self.ip_proxy:
-            r = requests.get(url, headers=header, proxies=self.get_proxy())
+    def judge_request_type(self, url):
+        """
+        判断请求类型，由于cookie池是分开维护的，搜索、详情、评论也不是一起被ban的，
+        需要对每个cookie的每个页面进行分类
+        @param url:
+        @return:
+        """
+        if 'shop' in url:
+            return 'detail'
+        elif 'review' in url:
+            return 'review'
         else:
-            r = requests.get(url, headers=header)
-        if r.status_code != 200:
-            if cookie is not None:
-                cookie_cache.change_state(cookie, request_type)
-                #  失效之后重复调用本方法直至200（也算是处理403了）
-                return self.get_requests(url, request_type)
-        else:
-            return self.handle_verify(r, url, request_type)
-        # 这里是cookie为None并且响应非200会调用到这，目前的逻辑应该不存在这种情况，不过为了保险起见依然选择返回r
-        return r
-
-    def handle_verify(self, r, url, request_type):
-        if 'verify' in r.url:
-            # print('处理验证码，按任意键继续', r.url)
-            # input()
-            print('verify')
-            # self.get_requests('http://www.dianping.com', request_type)
-            return self.get_requests(url, request_type)
-        else:
-            return r
+            return 'search'
+        pass
 
     def get_header(self, cookie, need_cookie=True):
         """

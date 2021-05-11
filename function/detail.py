@@ -25,6 +25,7 @@ from bs4 import BeautifulSoup
 from utils.cache import cache
 from utils.get_font_map import get_search_map_file
 from utils.requests_utils import requests_util
+from utils.logger import logger
 
 
 class Detail():
@@ -38,13 +39,19 @@ class Detail():
         @return:
         """
         url = 'http://www.dianping.com/shop/' + str(shop_id)
-        r = requests_util.get_requests(url, request_type='json')
+        r = requests_util.get_requests(url, request_type='proxy, no cookie')
+        # 对于部分敏感ip（比如我的ip，淦！）可能需要带cookie才允许访问
+        if r.status_code == 403:
+            r = requests_util.get_requests(url, request_type='no proxy, cookie')
+            if r.status_code == 403:
+                logger.error('使用代理吧小伙汁')
+                exit()
         text = r.text
         file_map = get_search_map_file(text)
         cache.search_font_map = file_map
         return file_map
 
-    def get_detail(self, shop_id, request_type='detail'):
+    def get_detail(self, shop_id, request_type='proxy, cookie'):
         url = 'http://www.dianping.com/shop/' + str(shop_id)
         r = requests_util.get_requests(url, request_type=request_type)
         if r.status_code == 403:

@@ -29,7 +29,7 @@ class Search():
     def __init__(self):
         pass
 
-    def search(self, search_url, request_type='search'):
+    def search(self, search_url, request_type='proxy, cookie'):
         """
         搜索
         :param key_word: 关键字

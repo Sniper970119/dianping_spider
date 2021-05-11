@@ -194,9 +194,9 @@ class Controller():
         """
         if cur_page == 1:
             # return self.base_url[:-2], 'no proxy, no cookie'
-            return self.base_url[:-2], 'search'
+            return self.base_url[:-2], 'proxy, cookie'
         else:
-            return self.base_url + str(cur_page), 'search'
+            return self.base_url + str(cur_page), 'proxy, cookie'
 
     def saver(self, each_search_res, each_detail_res, each_review_res):
         # save search

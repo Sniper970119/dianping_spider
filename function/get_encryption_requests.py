@@ -87,7 +87,7 @@ def get_basic_hidden_info(shop_id):
           '&originUrl=' + str(shop_url)
     # 这里处理解决请求会异常的问题
     while True:
-        r = requests_util.get_requests(url, request_type='json')
+        r = requests_util.get_requests(url, request_type='proxy, no cookie')
         r_text = requests_util.replace_json_text(r.text, get_font_msg())
         try:
             r_json = json.loads(r_text)
@@ -99,7 +99,7 @@ def get_basic_hidden_info(shop_id):
     # 验证码处理
     if r_json['code'] == 406:
         verify_page_url = r_json['customData']['verifyPageUrl']
-        print('处理验证码，按任意键继续：', verify_page_url)
+        print('处理验证码，按任意键回车后继续：', verify_page_url)
         input()
     elif r_json['code'] == 200:
         msg = r_json['msg']['shopInfo']
@@ -145,7 +145,7 @@ def get_review_and_star(shop_id):
           '&originUrl=' + shop_url
     # 这里处理解决请求会异常的问题
     while True:
-        r = requests_util.get_requests(url, request_type='json')
+        r = requests_util.get_requests(url, request_type='proxy, no cookie')
         r_text = requests_util.replace_json_text(r.text, get_font_msg())
         try:
             r_json = json.loads(r_text)
@@ -157,7 +157,7 @@ def get_review_and_star(shop_id):
     # 验证码处理
     if r_json['code'] == 406:
         verify_page_url = r_json['customData']['verifyPageUrl']
-        print('处理验证码，按任意键继续：', verify_page_url)
+        print('处理验证码，按任意键回车后继续：', verify_page_url)
         input()
     elif r_json['code'] == 200:
         shop_base_score = r_json['fiveScore']
@@ -228,7 +228,7 @@ def get_basic_review(shop_id):
           '&originUrl=' + shop_url
     # 这里处理解决请求会异常的问题
     while True:
-        r = requests_util.get_requests(url, request_type='json')
+        r = requests_util.get_requests(url, request_type='proxy, no cookie')
         r_text = requests_util.replace_json_text(r.text, get_font_msg())
         try:
             r_json = json.loads(r_text)
@@ -240,7 +240,7 @@ def get_basic_review(shop_id):
     # 验证码处理
     if r_json['code'] == 406:
         verify_page_url = r_json['customData']['verifyPageUrl']
-        print('处理验证码，按任意键继续：', verify_page_url)
+        print('处理验证码，按任意键回车后继续：', verify_page_url)
         input()
         get_basic_review(shop_id)
     elif r_json['code'] == 200:
