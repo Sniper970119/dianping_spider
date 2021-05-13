@@ -86,7 +86,9 @@ def get_basic_hidden_info(shop_id):
           '&optimusCode=10' \
           '&originUrl=' + str(shop_url)
     # 这里处理解决请求会异常的问题
+    retry_time = 5
     while True:
+        retry_time -= 1
         r = requests_util.get_requests(url, request_type='proxy, no cookie')
         r_text = requests_util.replace_json_text(r.text, get_font_msg())
         try:
@@ -94,6 +96,9 @@ def get_basic_hidden_info(shop_id):
             # 前置验证码过滤
             if r_json['code'] == 200:
                 break
+            if retry_time == 0:
+                logger.warning('替换tsv和uuid')
+                exit()
         except:
             pass
     # 验证码处理
