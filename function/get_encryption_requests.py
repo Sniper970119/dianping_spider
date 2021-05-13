@@ -321,7 +321,7 @@ def get_basic_review(shop_id):
         # return [summaries, all_review_count, good_review_count, mid_review_count, bad_review_count,
         #         review_with_pic_count, reviews, dish_tag_list]
         return {
-            '商铺id': shop_id,
+            '店铺id': shop_id,
             '评论摘要': summaries,
             '评论总数': all_review_count,
             '好评个数': good_review_count,

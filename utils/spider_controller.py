@@ -131,21 +131,22 @@ class Controller():
                     if spider_config.NEED_REVIEW_DETAIL:
                         """
                         {
-                            '商铺id': -,
-                            '评论id': -,
-                            '用户名': -,
-                            '用户打分': -,
-                            '评论正文': -,
-                            '评论点赞': -,
-                            '发表时间': -,
+                            '店铺id': -,
+                            '评论摘要': -,
+                            '评论总数': -,
+                            '好评个数': -,
+                            '中评个数': -,
+                            '差评个数': -,
+                            '带图评论个数': -,
+                            '精选评论': -,
                         }
                         """
-                        # Todo 返回数据适配json格式
                         each_review_res = self.r.get_review(shop_id)
+                        each_review_res.update({'推荐菜': '-'})
                     else:
                         """
                         {
-                            '商铺id': -,
+                            '店铺id': -,
                             '评论摘要': -,
                             '评论总数': -,
                             '好评个数': -,
@@ -157,14 +158,14 @@ class Controller():
                         }
                         """
                         each_review_res = get_basic_review(shop_id)
-                self.saver(each_search_res, each_detail_res, each_review_res['精选评论'])
+                self.saver(each_search_res, each_detail_res, each_review_res)
 
     def get_review(self, shop_id, detail=False):
         if detail:
             each_review_res = self.r.get_review(shop_id)
         else:
             each_review_res = get_basic_review(shop_id)
-        saver.save_data(each_review_res['精选评论'], 'review')
+        saver.save_data(each_review_res, 'review')
 
     def get_detail(self, shop_id, detail=False):
         each_detail_res = {}

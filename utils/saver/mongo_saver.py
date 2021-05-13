@@ -127,6 +127,8 @@ class MongoSaver():
         :return:
         """
         col = self.database['review']
-        for each in data:
-            col.delete_many({'评论id': each['评论id']})
-            col.insert(each)
+        col.delete_many({'店铺id': data['店铺id']})
+        col.insert(data)
+        # for each in data:
+        #     col.delete_many({'商铺id': each['商铺id']})
+        #     col.insert(each)
