@@ -224,7 +224,6 @@ class RequestsUtils():
             return 'review'
         else:
             return 'search'
-        pass
 
     def get_header(self, cookie, need_cookie=True):
         """
@@ -243,13 +242,11 @@ class RequestsUtils():
         if need_cookie:
             header = {
                 'User-Agent': ua,
-                # 'Host': 'http://www.dianping.com/',
                 'Cookie': cookie
             }
         else:
             header = {
                 'User-Agent': ua,
-                # 'Host': 'http://www.dianping.com/',
             }
         return header
 
