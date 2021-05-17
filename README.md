@@ -87,8 +87,8 @@
 |Cookie      |Cookie信息（注意大写，之所以不一样是方便将浏览器信息直接复制进去而不做更改）。|
 |uuid      |uuid信息，[详见](./docs/json.md)|
 |tcv      |tcv信息，[详见](./docs/json.md)|
-|user-agent      |浏览器UA信息，不填则随机UA。[详见](./docs/location.md )  ||
-|save_mode      |保存方式，具体格式参照config.ini提示。|
+|user-agent      |浏览器UA信息，不填则随机UA。|
+|save_mode      |保存方式，具体格式参照config.ini提示。[详见](./docs/location.md )  |
 |mongo_path      |mongo数据库配置，具体格式参照config.ini提示|
 |requests_times      |爬虫间隔时间，具体格式参照config.ini提示。  |
 |detail：      |  |
