@@ -80,6 +80,10 @@ class Controller():
             }
             """
             search_res = self.s.search(search_url, request_type)
+            if spider_config.NEED_DETAIL is False and spider_config.NEED_REVIEW is False:
+                for each_search_res in search_res:
+                    self.saver(each_search_res, {}, {})
+                continue
             for each_search_res in tqdm(search_res, desc='详细爬取'):
                 each_detail_res = {}
                 each_review_res = {}
