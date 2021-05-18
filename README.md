@@ -152,13 +152,7 @@
 同时由于数据结构化明显，不是很方便进行csv存储，以后的支持主流一定是mongo。
 
 ### 商家搜索结果展示：
-![image](./imgs/search.jpg)
-
-### 商家详情页展示：
-![image](./imgs/detail.jpg)
-
-![image](./imgs/detail_json.jpg)
-
+![image](./imgs/show_info.jpg)
 
 ### 商家评论页展示：
 ![image](./imgs/show_review.jpg)
