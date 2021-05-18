@@ -35,8 +35,9 @@ class Saver():
         # 构造每个存储方法的存储器
         if 'csv' in save_mode:
             from utils.saver.csv_saver import CSV
-            csv_saver = CSV()
-            self.saver_list.append(csv_saver)
+            print('暂时不支持csv，如果您只选择了csv将不会进行存储（原因详见README）')
+            # csv_saver = CSV()
+            # self.saver_list.append(csv_saver)
             pass
         if 'mongo' in save_mode:
             from utils.saver.mongo_saver import MongoSaver
