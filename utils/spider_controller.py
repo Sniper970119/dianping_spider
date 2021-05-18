@@ -62,27 +62,32 @@ class Controller():
         for page in tqdm(range(1, spider_config.NEED_SEARCH_PAGES + 1), desc='搜索页数'):
             # 拼凑url
             search_url, request_type = self.get_search_url(page)
-            # each_search_res = self.s.search(search_url, request_type)
             """
             {
                 '店铺id': -,
                 '店铺名': -,
-                '评论个数': -,
+                '评论总数': -,
                 '人均价格': -,
                 '标签1': -,
                 '标签2': -,
                 '店铺地址': -,
                 '详情链接': -,
                 '图片链接': -,
-                '详细评分': -,
-                '推荐菜': -,
                 '店铺均分': -,
+                '推荐菜': -,
+                '店铺总分': -,
             }
             """
             search_res = self.s.search(search_url, request_type)
+
             if spider_config.NEED_DETAIL is False and spider_config.NEED_REVIEW is False:
                 for each_search_res in search_res:
-                    self.saver(each_search_res, {}, {})
+                    each_search_res.update({
+                        '店铺电话': '-',
+                        '其他信息': '-',
+                        '优惠券信息': '-',
+                    })
+                    self.saver(each_search_res, {})
                 continue
             for each_search_res in tqdm(search_res, desc='详细爬取'):
                 each_detail_res = {}
@@ -106,7 +111,8 @@ class Controller():
                         # 多版本爬取格式适配
                         each_detail_res.update({
                             '店铺总分': '-',
-                            '店铺评分': '-',
+                            '店铺均分': '-',
+                            '优惠券信息': '-',
                         })
                     else:
                         """
@@ -116,7 +122,7 @@ class Controller():
                             '店铺地址': -,
                             '店铺电话': -,
                             '店铺总分': -,
-                            '店铺评分': -,
+                            '店铺均分': -,
                             '人均价格': -,
                             '评论总数': -,
                         }
@@ -127,7 +133,8 @@ class Controller():
                         each_detail_res.update(review_and_star)
                         # 多版本爬取格式适配
                         each_detail_res.update({
-                            '其他信息': '-'
+                            '其他信息': '-',
+                            '优惠券信息': '-'
                         })
                 # 爬取评论
                 if spider_config.NEED_REVIEW:
@@ -162,7 +169,24 @@ class Controller():
                         }
                         """
                         each_review_res = get_basic_review(shop_id)
-                self.saver(each_search_res, each_detail_res, each_review_res)
+
+                    # 全局整合，将详情以及评论的相关信息拼接到search_res中。
+                    each_search_res['店铺地址'] = each_detail_res['店铺地址']
+                    each_search_res['店铺电话'] = each_detail_res['店铺电话']
+                    each_search_res['店铺总分'] = each_detail_res['店铺总分']
+                    if each_search_res['店铺均分'] == '-':
+                        each_search_res['店铺均分'] = each_detail_res['店铺均分']
+                    each_search_res['人均价格'] = each_detail_res['人均价格']
+                    each_search_res['评论总数'] = each_detail_res['评论总数']
+                    each_search_res['其他信息'] = each_detail_res['其他信息']
+                    each_search_res['优惠券信息'] = each_detail_res['优惠券信息']
+                    each_search_res['推荐菜'] = each_review_res['推荐菜']
+
+                    # 对于已经给到search_res中的信息，删除
+                    # 没有删除detail里的是因为detail整个都被删了
+                    each_review_res.pop('推荐菜')
+
+                self.saver(each_search_res, each_review_res)
 
     def get_review(self, shop_id, detail=False):
         if detail:
@@ -203,12 +227,12 @@ class Controller():
         else:
             return self.base_url + str(cur_page), 'proxy, cookie'
 
-    def saver(self, each_search_res, each_detail_res, each_review_res):
+    def saver(self, each_search_res, each_review_res):
         # save search
         saver.save_data(each_search_res, 'search')
         # save detail
-        if spider_config.NEED_DETAIL:
-            saver.save_data(each_detail_res, 'detail')
+        # if spider_config.NEED_DETAIL:
+        #     saver.save_data(each_detail_res, 'detail')
 
         # save review
         if spider_config.NEED_REVIEW:

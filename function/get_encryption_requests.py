@@ -182,7 +182,7 @@ def get_review_and_star(shop_id):
         return {
             '店铺id': shop_id,
             '店铺总分': shop_base_score,
-            '店铺评分': scores,
+            '店铺均分': scores,
             '人均价格': avg_price,
             '评论总数': review_count
         }

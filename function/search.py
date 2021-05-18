@@ -117,16 +117,16 @@ class Search():
             one_step_search_res = {
                 '店铺id': shop_id,
                 '店铺名': name,
-                '评论个数': review_number,
+                '评论总数': review_number,
                 '人均价格': mean_price,
                 '标签1': tag1,
                 '标签2': tag2,
                 '店铺地址': addr,
                 '详情链接': detail_url,
                 '图片链接': image_path,
-                '详细评分': comment_list,
+                '店铺均分': comment_list,
                 '推荐菜': recommend,
-                '店铺均分': star_point,
+                '店铺总分': star_point,
             }
             search_res.append(one_step_search_res)
             # yield one_step_search_res
