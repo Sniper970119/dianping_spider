@@ -54,5 +54,5 @@ json格式由于各家代理json格式也不一样，目前只适配了一种格
 
 ## 其他
 
-对于need_detail=True情况下依然要配置cookie，原因是搜索页需要cookie才能访问
+对于need_detail=False情况下依然要配置cookie，原因是搜索页需要cookie才能访问
 （虽然第一页不用，但是第一页对于匿名访问有格外限制，与其浪费代理撞出来，不如用cookie，最多点一下验证码而已）。
