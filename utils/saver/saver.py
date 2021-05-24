@@ -43,6 +43,10 @@ class Saver():
             from utils.saver.mongo_saver import MongoSaver
             mongo_saver = MongoSaver()
             self.saver_list.append(mongo_saver)
+        if 'mongodb' in save_mode:
+            from utils.saver.mongo_saver import MongoSaver
+            mongo_saver = MongoSaver()
+            self.saver_list.append(mongo_saver)
 
     def save_data(self, data, data_type):
         """
