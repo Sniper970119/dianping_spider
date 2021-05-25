@@ -29,7 +29,6 @@ from utils.requests_utils import requests_util
 from utils.cache import cache
 from utils.logger import logger
 from utils.spider_config import spider_config
-
 from function.detail import Detail
 
 
@@ -64,7 +63,7 @@ def get_font_msg():
     if cache.search_font_map != {}:
         return cache.search_font_map
     else:
-        Detail().get_detail_font_mapping('H2noKWCDigM0H9c1')
+        Detail().get_detail_font_mapping('H5BIJ8PN64Rmywap')
         return cache.search_font_map
 
 
@@ -85,22 +84,31 @@ def get_basic_hidden_info(shop_id):
           '&partner=150' \
           '&optimusCode=10' \
           '&originUrl=' + str(shop_url)
-    # 这里处理解决请求会异常的问题
-    retry_time = 5
+
+    # 这里处理解决请求会异常的问题,允许恰巧当前ip出问题，多试一条
+    if spider_config.REPEAT_NUMBER == 0:
+        retry_time = 5
+    else:
+        retry_time = spider_config.REPEAT_NUMBER + 1
+
     while True:
         retry_time -= 1
         r = requests_util.get_requests(url, request_type='proxy, no cookie')
-        r_text = requests_util.replace_json_text(r.text, get_font_msg())
         try:
-            r_json = json.loads(r_text)
+            r_json = json.loads(r.text)
             # 前置验证码过滤
             if r_json['code'] == 200:
+                r_json = json.loads(requests_util.replace_json_text(r.text, get_font_msg()))
                 break
-            if retry_time == 0:
-                logger.warning('替换tsv和uuid')
+            if retry_time <= 0:
+                logger.warning('替换tsv和uuid，或者代理质量较低')
                 exit()
         except:
+            if retry_time <= 0:
+                logger.warning('代理质量较低')
+                exit()
             pass
+
     # 验证码处理
     if r_json['code'] == 406:
         verify_page_url = r_json['customData']['verifyPageUrl']
@@ -165,7 +173,10 @@ def get_review_and_star(shop_id):
         print('处理验证码，按任意键回车后继续：', verify_page_url)
         input()
     elif r_json['code'] == 200:
-        shop_base_score = r_json['fiveScore']
+        try:
+            shop_base_score = r_json['fiveScore']
+        except:
+            shop_base_score = 0.0
         score_title_list = r_json['shopScoreTitleList']
         avg_price = BeautifulSoup(r_json['avgPrice'], 'lxml').text
         review_count = BeautifulSoup(r_json['defaultReviewCount'], 'lxml').text
@@ -251,11 +262,14 @@ def get_basic_review(shop_id):
     elif r_json['code'] == 200:
         # 获取评论的标签以及每个标签的个数
         summaries = []
-        for summary in r_json['summarys']:
-            summaries.append({
-                '描述': summary['summaryString'],
-                '个数': summary['summaryCount']
-            })
+        if r_json['summarys'] is None:
+            pass
+        else:
+            for summary in r_json['summarys']:
+                summaries.append({
+                    '描述': summary['summaryString'],
+                    '个数': summary['summaryCount']
+                })
 
         # 获取评论数量信息
         all_review_count = r_json['reviewCountAll']

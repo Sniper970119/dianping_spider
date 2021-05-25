@@ -262,9 +262,12 @@ class RequestsUtils():
                 proxy_url = spider_config.HTTP_LINK
                 r = requests.get(proxy_url)
                 r_json = r.json()
+                # json解析方式替换
+                # for proxy in r_json['Data']:
                 for proxy in r_json:
                     # 重复添加，多次利用
                     for _ in range(repeat_nub):
+                        # self.proxy_pool.append([proxy['Ip'], proxy['Port']])
                         self.proxy_pool.append([proxy['ip'], proxy['port']])
             # 获取ip
             proxies = self.http_proxy_utils(self.proxy_pool[0][0], self.proxy_pool[0][1])

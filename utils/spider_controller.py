@@ -49,7 +49,8 @@ class Controller():
                 channel_id) + '_' + str(keyword) + '/p'
             pass
         else:
-            self.base_url = spider_config.SEARCH_URL
+            # 末尾加一个任意字符，为了适配两种初始化url切割长度
+            self.base_url = spider_config.SEARCH_URL+'1'
 
     def main(self):
         """
