@@ -3,6 +3,8 @@
 **ip代理的配置项专业性较强，如果您阅读config.ini和这里后不懂参数的意义，说明您欠缺这方面的相关知识，
 建议百度 [python 代理ip的使用](https://www.baidu.com/baidu?tn=monline_3_dg&ie=utf-8&wd=python+%E4%BB%A3%E7%90%86ip%E7%9A%84%E4%BD%BF%E7%94%A8 )**
 
+代理是需要买的，代理是需要买的，代理是需要买的。
+
 **诚招代理广告位哈哈哈哈哈**
 
 ## 我为什么要使用代理？
