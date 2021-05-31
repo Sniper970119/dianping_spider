@@ -96,6 +96,12 @@ def get_basic_hidden_info(shop_id):
         r = requests_util.get_requests(url, request_type='proxy, no cookie')
         try:
             r_json = json.loads(r.text)
+            if r_json['code'] == 406:
+                if cache.is_cold_start is True:
+                    print('处理验证码,按任意键回车继续:', r_json['customData']['verifyPageUrl'])
+                    if input():
+                        r = requests_util.get_requests(url, request_type='proxy, no cookie')
+                    cache.is_cold_start = False
             # 前置验证码过滤
             if r_json['code'] == 200:
                 r_json = json.loads(requests_util.replace_json_text(r.text, get_font_msg()))
