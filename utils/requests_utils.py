@@ -182,7 +182,7 @@ class RequestsUtils():
         if 'verify' in r.url:
             """
             不管是使用真实ip还是真实cookie，都对验证码进行处理
-            这里有一个特例，就是cookie池到底处不处理验证码，如果处理，
+            这里有一个问题，就是cookie池到底处不处理验证码，如果处理，
             一定程度上丧失了cookie池的意义，如果不处理，失效的太快。
             暂时处理
             """
@@ -205,7 +205,7 @@ class RequestsUtils():
                 cur_cookie = cookie_cache.get_cookie(mission_type=self.judge_request_type(url))
                 if cur_cookie is not None:
                     break
-                logger.info('所有cookie均已失效，替换（替换后会自动继续）或等待解封')
+                logger.info('所有cookie均已失效，替换（替换后等待一段时间会自动继续）或等待解封')
                 time.sleep(60)
         else:
             cur_cookie = self.cookie
@@ -276,6 +276,9 @@ class RequestsUtils():
         # 秘钥提取模式
         elif spider_config.KEY_EXTRACT:
             pass
+        else:
+            logger.warning('使用代理时，必须选择http提取或秘钥提取中的一个')
+            exit()
         pass
 
     def http_proxy_utils(self, ip, port):

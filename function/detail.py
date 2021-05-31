@@ -94,11 +94,6 @@ class Detail():
                 shop_name = '-'
             try:
                 brief_info = main_info.select('.brief-info')[0]
-                # Todo 单独json接口响应，js加密参数，由后期慢慢解决，但是仍然保留这个字段，其他解析方式有时可以解析这个字段
-                # try:
-                #     score = brief_info.select('.star-wrapper')[0].select('.mid-score')[0].text.strip()
-                # except:
-                #     score = None
                 try:
                     review_count = brief_info.select('#reviewCount')[0].text.strip()
                 except:
@@ -107,12 +102,6 @@ class Detail():
                     avg_price = brief_info.select('#avgPriceTitle')[0].text.strip()
                 except:
                     avg_price = '-'
-
-                # Todo 这个建议使用info中信息，这里的有可能会不准，动态参数由json返回
-                # try:
-                #     comment_score = brief_info.select('#comment_score')[0].text.strip()
-                # except:
-                #     comment_score = None
 
                 try:
                     address = main_info.find(attrs={'itemprop': 'street-address'}).text.strip()
@@ -129,24 +118,7 @@ class Detail():
                 except:
                     other_info = '-'
             except:
-                # Todo 前台显示手动滑动解锁
-                # self.get_detail(shop_id)
                 pass
-            # Todo 促销信息 （单独接口 js加密）
-            # try:
-            #     sale_info = ''
-            #     sales = main_info.select('#sales')
-            #     for sale in sales:
-            #         for tag in sale.select('.item'):
-            #             try:
-            #                 title = tag.select('.title')[0].text
-            #                 price = tag.select('.price')[0].text
-            #                 del_price = tag.select('.del-price')[0].text
-            #                 sale_info += title + '\t' + price + '\t' + del_price + '\n'
-            #             except:
-            #                 continue
-            # except:
-            #     sales = None
         except:
             # 切换解析方式
             pass

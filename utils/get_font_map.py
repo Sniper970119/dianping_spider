@@ -33,7 +33,6 @@ from fontTools.ttLib import TTFont
 import logging
 
 from utils.logger import logger as global_logger
-from utils.config import global_config
 from utils.get_file_map import get_map
 from utils.requests_utils import requests_util
 

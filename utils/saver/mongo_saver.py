@@ -28,7 +28,6 @@ from utils.spider_config import spider_config
 
 class MongoSaver():
     def __init__(self):
-        # mongo_url = global_config.get('config', 'mongo_path')
         mongo_url = spider_config.MONGO_PATH
         try:
             import pymongo
@@ -65,31 +64,7 @@ class MongoSaver():
         col = self.database['info']
         col.delete_many({'店铺id': data['店铺id']})
         col.insert(data)
-        # data_list = []
-        # for each in data:
-        #     data_dict = {
-        #         '店铺id': each[0],
-        #         '店铺名称': each[1],
-        #         '店铺评分': each[2],
-        #         '评论数量': each[3],
-        #         '平均价格': each[4],
-        #         '标签1': each[5],
-        #         '标签2': each[6],
-        #         '地址': each[7],
-        #         '推荐': each[8],
-        #         '评分': each[9],
-        #         '图片链接': each[10],
-        #         '详情链接': each[11],
-        #         'detail': each[12],
-        #         'review': each[13],
-        #
-        #     }
-        #     data_list.append(data_dict)
-        # col = self.database['info']
-        # for each in data_list:
-        #     col.delete_many({'店铺id': each['店铺id']})
-        # col.insert(data_list)
-        pass
+
 
     def save_detail_list(self, data):
         """
@@ -100,25 +75,7 @@ class MongoSaver():
         col = self.database['info_detail']
         col.delete_many({'店铺id': data['店铺id']})
         col.insert(data)
-        # data_list = []
-        # for each in data:
-        #     data_dict = {
-        #         '店铺id': each[0],
-        #         '店铺名称': each[1],
-        #         '评论数量': each[2],
-        #         '平均价格': each[3],
-        #         '评分': each[4],
-        #         '地址': each[5],
-        #         '电话': each[6],
-        #         '其他信息': each[7],
-        #
-        #     }
-        #     data_list.append(data_dict)
-        # col = self.database['info_detail']
-        #
-        # for each in data_list:
-        #     col.delete_many({'店铺id': each['店铺id']})
-        # col.insert(data_list)
+
 
     def save_review_list(self, data):
         """
@@ -129,6 +86,4 @@ class MongoSaver():
         col = self.database['review']
         col.delete_many({'店铺id': data['店铺id']})
         col.insert(data)
-        # for each in data:
-        #     col.delete_many({'商铺id': each['商铺id']})
-        #     col.insert(each)
+

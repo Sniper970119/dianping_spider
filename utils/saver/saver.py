@@ -19,7 +19,6 @@
           ┗━┻━┛   ┗━┻━┛
 
 """
-from utils.config import global_config
 from utils.spider_config import spider_config
 
 
