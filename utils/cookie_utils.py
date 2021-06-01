@@ -112,7 +112,7 @@ class CookieCache():
             tag = 3
         elif mission_type == 'search':
             tag = 1
-        # 打乱cookie池，模拟随机（之所以打乱不random是为了在所有cookie都失效后方便了解状态[虽然现在没处理]）
+        # 打乱cookie池，模拟随机（之所以打乱不random是为了在所有cookie都失效后方便了解状态）
         random.shuffle(self.all_cookie)
         for each in self.all_cookie:
             if each[tag] == 0:
