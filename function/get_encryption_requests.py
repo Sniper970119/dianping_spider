@@ -124,11 +124,10 @@ def get_basic_hidden_info(shop_id):
         msg = r_json['msg']['shopInfo']
         shop_name = msg['shopName']
 
-        shop_address = BeautifulSoup(msg['address'], 'lxml').text if msg['address'] is not None else '' + \
-                                                                                                     BeautifulSoup(msg[
-                                                                                                                       'crossRoad'],
-                                                                                                                   'lxml').text if \
-            msg['crossRoad'] is not None else ''
+        shop_address = BeautifulSoup(msg['address'], 'lxml').text if msg['address'] \
+                                                                     is not None else '' + BeautifulSoup(
+            msg['crossRoad'], 'lxml').text \
+            if msg['crossRoad'] is not None else ''
         shop_number = BeautifulSoup(msg['phoneNo'], 'lxml').text if msg['phoneNo'] is not None else '' + ', ' + \
                                                                                                     BeautifulSoup(
                                                                                                         msg['phoneNo2'],
