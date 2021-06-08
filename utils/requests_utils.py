@@ -275,7 +275,8 @@ class RequestsUtils():
             return proxies
         # 秘钥提取模式
         elif spider_config.KEY_EXTRACT:
-            pass
+            proxies = self.key_proxy_utils()
+            return proxies
         else:
             logger.warning('使用代理时，必须选择http提取或秘钥提取中的一个')
             exit()
@@ -298,6 +299,27 @@ class RequestsUtils():
 
             "http": proxyMeta,
             "https": proxyMeta
+        }
+        return proxies
+
+    def key_proxy_utils(self):
+        """
+        专属http链接的代理格式
+        @param ip:
+        @param port:
+        @return:
+        """
+
+        proxyMeta = "http://%(user)s:%(pass)s@%(host)s:%(port)s" % {
+            "host": spider_config.PROXY_HOST,
+            "port": spider_config.PROXY_PORT,
+            "user": spider_config.KEY_ID,
+            "pass": spider_config.KEY_KEY,
+        }
+
+        proxies = {
+            "http": proxyMeta,
+            "https": proxyMeta,
         }
         return proxies
 

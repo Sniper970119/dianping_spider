@@ -66,6 +66,8 @@ class Config():
         self.HTTP_EXTRACT = True if global_config.getRaw('proxy', 'http_extract') == 'True' else False
         self.HTTP_LINK = global_config.getRaw('proxy', 'http_link')
         self.KEY_EXTRACT = True if global_config.getRaw('proxy', 'key_extract') == 'True' else False
+        self.PROXY_HOST = global_config.getRaw('proxy', 'proxy_host').strip()
+        self.PROXY_PORT = global_config.getRaw('proxy', 'proxy_port').strip()
         self.KEY_ID = global_config.getRaw('proxy', 'key_id')
         self.KEY_KEY = global_config.getRaw('proxy', 'key_key')
         assert not (self.HTTP_EXTRACT is True and self.KEY_EXTRACT is True), '代理模式不可以全为True'
