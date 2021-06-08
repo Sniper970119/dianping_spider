@@ -50,7 +50,7 @@ class Controller():
             pass
         else:
             # 末尾加一个任意字符，为了适配两种初始化url切割长度
-            self.base_url = spider_config.SEARCH_URL+'1'
+            self.base_url = spider_config.SEARCH_URL + '1'
 
     def main(self):
         """
@@ -137,6 +137,16 @@ class Controller():
                             '其他信息': '-',
                             '优惠券信息': '-'
                         })
+                    # 全局整合，将详情以及评论的相关信息拼接到search_res中。
+                    each_search_res['店铺地址'] = each_detail_res['店铺地址']
+                    each_search_res['店铺电话'] = each_detail_res['店铺电话']
+                    each_search_res['店铺总分'] = each_detail_res['店铺总分']
+                    if each_search_res['店铺均分'] == '-':
+                        each_search_res['店铺均分'] = each_detail_res['店铺均分']
+                    each_search_res['人均价格'] = each_detail_res['人均价格']
+                    each_search_res['评论总数'] = each_detail_res['评论总数']
+                    each_search_res['其他信息'] = each_detail_res['其他信息']
+                    each_search_res['优惠券信息'] = each_detail_res['优惠券信息']
                 # 爬取评论
                 if spider_config.NEED_REVIEW:
                     shop_id = each_search_res['店铺id']
@@ -171,21 +181,11 @@ class Controller():
                         """
                         each_review_res = get_basic_review(shop_id)
 
-                    # 全局整合，将详情以及评论的相关信息拼接到search_res中。
-                    each_search_res['店铺地址'] = each_detail_res['店铺地址']
-                    each_search_res['店铺电话'] = each_detail_res['店铺电话']
-                    each_search_res['店铺总分'] = each_detail_res['店铺总分']
-                    if each_search_res['店铺均分'] == '-':
-                        each_search_res['店铺均分'] = each_detail_res['店铺均分']
-                    each_search_res['人均价格'] = each_detail_res['人均价格']
-                    each_search_res['评论总数'] = each_detail_res['评论总数']
-                    each_search_res['其他信息'] = each_detail_res['其他信息']
-                    each_search_res['优惠券信息'] = each_detail_res['优惠券信息']
-                    each_search_res['推荐菜'] = each_review_res['推荐菜']
-
-                    # 对于已经给到search_res中的信息，删除
-                    # 没有删除detail里的是因为detail整个都被删了
-                    each_review_res.pop('推荐菜')
+                        # 全局整合，将详情以及评论的相关信息拼接到search_res中。
+                        each_search_res['推荐菜'] = each_review_res['推荐菜']
+                        # 对于已经给到search_res中的信息，删除
+                        # 没有删除detail里的是因为detail整个都被删了
+                        each_review_res.pop('推荐菜')
 
                 self.saver(each_search_res, each_review_res)
 
