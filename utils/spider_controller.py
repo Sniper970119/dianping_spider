@@ -60,7 +60,7 @@ class Controller():
         # Todo  其实这里挺犹豫是爬取完搜索直接详情还是爬一段详情一段
         #       本着稀释同类型访问频率的原则，暂时采用爬一段详情一段
         # 调用搜索
-        for page in tqdm(range(1, spider_config.NEED_SEARCH_PAGES + 1), desc='搜索页数'):
+        for page in tqdm(range(2, spider_config.NEED_SEARCH_PAGES + 1), desc='搜索页数'):
             # 拼凑url
             search_url, request_type = self.get_search_url(page)
             """
@@ -226,7 +226,10 @@ class Controller():
             # return self.base_url[:-2], 'no proxy, no cookie'
             return self.base_url[:-2], 'proxy, cookie'
         else:
-            return self.base_url + str(cur_page), 'proxy, cookie'
+            if self.base_url.endswith('p'):
+                return self.base_url + str(cur_page), 'proxy, cookie'
+            else:
+                return self.base_url[:-1] + str(cur_page), 'proxy, cookie'
 
     def saver(self, each_search_res, each_review_res):
         # save search
