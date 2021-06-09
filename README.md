@@ -107,6 +107,8 @@
 |http_extract |http提取 |
 |key_extract |秘钥提取 |
 |http_link |http提取接口 |
+|proxy_host |秘钥模式服务器ip |
+|proxy_port |秘钥模式服务器端口 |
 |key_id |秘钥id |
 |key_key |秘钥key |
 
