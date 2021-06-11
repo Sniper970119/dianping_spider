@@ -79,6 +79,12 @@
 
 解决办法：注释掉detail和search（review）中对加密字体的解析与替换；后期可能会更新自动识别，但是在这之前需要手动注释掉。
 
+### 10.报错：UnicodeEncodeError: 'latin-1' codec can't encode character '\u2026' in position 512: ordinal not in range(256)
+
+原因：cookie里有非法字符，一般是因为浏览器会把cookie超长的部分变成 ...  
+
+解决办法：复制的时候注意规避 复制完整cookie
+
 
 ## 写在最后：
 
