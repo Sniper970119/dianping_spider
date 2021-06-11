@@ -184,7 +184,6 @@ class Controller():
                         # 全局整合，将详情以及评论的相关信息拼接到search_res中。
                         each_search_res['推荐菜'] = each_review_res['推荐菜']
                         # 对于已经给到search_res中的信息，删除
-                        # 没有删除detail里的是因为detail整个都被删了
                         each_review_res.pop('推荐菜')
 
                 self.saver(each_search_res, each_review_res)

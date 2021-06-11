@@ -41,6 +41,7 @@ class Detail():
         url = 'http://www.dianping.com/shop/' + str(shop_id)
         r = requests_util.get_requests(url, request_type='proxy, no cookie')
         # 对于部分敏感ip（比如我的ip，淦！）可能需要带cookie才允许访问
+        # request handle v2
         if r.status_code == 403:
             r = requests_util.get_requests(url, request_type='no proxy, cookie')
             if r.status_code == 403:
@@ -54,6 +55,8 @@ class Detail():
     def get_detail(self, shop_id, request_type='proxy, cookie'):
         url = 'http://www.dianping.com/shop/' + str(shop_id)
         r = requests_util.get_requests(url, request_type=request_type)
+        # request handle v1
+        # Todo change request handle to v2
         if r.status_code == 403:
             print('检查浏览器，处理验证码,替换cookie，输入y解除限制', 'http://www.dianping.com/shop/' + str(shop_id))
             while input() != 'y':

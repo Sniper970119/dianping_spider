@@ -95,6 +95,7 @@ def get_basic_hidden_info(shop_id):
         retry_time -= 1
         r = requests_util.get_requests(url, request_type='proxy, no cookie')
         try:
+            # request handle v2
             r_json = json.loads(r.text)
             if r_json['code'] == 406:
                 if cache.is_cold_start is True:
@@ -111,11 +112,12 @@ def get_basic_hidden_info(shop_id):
                 exit()
         except:
             if retry_time <= 0:
-                logger.warning('代理质量较低')
+                logger.warning('替换tsv和uuid，或者代理质量较低')
                 exit()
             pass
 
     # 验证码处理
+    # Todo 验证这个是否有效，应该在上面已经完全覆盖了，这里可以删了
     if r_json['code'] == 406:
         verify_page_url = r_json['customData']['verifyPageUrl']
         print('处理验证码，按任意键回车后继续：', verify_page_url)
@@ -162,6 +164,7 @@ def get_review_and_star(shop_id):
           '&optimusCode=10' \
           '&originUrl=' + shop_url
     # 这里处理解决请求会异常的问题
+    # Todo 这里其实也需要while循环尝试
     while True:
         r = requests_util.get_requests(url, request_type='proxy, no cookie')
         r_text = requests_util.replace_json_text(r.text, get_font_msg())
@@ -248,6 +251,7 @@ def get_basic_review(shop_id):
           '&optimusCode=10' \
           '&originUrl=' + shop_url
     # 这里处理解决请求会异常的问题
+    # Todo 这里其实也需要while循环尝试
     while True:
         r = requests_util.get_requests(url, request_type='proxy, no cookie')
         r_text = requests_util.replace_json_text(r.text, get_font_msg())

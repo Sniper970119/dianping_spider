@@ -41,6 +41,8 @@ class Review():
             if cur_pages == 1:
                 url = 'http://www.dianping.com/shop/' + str(shop_id) + '/review_all'
             r = requests_util.get_requests(url, request_type=request_type)
+            # request handle v1
+            # Todo change request handle to v2
             if r.status_code == 403:
                 logger.warning('评论页请求被ban')
                 raise Exception

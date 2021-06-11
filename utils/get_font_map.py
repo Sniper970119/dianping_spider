@@ -69,6 +69,7 @@ def get_search_map_file(page_source):
     for each in woff_urls:
 
         # 解析address woff
+        # Todo 这里可以单独提取一个方法，有时间再提
         if 'address' in each:
             address_map_woff_url = re.findall('(//.*?woff)', each)[0]
             address_map_woff_url = 'https:' + address_map_woff_url
