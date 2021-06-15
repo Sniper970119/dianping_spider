@@ -67,6 +67,52 @@ def get_font_msg():
         return cache.search_font_map
 
 
+def get_retry_time():
+    """
+    获取ip重试次数
+    @return:
+    """
+    # 这里处理解决请求会异常的问题,允许恰巧当前ip出问题，多试一条
+    if spider_config.REPEAT_NUMBER == 0:
+        retry_time = 5
+    else:
+        retry_time = spider_config.REPEAT_NUMBER + 1
+    return retry_time
+
+
+def get_request_for_interface(url):
+    """
+
+    @param url:
+    @return:
+    """
+    retry_time = get_retry_time()
+    while True:
+        retry_time -= 1
+        r = requests_util.get_requests(url, request_type='proxy, no cookie')
+        try:
+            # request handle v2
+            r_json = json.loads(r.text)
+            if r_json['code'] == 406:
+                # 处理代理模式冷启动时，首条需要验证
+                # （虽然我也不知道为什么首条要验证，本质上切换ip都是首条。但是这样做有效）
+                if cache.is_cold_start is True:
+                    print('处理验证码,按任意键回车继续:', r_json['customData']['verifyPageUrl'])
+                    input()
+                    r = requests_util.get_requests(url, request_type='proxy, no cookie')
+                    cache.is_cold_start = False
+            # 前置验证码过滤
+            if r_json['code'] == 200:
+                r_json = json.loads(requests_util.replace_json_text(r.text, get_font_msg()))
+                break
+            if retry_time <= 0:
+                logger.warning('替换tsv和uuid，或者代理质量较低')
+                exit()
+        except:
+            pass
+    return r
+
+
 def get_basic_hidden_info(shop_id):
     """
     获取基础隐藏信息（名称、地址、电话号、cityid）
@@ -85,12 +131,7 @@ def get_basic_hidden_info(shop_id):
           '&optimusCode=10' \
           '&originUrl=' + str(shop_url)
 
-    # 这里处理解决请求会异常的问题,允许恰巧当前ip出问题，多试一条
-    if spider_config.REPEAT_NUMBER == 0:
-        retry_time = 5
-    else:
-        retry_time = spider_config.REPEAT_NUMBER + 1
-
+    retry_time = get_retry_time()
     while True:
         retry_time -= 1
         r = requests_util.get_requests(url, request_type='proxy, no cookie')
@@ -98,10 +139,12 @@ def get_basic_hidden_info(shop_id):
             # request handle v2
             r_json = json.loads(r.text)
             if r_json['code'] == 406:
+                # 处理代理模式冷启动时，首条需要验证
+                # （虽然我也不知道为什么首条要验证，本质上切换ip都是首条。但是这样做有效）
                 if cache.is_cold_start is True:
                     print('处理验证码,按任意键回车继续:', r_json['customData']['verifyPageUrl'])
-                    if input():
-                        r = requests_util.get_requests(url, request_type='proxy, no cookie')
+                    input()
+                    r = requests_util.get_requests(url, request_type='proxy, no cookie')
                     cache.is_cold_start = False
             # 前置验证码过滤
             if r_json['code'] == 200:
@@ -111,18 +154,12 @@ def get_basic_hidden_info(shop_id):
                 logger.warning('替换tsv和uuid，或者代理质量较低')
                 exit()
         except:
-            if retry_time <= 0:
-                logger.warning('替换tsv和uuid，或者代理质量较低')
-                exit()
             pass
 
-    # 验证码处理
-    # Todo 验证这个是否有效，应该在上面已经完全覆盖了，这里可以删了
-    if r_json['code'] == 406:
-        verify_page_url = r_json['customData']['verifyPageUrl']
-        print('处理验证码，按任意键回车后继续：', verify_page_url)
-        input()
-    elif r_json['code'] == 200:
+    # r = get_request_for_interface(url)
+    # r_json = json.loads(requests_util.replace_json_text(r.text, get_font_msg()))
+
+    if r_json['code'] == 200:
         msg = r_json['msg']['shopInfo']
         shop_name = msg['shopName']
 
@@ -165,6 +202,9 @@ def get_review_and_star(shop_id):
           '&originUrl=' + shop_url
     # 这里处理解决请求会异常的问题
     # Todo 这里其实也需要while循环尝试
+
+    retry_time = get_retry_time()
+
     while True:
         r = requests_util.get_requests(url, request_type='proxy, no cookie')
         r_text = requests_util.replace_json_text(r.text, get_font_msg())
@@ -322,9 +362,6 @@ def get_basic_review(shop_id):
             review_username = review['user']['userNickName']
             user_id = review['user']['userId']
 
-            # each_review = [shop_id, review_id, user_id, review_username, review_star, review_body, review_vote_count,
-            #                review_reply_count, review_view_count, review_avg_price, review_like_dish,
-            #                review_publish_time, review_merchant_reply, review_pic_list]
             each_review = {
                 '店铺id': shop_id,
                 '评论id': review_id,
@@ -346,8 +383,6 @@ def get_basic_review(shop_id):
         # 推荐菜
         dish_tag_list = r_json['dishTagStrList']
 
-        # return [summaries, all_review_count, good_review_count, mid_review_count, bad_review_count,
-        #         review_with_pic_count, reviews, dish_tag_list]
         return {
             '店铺id': shop_id,
             '评论摘要': summaries,

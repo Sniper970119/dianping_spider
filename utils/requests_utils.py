@@ -23,10 +23,12 @@
 import os
 import sys
 import time
+import json
 import requests
 from tqdm import tqdm
 from faker import Factory
 
+from utils.cache import cache
 from utils.config import global_config
 from utils.logger import logger
 from utils.get_file_map import get_map
@@ -179,6 +181,8 @@ class RequestsUtils():
                     break
 
     def handle_verify(self, r, url, request_type):
+        # 这里只做验证码处理，不做其他判断（例如403）
+        # 原因是很多地方需要不同的处理方法，全部移到这里基于现有架构代价有点大
         if 'verify' in r.url:
             """
             不管是使用真实ip还是真实cookie，都对验证码进行处理
@@ -186,7 +190,6 @@ class RequestsUtils():
             一定程度上丧失了cookie池的意义，如果不处理，失效的太快。
             暂时处理
             """
-            # Todo 尝试把403判断也移到这里，尝试从这里返回出去的请求都是“正确”的
             if request_type is not 'proxy, no cookie' or not spider_config.USE_PROXY:
                 print('处理验证码，按任意键回车后继续', r.url)
                 input()
@@ -195,6 +198,50 @@ class RequestsUtils():
             return self.get_requests(url, request_type)
         else:
             return r
+
+    def get_retry_time(self):
+        """
+        获取ip重试次数
+        @return:
+        """
+        # 这里处理解决请求会异常的问题,允许恰巧当前ip出问题，多试一条
+        if spider_config.REPEAT_NUMBER == 0:
+            retry_time = 5
+        else:
+            retry_time = spider_config.REPEAT_NUMBER + 1
+        return retry_time
+
+    def get_request_for_interface(self, url):
+        """
+
+        @param url:
+        @return:
+        """
+        retry_time = self.get_retry_time()
+        while True:
+            retry_time -= 1
+            r = requests_util.get_requests(url, request_type='proxy, no cookie')
+            try:
+                # request handle v2
+                r_json = json.loads(r.text)
+                if r_json['code'] == 406:
+                    # 处理代理模式冷启动时，首条需要验证
+                    # （虽然我也不知道为什么首条要验证，本质上切换ip都是首条。但是这样做有效）
+                    if cache.is_cold_start is True:
+                        print('处理验证码,按任意键回车继续:', r_json['customData']['verifyPageUrl'])
+                        input()
+                        r = requests_util.get_requests(url, request_type='proxy, no cookie')
+                        cache.is_cold_start = False
+                # 前置验证码过滤
+                if r_json['code'] == 200:
+                    # r_json = json.loads(requests_util.replace_json_text(r.text, get_font_msg()))
+                    break
+                if retry_time <= 0:
+                    logger.warning('替换tsv和uuid，或者代理质量较低')
+                    exit()
+            except:
+                pass
+        return r
 
     def get_cookie(self, url):
         """
