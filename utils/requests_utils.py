@@ -128,7 +128,7 @@ class RequestsUtils():
                 # 这个while是处理代理失效的问题（通常是超时等问题）
                 while True:
                     try:
-                        r = requests.get(url, headers=self.get_header(None, False), proxies=self.get_proxy())
+                        r = requests.get(url, headers=self.get_header(None, False), proxies=self.get_proxy(), timeout=5)
                         break
                     except:
                         pass
@@ -146,7 +146,7 @@ class RequestsUtils():
             if self.ip_proxy:
                 while True:
                     try:
-                        r = requests.get(url, headers=header, proxies=self.get_proxy())
+                        r = requests.get(url, headers=header, proxies=self.get_proxy(),timeout=5)
                         break
                     except:
                         pass
