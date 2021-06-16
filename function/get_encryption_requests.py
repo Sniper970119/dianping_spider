@@ -80,39 +80,6 @@ def get_retry_time():
     return retry_time
 
 
-def get_request_for_interface(url):
-    """
-
-    @param url:
-    @return:
-    """
-    retry_time = get_retry_time()
-    while True:
-        retry_time -= 1
-        r = requests_util.get_requests(url, request_type='proxy, no cookie')
-        try:
-            # request handle v2
-            r_json = json.loads(r.text)
-            if r_json['code'] == 406:
-                # 处理代理模式冷启动时，首条需要验证
-                # （虽然我也不知道为什么首条要验证，本质上切换ip都是首条。但是这样做有效）
-                if cache.is_cold_start is True:
-                    print('处理验证码,按任意键回车继续:', r_json['customData']['verifyPageUrl'])
-                    input()
-                    r = requests_util.get_requests(url, request_type='proxy, no cookie')
-                    cache.is_cold_start = False
-            # 前置验证码过滤
-            if r_json['code'] == 200:
-                r_json = json.loads(requests_util.replace_json_text(r.text, get_font_msg()))
-                break
-            if retry_time <= 0:
-                logger.warning('替换tsv和uuid，或者代理质量较低')
-                exit()
-        except:
-            pass
-    return r
-
-
 def get_basic_hidden_info(shop_id):
     """
     获取基础隐藏信息（名称、地址、电话号、cityid）
@@ -131,32 +98,7 @@ def get_basic_hidden_info(shop_id):
           '&optimusCode=10' \
           '&originUrl=' + str(shop_url)
 
-    # retry_time = get_retry_time()
-    # while True:
-    #     retry_time -= 1
-    #     r = requests_util.get_requests(url, request_type='proxy, no cookie')
-    #     try:
-    #         # request handle v2
-    #         r_json = json.loads(r.text)
-    #         if r_json['code'] == 406:
-    #             # 处理代理模式冷启动时，首条需要验证
-    #             # （虽然我也不知道为什么首条要验证，本质上切换ip都是首条。但是这样做有效）
-    #             if cache.is_cold_start is True:
-    #                 print('处理验证码,按任意键回车继续:', r_json['customData']['verifyPageUrl'])
-    #                 input()
-    #                 r = requests_util.get_requests(url, request_type='proxy, no cookie')
-    #                 cache.is_cold_start = False
-    #         # 前置验证码过滤
-    #         if r_json['code'] == 200:
-    #             r_json = json.loads(requests_util.replace_json_text(r.text, get_font_msg()))
-    #             break
-    #         if retry_time <= 0:
-    #             logger.warning('替换tsv和uuid，或者代理质量较低')
-    #             exit()
-    #     except:
-    #         pass
-
-    r = get_request_for_interface(url)
+    r = requests_util.get_request_for_interface(url)
     r_json = json.loads(requests_util.replace_json_text(r.text, get_font_msg()))
 
     if r_json['code'] == 200:
@@ -200,22 +142,8 @@ def get_review_and_star(shop_id):
           '&partner=150' \
           '&optimusCode=10' \
           '&originUrl=' + shop_url
-    # 这里处理解决请求会异常的问题
-    # Todo 这里其实也需要while循环尝试
 
-    # retry_time = get_retry_time()
-
-    # while True:
-    #     r = requests_util.get_requests(url, request_type='proxy, no cookie')
-    #     r_text = requests_util.replace_json_text(r.text, get_font_msg())
-    #     try:
-    #         r_json = json.loads(r_text)
-    #         # 前置验证码过滤
-    #         if r_json['code'] == 200:
-    #             break
-    #     except:
-    #         pass
-    r = get_request_for_interface(url)
+    r = requests_util.get_request_for_interface(url)
     r_json = json.loads(requests_util.replace_json_text(r.text, get_font_msg()))
 
     # 验证码处理
@@ -234,13 +162,9 @@ def get_review_and_star(shop_id):
         score_list = []
         for each in r_json['shopRefinedScoreValueList']:
             score_list.append(BeautifulSoup(each, 'lxml').text)
-        # scores = ''
-        # for i, score in enumerate(score_list):
-        #     scores = scores + ' ' + score_title_list[i] + score_list[i]
         scores = {}
         for i, score in enumerate(score_list):
             scores[score_title_list[i]] = score_list[i]
-        # return [shop_base_score, scores, avg_price, review_count]
         return {
             '店铺id': shop_id,
             '店铺总分': shop_base_score,
@@ -293,19 +217,8 @@ def get_basic_review(shop_id):
           '&partner=150' \
           '&optimusCode=10' \
           '&originUrl=' + shop_url
-    # 这里处理解决请求会异常的问题
-    # Todo 这里其实也需要while循环尝试
-    # while True:
-    #     r = requests_util.get_requests(url, request_type='proxy, no cookie')
-    #     r_text = requests_util.replace_json_text(r.text, get_font_msg())
-    #     try:
-    #         r_json = json.loads(r_text)
-    #         # 前置验证码过滤
-    #         if r_json['code'] == 200:
-    #             break
-    #     except:
-    #         pass
-    r = get_request_for_interface(url)
+
+    r = requests_util.get_request_for_interface(url)
     r_json = json.loads(requests_util.replace_json_text(r.text, get_font_msg()))
     # 验证码处理
     if r_json['code'] == 406:
