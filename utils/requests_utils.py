@@ -126,12 +126,14 @@ class RequestsUtils():
         if request_type == 'proxy, no cookie':
             if self.ip_proxy:
                 # 这个while是处理代理失效的问题（通常是超时等问题）
-                while True:
-                    try:
-                        r = requests.get(url, headers=self.get_header(None, False), proxies=self.get_proxy(), timeout=5)
-                        break
-                    except:
-                        pass
+                r = requests.get(url, headers=self.get_header(None, False), proxies=self.get_proxy(), timeout=5)
+                # 接口专属请求做过重试了（max retry），因此这里的while暂时不用
+                # while True:
+                #     try:
+                #         r = requests.get(url, headers=self.get_header(None, False), proxies=self.get_proxy(), timeout=5)
+                #         break
+                #     except:
+                #         pass
             else:
                 r = requests.get(url, headers=self.get_header(None, False))
             return self.handle_verify(r, url, request_type)
@@ -144,12 +146,13 @@ class RequestsUtils():
             header = self.get_header(cookie=cur_cookie, need_cookie=True)
 
             if self.ip_proxy:
-                while True:
-                    try:
-                        r = requests.get(url, headers=header, proxies=self.get_proxy(),timeout=5)
-                        break
-                    except:
-                        pass
+                r = requests.get(url, headers=header, proxies=self.get_proxy(), timeout=5)
+                # while True:
+                #     try:
+                #         r = requests.get(url, headers=header, proxies=self.get_proxy(),timeout=5)
+                #         break
+                #     except:
+                #         pass
             else:
                 r = requests.get(url, headers=header)
 
