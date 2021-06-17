@@ -146,12 +146,7 @@ def get_review_and_star(shop_id):
     r = requests_util.get_request_for_interface(url)
     r_json = json.loads(requests_util.replace_json_text(r.text, get_font_msg()))
 
-    # 验证码处理
-    if r_json['code'] == 406:
-        verify_page_url = r_json['customData']['verifyPageUrl']
-        print('处理验证码，按任意键回车后继续：', verify_page_url)
-        input()
-    elif r_json['code'] == 200:
+    if r_json['code'] == 200:
         try:
             shop_base_score = r_json['fiveScore']
         except:
@@ -220,13 +215,8 @@ def get_basic_review(shop_id):
 
     r = requests_util.get_request_for_interface(url)
     r_json = json.loads(requests_util.replace_json_text(r.text, get_font_msg()))
-    # 验证码处理
-    if r_json['code'] == 406:
-        verify_page_url = r_json['customData']['verifyPageUrl']
-        print('处理验证码，按任意键回车后继续：', verify_page_url)
-        input()
-        get_basic_review(shop_id)
-    elif r_json['code'] == 200:
+
+    if r_json['code'] == 200:
         # 获取评论的标签以及每个标签的个数
         summaries = []
         if r_json['summarys'] is None:
