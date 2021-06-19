@@ -147,12 +147,6 @@ class RequestsUtils():
 
             if self.ip_proxy:
                 r = requests.get(url, headers=header, proxies=self.get_proxy(), timeout=5)
-                # while True:
-                #     try:
-                #         r = requests.get(url, headers=header, proxies=self.get_proxy(),timeout=5)
-                #         break
-                #     except:
-                #         pass
             else:
                 r = requests.get(url, headers=header)
 
@@ -216,7 +210,7 @@ class RequestsUtils():
 
     def get_request_for_interface(self, url):
         """
-
+        专属于接口的请求方法，可以保证返回的都是“正确”的
         @param url:
         @return:
         """
@@ -237,7 +231,6 @@ class RequestsUtils():
                         cache.is_cold_start = False
                 # 前置验证码过滤
                 if r_json['code'] == 200:
-                    # r_json = json.loads(requests_util.replace_json_text(r.text, get_font_msg()))
                     break
                 if retry_time <= 0:
                     logger.warning('替换tsv和uuid，或者代理质量较低')
