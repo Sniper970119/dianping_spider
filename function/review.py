@@ -30,8 +30,22 @@ from utils.spider_config import spider_config
 class Review():
     def __init__(self):
         self.pages_needed = spider_config.NEED_REVIEW_PAGES
+        self.is_ban = False
 
-    def get_review(self, shop_id, request_type='proxy, cookie'):
+    def get_review(self, shop_id, request_type='proxy, cookie', last_chance=False):
+        if self.is_ban and spider_config.USE_COOKIE_POOL is False:
+            logger.warning('评论页请求被ban，程序继续运行')
+            return_data = {
+                '店铺id': shop_id,
+                '评论摘要': 'ban',
+                '评论总数': 'ban',
+                '好评个数': 'ban',
+                '中评个数': 'ban',
+                '差评个数': 'ban',
+                '带图评论个数': 'ban',
+                '精选评论': 'ban',
+            }
+            return return_data
         all_pages = -1
         cur_pages = 1
         all_review = []
@@ -41,11 +55,11 @@ class Review():
             if cur_pages == 1:
                 url = 'http://www.dianping.com/shop/' + str(shop_id) + '/review_all'
             r = requests_util.get_requests(url, request_type=request_type)
-            # request handle v1
-            # Todo change request handle to v2
+            # 给一次retry的机会，如果依然403则判断为被ban
             if r.status_code == 403:
-                logger.warning('评论页请求被ban')
-                raise Exception
+                if last_chance is True:
+                    self.is_ban = True
+                return self.get_review(shop_id=shop_id, request_type=request_type, last_chance=True)
 
             text = r.text
             # 获取加密文件
