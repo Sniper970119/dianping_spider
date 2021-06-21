@@ -19,17 +19,21 @@
           ┗━┻━┛   ┗━┻━┛
 
 """
+import sys
+
 from bs4 import BeautifulSoup
 
+from utils.logger import logger
 from utils.get_font_map import get_search_map_file
 from utils.requests_utils import requests_util
+from utils.spider_config import spider_config
 
 
 class Search():
     def __init__(self):
-        pass
+        self.is_ban = False
 
-    def search(self, search_url, request_type='proxy, cookie'):
+    def search(self, search_url, request_type='proxy, cookie', last_chance=False):
         """
         搜索
         :param key_word: 关键字
@@ -37,7 +41,16 @@ class Search():
         :param needed_pages: 需要多少页
         :return:
         """
+        if self.is_ban and spider_config.USE_COOKIE_POOL is False:
+            logger.warning('搜索页请求被ban，程序终止')
+            sys.exit()
+
         r = requests_util.get_requests(search_url, request_type=request_type)
+        # 给一次retry的机会，如果依然403则判断为被ban
+        if r.status_code == 403:
+            if last_chance is True:
+                self.is_ban = True
+            return self.search(search_url=search_url, request_type=request_type, last_chance=True)
         text = r.text
         # 获取加密文件
         file_map = get_search_map_file(text)

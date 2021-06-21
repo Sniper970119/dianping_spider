@@ -26,11 +26,12 @@ from utils.cache import cache
 from utils.get_font_map import get_search_map_file
 from utils.requests_utils import requests_util
 from utils.logger import logger
+from utils.spider_config import spider_config
 
 
 class Detail():
     def __init__(self):
-        pass
+        self.is_ban = False
 
     def get_detail_font_mapping(self, shop_id):
         """
@@ -52,18 +53,27 @@ class Detail():
         cache.search_font_map = file_map
         return file_map
 
-    def get_detail(self, shop_id, request_type='proxy, cookie'):
+    def get_detail(self, shop_id, request_type='proxy, cookie', last_chance=False):
+        if self.is_ban and spider_config.USE_COOKIE_POOL is False:
+            logger.warning('详情页请求被ban，程序继续运行')
+            return_data = {
+                '店铺id': shop_id,
+                '店铺名': 'ban',
+                '评论总数': 'ban',
+                '人均价格': 'ban',
+                '店铺地址': 'ban',
+                '店铺电话': 'ban',
+                '其他信息': 'ban'
+            }
+            return return_data
         url = 'http://www.dianping.com/shop/' + str(shop_id)
         r = requests_util.get_requests(url, request_type=request_type)
-        # request handle v1
-        # Todo change request handle to v2
+        # 给一次retry的机会，如果依然403则判断为被ban
         if r.status_code == 403:
-            print('检查浏览器，处理验证码,替换cookie，输入y解除限制', 'http://www.dianping.com/shop/' + str(shop_id))
-            while input() != 'y':
-                import time
-                time.sleep(1)
-            requests_util.update_cookie()
-            r = requests_util.get_requests(url, request_type=request_type)
+            if last_chance is True:
+                self.is_ban = True
+            return self.get_detail(shop_id=shop_id, request_type=request_type, last_chance=True)
+
         text = r.text
         # 获取加密文件
         file_map = get_search_map_file(text)
