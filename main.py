@@ -42,9 +42,6 @@ parser.add_argument('--need_more', type=bool, required=False, default=False,
                     help='need detail')
 args = parser.parse_args()
 if __name__ == '__main__':
-    # args.review = 1
-    # args.normal = 0
-    # args.shop_id = 'l8QDQukrl2tXhzmY'
     if args.normal == 1:
         controller.main()
     if args.detail == 1:
