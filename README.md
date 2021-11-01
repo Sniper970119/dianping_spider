@@ -5,7 +5,7 @@
 [![](https://img.shields.io/badge/python-3-brightgreen.svg)](https://www.python.org/downloads/)
 <img src="https://img.shields.io/badge/license-GPL--3.0-brightgreen">
 
-*仅限学习交流使用，禁止商用*
+*仅限学习交流使用，禁止商用。未经授权禁止转载*
 
 
 ##### 本项目遵守GPL-3.0开源协议
