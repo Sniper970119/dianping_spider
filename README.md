@@ -61,6 +61,7 @@
 
 - 秘钥模式代理隧道支持
 
+- 浏览器油猴插件（感谢(@halsn)[https://github.com/halsn],插件相关详见(这里)[https://github.com/Sniper970119/dianping_spider/tree/master/js]）
 
 ### 计划支持(最近几个月很忙，可能没办法更新，周末如果有空可能会更新)
 
