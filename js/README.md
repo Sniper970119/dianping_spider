@@ -4,4 +4,4 @@
 
 ##### 经过测试, FireFox搭配Tampermonkey插件可完美使用, Chrome浏览器点击更多评论会刷新页面, 原因未知
 
-##### 可直接在线安装, [脚本地址](https://greasyfork.org/zh-CN/scripts/435145-%E5%A4%A7%E4%BC%97%E7%82%B9%E8%AF%84%E8%AF%84%E8%AE%BA) `https://greasyfork.org/zh-CN/scripts/435145-%E5%A4%A7%E4%BC%97%E7%82%B9%E8%AF%84%E8%AF%84%E8%AE%BA`
+##### 可直接在线安装, [脚本地址](https://greasyfork.org/zh-CN/scripts/435145-%E5%A4%A7%E4%BC%97%E7%82%B9%E8%AF%84%E8%AF%84%E8%AE%BA)
