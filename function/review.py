@@ -76,19 +76,37 @@ class Review():
                     all_pages = 1
                 # 只用解析一次的东西比如评论个数也放这里来
                 summaries = []
-                for summary in html.select('.content')[0].select('span'):
-                    tag_string = summary.text.strip().replace('\n', '').split()
-                    string = tag_string[0]
-                    count = tag_string[1][1:-1]
-                    summaries.append({
-                        '描述': string,
-                        '个数': count,
-                    })
+                try:
+                    for summary in html.select('.content')[0].select('span'):
+                        try:
+                            tag_string = summary.text.strip().replace('\n', '').split()
+                            string = tag_string[0]
+                            count = tag_string[1][1:-1]
+                            summaries.append({
+                                '描述': string,
+                                '个数': count,
+                            })
+                        except:
+                            pass
+                except:
+                    pass
                 # 各种评论个数
-                review_with_pic_count = html.select('.filter-pic')[0].select('.count')[0].text[1:-1]
-                good_review_count = html.select('.filter-good')[0].select('.count')[0].text[1:-1]
-                mid_review_count = html.select('.filter-middle')[0].select('.count')[0].text[1:-1]
-                bad_review_count = html.select('.filter-bad')[0].select('.count')[0].text[1:-1]
+                try:
+                    review_with_pic_count = html.select('.filter-pic')[0].select('.count')[0].text[1:-1]
+                except:
+                    review_with_pic_count = 0
+                try:
+                    good_review_count = html.select('.filter-good')[0].select('.count')[0].text[1:-1]
+                except:
+                    good_review_count = 0
+                try:
+                    mid_review_count = html.select('.filter-middle')[0].select('.count')[0].text[1:-1]
+                except:
+                    mid_review_count = 0
+                try:
+                    bad_review_count = html.select('.filter-bad')[0].select('.count')[0].text[1:-1]
+                except:
+                    bad_review_count = 0
                 try:
                     all_review_count = int(good_review_count) + int(mid_review_count) + int(bad_review_count)
                 except:
