@@ -94,19 +94,19 @@ class Review():
                 try:
                     review_with_pic_count = html.select('.filter-pic')[0].select('.count')[0].text[1:-1]
                 except:
-                    review_with_pic_count = 0
+                    review_with_pic_count = '0'
                 try:
                     good_review_count = html.select('.filter-good')[0].select('.count')[0].text[1:-1]
                 except:
-                    good_review_count = 0
+                    good_review_count = '0'
                 try:
                     mid_review_count = html.select('.filter-middle')[0].select('.count')[0].text[1:-1]
                 except:
-                    mid_review_count = 0
+                    mid_review_count = '0'
                 try:
                     bad_review_count = html.select('.filter-bad')[0].select('.count')[0].text[1:-1]
                 except:
-                    bad_review_count = 0
+                    bad_review_count = '0'
                 try:
                     all_review_count = int(good_review_count) + int(mid_review_count) + int(bad_review_count)
                 except:
