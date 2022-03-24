@@ -69,7 +69,11 @@ class Review():
             html = BeautifulSoup(text, 'lxml')
             # 更新页数
             if all_pages == -1:
-                all_pages = min(int(html.select('.reviews-pages')[0].select('a')[-2].text), int(self.pages_needed))
+                # 处理评论只有一页的情况，没有换页按钮无法解析
+                try:
+                    all_pages = min(int(html.select('.reviews-pages')[0].select('a')[-2].text), int(self.pages_needed))
+                except:
+                    all_pages = 1
                 # 只用解析一次的东西比如评论个数也放这里来
                 summaries = []
                 for summary in html.select('.content')[0].select('span'):
