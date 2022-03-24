@@ -5,7 +5,7 @@
 [![](https://img.shields.io/badge/python-3-brightgreen.svg)](https://www.python.org/downloads/)
 <img src="https://img.shields.io/badge/license-GPL--3.0-brightgreen">
 
-*仅限学习交流使用，禁止商用*
+*仅限学习交流使用，禁止商用。未经授权禁止转载*
 
 
 ##### 本项目遵守GPL-3.0开源协议
@@ -61,6 +61,7 @@
 
 - 秘钥模式代理隧道支持
 
+- 浏览器油猴插件（感谢[@halsn](https://github.com/halsn),插件相关详见[这里](https://github.com/Sniper970119/dianping_spider/tree/master/js)）
 
 ### 计划支持(最近几个月很忙，可能没办法更新，周末如果有空可能会更新)
 
