@@ -124,11 +124,17 @@ class Review():
                 except:
                     user_id = '-'
 
+                review_total_score = ''
                 try:
                     review_score_detail = {}
                     review_avg_price = ''
                     review_score_detail_temp = review.select('.score')[0].text.replace(' ', '').replace('\n',
                                                                                                         ' ').strip().split()
+                    try:
+                        review_total_score = str(float(review.select('.sml-rank-stars')[0]['class'][1][-2:]) / 10)
+                    except:
+                        review_total_score = ''
+
                     for each in review_score_detail_temp:
                         if '人均' in each:
                             review_avg_price = each.split('：')[1].replace('元', '')
@@ -177,6 +183,7 @@ class Review():
                     '评论id': review_id,
                     '用户id': user_id,
                     '用户名': review_username,
+                    '用户总分': review_total_score,
                     '用户打分': review_score_detail,
                     '评论内容': review_text,
                     '人均价格': review_avg_price,
