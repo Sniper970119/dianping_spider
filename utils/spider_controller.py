@@ -60,7 +60,7 @@ class Controller():
         # Todo  其实这里挺犹豫是爬取完搜索直接详情还是爬一段详情一段
         #       本着稀释同类型访问频率的原则，暂时采用爬一段详情一段
         # 调用搜索
-        for page in tqdm(range(2, spider_config.NEED_SEARCH_PAGES + 1), desc='搜索页数'):
+        for page in tqdm(range(1, spider_config.NEED_SEARCH_PAGES + 1), desc='搜索页数'):
             # 拼凑url
             search_url, request_type = self.get_search_url(page)
             """

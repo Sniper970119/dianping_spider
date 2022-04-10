@@ -54,6 +54,7 @@ class Review():
             # 访问p1会触发验证码，因此对第一页单独处理
             if cur_pages == 1:
                 url = 'http://www.dianping.com/shop/' + str(shop_id) + '/review_all'
+            print(url)
             r = requests_util.get_requests(url, request_type=request_type)
             # 给一次retry的机会，如果依然403则判断为被ban
             if r.status_code == 403:
