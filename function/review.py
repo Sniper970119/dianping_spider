@@ -113,7 +113,10 @@ class Review():
                 except:
                     all_review_count = '-'
 
-            reviews = html.select('.reviews-items')[0].select('.main-review')
+            try:
+                reviews = html.select('.reviews-items')[0].select('.main-review')
+            except:
+                reviews = []
             for review in reviews:
                 try:
                     review_username = review.select('.name')[0].text.strip()
