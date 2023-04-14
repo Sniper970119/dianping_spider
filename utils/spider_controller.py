@@ -80,6 +80,9 @@ class Controller():
             }
             """
             search_res = self.s.search(search_url, request_type)
+            # search方法如果返回None，代表页面已经没有数据了
+            if not search_res:
+                break
 
             if spider_config.NEED_DETAIL is False and spider_config.NEED_REVIEW is False:
                 for each_search_res in search_res:
@@ -187,6 +190,9 @@ class Controller():
                         each_review_res.pop('推荐菜')
 
                 self.saver(each_search_res, each_review_res)
+            # 如果这一页数据小于15，代表下一页已经没有数据了，直接退出
+            if len(search_res) < 15:
+                break
 
     def get_review(self, shop_id, detail=False):
         if detail:

@@ -59,6 +59,9 @@ class Search():
 
         # 网页解析
         html = BeautifulSoup(text, 'lxml')
+        # 如果页面出现了not-found(无数据)提示，返回None给上一层，让上一层的for循环退出
+        if html.select(".not-found-right"):
+            return None
         shop_all_list = html.select('.shop-list')[0].select('li')
 
         search_res = []
