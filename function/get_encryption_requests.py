@@ -130,20 +130,12 @@ def get_lat_and_lng(shop_id):
     @return:
     """
     assert len(shop_id) == len('H2noKWCDigM0H9c1')
-    shop_url = get_shop_url(shop_id)
+    # 此接口只需要shopid即可
     url = 'https://www.dianping.com/ajax/json/shopDynamic/shopAside?' \
-          'shopId=' + str(shop_id) + \
-          '&cityId=19' \
-          '&mainCategoryId=2821' \
-          '&_token=' + str(get_token(shop_url)) + \
-          '&uuid=' + str(spider_config.UUID) + \
-          '&platform=1' \
-          '&partner=150' \
-          '&optimusCode=10' \
-          '&originUrl=' + shop_url
-
+          'shopId=' + str(shop_id)
     r = requests_util.get_request_for_interface(url)
-    r_json = json.loads(requests_util.replace_json_text(r.text, get_font_msg()))
+    # 无需解密
+    r_json = json.loads(r.text)
 
     if r_json['code'] == 200:
         shop_info = r_json['shop']
