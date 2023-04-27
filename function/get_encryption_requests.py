@@ -123,6 +123,43 @@ def get_basic_hidden_info(shop_id):
     else:
         logger.warning('json响应码异常，尝试更改提pr，或者提issue')
 
+def get_lat_and_lng(shop_id):
+    """
+    获取店铺经纬度(glat, glng)
+    @param shop_id:
+    @return:
+    """
+    assert len(shop_id) == len('H2noKWCDigM0H9c1')
+    shop_url = get_shop_url(shop_id)
+    url = 'https://www.dianping.com/ajax/json/shopDynamic/shopAside?' \
+          'shopId=' + str(shop_id) + \
+          '&cityId=19' \
+          '&mainCategoryId=2821' \
+          '&_token=' + str(get_token(shop_url)) + \
+          '&uuid=' + str(spider_config.UUID) + \
+          '&platform=1' \
+          '&partner=150' \
+          '&optimusCode=10' \
+          '&originUrl=' + shop_url
+
+    r = requests_util.get_request_for_interface(url)
+    r_json = json.loads(requests_util.replace_json_text(r.text, get_font_msg()))
+
+    if r_json['code'] == 200:
+        shop_info = r_json['shop']
+        shop_name = shop_info['shopName']
+        shop_id = shop_info['shopId']
+        shop_lat = shop_info['glat']
+        shop_lng = shop_info['glng']
+
+        return {
+            '店铺id': shop_id,
+            '店铺名': shop_name,
+            '店铺纬度': shop_lat,
+            '店铺经度': shop_lng
+        }
+    else:
+        logger.warning('json响应码异常，尝试更改提pr，或者提issue')
 
 def get_review_and_star(shop_id):
     """
