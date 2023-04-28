@@ -78,6 +78,9 @@ class Config():
         if self.NEED_PHONE_DETAIL:
             logger.warn('开启了电话详情模式，会降低速度并增加反爬概率')
 
+        # require 的 shop location
+        self.NEED_LOCATION = True if require_config.getRaw('shop_location', 'need') == 'True' else False
+
         # require 的 shop review
         self.NEED_REVIEW = True if require_config.getRaw('shop_review', 'need') == 'True' else False
         self.NEED_REVIEW_DETAIL = True if require_config.getRaw('shop_review', 'more_detail') == 'True' else False

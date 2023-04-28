@@ -140,6 +140,24 @@ class Controller():
                             '其他信息': '-',
                             '优惠券信息': '-'
                         })
+                    # 爬取经纬度
+                    if spider_config.NEED_LOCATION:
+                        """
+                        {
+                            '店铺id': -,
+                            '店铺名': -,
+                            '店铺纬度': -,
+                            '店铺经度': -,
+                        }
+                        """
+                        shop_id = each_search_res['店铺id']
+                        lat_and_lng = get_lat_and_lng(shop_id)
+                        each_detail_res.update(lat_and_lng)
+                    else:
+                        each_detail_res.update({
+                            '店铺纬度': '-',
+                            '店铺经度': '-'
+                        })
                     # 全局整合，将详情以及评论的相关信息拼接到search_res中。
                     each_search_res['店铺地址'] = each_detail_res['店铺地址']
                     each_search_res['店铺电话'] = each_detail_res['店铺电话']
@@ -150,6 +168,8 @@ class Controller():
                     each_search_res['评论总数'] = each_detail_res['评论总数']
                     each_search_res['其他信息'] = each_detail_res['其他信息']
                     each_search_res['优惠券信息'] = each_detail_res['优惠券信息']
+                    each_search_res['店铺纬度'] = each_detail_res['店铺纬度']
+                    each_search_res['店铺经度'] = each_detail_res['店铺经度']
                 # 爬取评论
                 if spider_config.NEED_REVIEW:
                     shop_id = each_search_res['店铺id']
@@ -189,6 +209,7 @@ class Controller():
                         # 对于已经给到search_res中的信息，删除
                         each_review_res.pop('推荐菜')
 
+
                 self.saver(each_search_res, each_review_res)
             # 如果这一页数据小于15，代表下一页已经没有数据了，直接退出
             if len(search_res) < 15:
@@ -204,13 +225,35 @@ class Controller():
     def get_detail(self, shop_id, detail=False):
         each_detail_res = {}
         if detail:
+            """
+            '店铺id': -,
+            '店铺名': -,
+            '评论总数': -,
+            '人均价格': -,
+            '店铺地址': -,
+            '店铺电话': -,
+            '其他信息': -,
+            '店铺总分': '-',
+            '店铺均分': '-',
+            """
             each_detail_res = self.d.get_detail(shop_id)
             # 多版本爬取格式适配
             each_detail_res.update({
                 '店铺总分': '-',
-                '店铺评分': '-',
+                '店铺均分': '-',
             })
         else:
+            """
+            '店铺id': -,
+            '店铺总分': -,
+            '店铺均分': -,
+            '人均价格': -,
+            '评论总数': -,
+            '店铺名': -,
+            '店铺地址': -,
+            '店铺电话': -，
+            '其他信息': -,
+            """
             hidden_info = get_basic_hidden_info(shop_id)
             review_and_star = get_review_and_star(shop_id)
             each_detail_res.update(hidden_info)
@@ -219,6 +262,10 @@ class Controller():
             each_detail_res.update({
                 '其他信息': '-'
             })
+        # 获取经纬度
+        if spider_config.NEED_LAT_AND_LNG:
+            lat_and_lng = get_lat_and_lng(shop_id)
+            each_detail_res.update(lat_and_lng)
         saver.save_data(each_detail_res, 'detail')
 
     def get_search_url(self, cur_page):
