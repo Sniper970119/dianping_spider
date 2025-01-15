@@ -39,7 +39,7 @@ class Detail():
         @param shop_id:
         @return:
         """
-        url = 'http://www.dianping.com/shop/' + str(shop_id)
+        url = 'http://www.dianping.com/shopold/pc?shopuuid=' + str(shop_id)
         r = requests_util.get_requests(url, request_type='proxy, no cookie')
         # 对于部分敏感ip（比如我的ip，淦！）可能需要带cookie才允许访问
         # request handle v2
