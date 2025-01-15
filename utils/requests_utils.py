@@ -217,7 +217,7 @@ class RequestsUtils():
         retry_time = self.get_retry_time()
         while True:
             retry_time -= 1
-            r = requests_util.get_requests(url, request_type='proxy, no cookie')
+            r = requests_util.get_requests(url, request_type='proxy, cookie')
             try:
                 # request handle v2
                 r_json = json.loads(r.text)
@@ -227,16 +227,16 @@ class RequestsUtils():
                     if cache.is_cold_start is True:
                         print('处理验证码,按任意键回车继续:', r_json['customData']['verifyPageUrl'])
                         input()
-                        r = requests_util.get_requests(url, request_type='proxy, no cookie')
+                        r = requests_util.get_requests(url, request_type='proxy, cookie')
                         cache.is_cold_start = False
                 # 前置验证码过滤
                 if r_json['code'] == 200:
                     break
-                if retry_time <= 0:
-                    logger.warning('替换tsv和uuid，或者代理质量较低')
-                    exit()
             except:
                 pass
+            if retry_time <= 0:
+                logger.warning('替换tsv和uuid，或者代理质量较低')
+                exit()
         return r
 
     def get_cookie(self, url):

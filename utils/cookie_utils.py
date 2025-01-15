@@ -61,7 +61,7 @@ class CookieCache():
         检查cookie，定时任务，恢复&去掉 review、detail标记
         """
         review_test_url = 'http://www.dianping.com/shop/F8oeMhRBwBa99Z70/review_all/p34'
-        detail_test_url = 'http://www.dianping.com/shop/G1PUPaOlLNpU8Z1h'
+        detail_test_url = 'http://www.dianping.com/shopold/pc?shopuuid=G1PUPaOlLNpU8Z1h'
         search_test_url = 'http://www.dianping.com/dalian/ch10/g110p5'
         for i in range(len(self.all_cookie)):
             # check search

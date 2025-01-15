@@ -50,7 +50,7 @@ def get_shop_url(shop_id):
     @param shop_id:
     @return:
     """
-    shop_url = 'http://www.dianping.com/shop/' + str(shop_id)
+    shop_url = 'http://www.dianping.com/shopold/pc?shopuuid=' + str(shop_id)
     return shop_url
 
 
