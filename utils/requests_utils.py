@@ -232,11 +232,11 @@ class RequestsUtils():
                 # 前置验证码过滤
                 if r_json['code'] == 200:
                     break
-                if retry_time <= 0:
-                    logger.warning('替换tsv和uuid，或者代理质量较低')
-                    exit()
             except:
                 pass
+            if retry_time <= 0:
+                logger.warning('替换tsv和uuid，或者代理质量较低')
+                exit()
         return r
 
     def get_cookie(self, url):
